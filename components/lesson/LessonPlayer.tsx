@@ -1,0 +1,246 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowLeft, RotateCcw } from "lucide-react";
+import { Mascot } from "@/components/mascot/Mascot";
+import { Confetti } from "@/components/ui/Confetti";
+import { Button } from "@/components/ui/Button";
+import { buttonVariants } from "@/components/ui/buttonStyles";
+import { Card } from "@/components/ui/Card";
+import { Feedback } from "@/components/lesson/Feedback";
+import { ProgressBar } from "@/components/lesson/ProgressBar";
+import { QuestionView } from "@/components/lesson/QuestionView";
+import { RichText } from "@/components/glossary/RichText";
+import { completeLines, correctLines, pick, wrongLines } from "@/content/messages";
+import { hasAnswer, isAnswerCorrect, type Answer } from "@/lib/grade";
+import type { Lesson } from "@/lib/schema";
+import { useProgress } from "@/store/useProgress";
+
+type Phase = "intro" | "play" | "done";
+
+export function LessonPlayer({ lesson }: { lesson: Lesson }) {
+  const hydrate = useProgress((s) => s.hydrate);
+  const complete = useProgress((s) => s.complete);
+  const markWrong = useProgress((s) => s.markWrong);
+
+  // 진도를 덮어쓰지 않도록 마운트 시 저장값을 불러온다.
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
+  const total = lesson.questions.length;
+  const [phase, setPhase] = useState<Phase>("intro");
+  const [index, setIndex] = useState(0);
+  const [answer, setAnswer] = useState<Answer>(null);
+  const [checked, setChecked] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [confetti, setConfetti] = useState(0);
+
+  const question = lesson.questions[index];
+  const isCorrect = checked && question ? isAnswerCorrect(question, answer) : false;
+  const isLast = index === total - 1;
+
+  const xpEarned = useMemo(() => 10 + correctCount * 2, [correctCount]);
+
+  function start() {
+    setPhase("play");
+  }
+
+  function check() {
+    if (checked || !question || !hasAnswer(answer)) return;
+    const correct = isAnswerCorrect(question, answer);
+    setChecked(true);
+    if (correct) {
+      setCorrectCount((c) => c + 1);
+      setConfetti((n) => n + 1);
+    } else {
+      markWrong(`${lesson.id}:${index}`);
+    }
+  }
+
+  function next() {
+    if (isLast) {
+      finish();
+      return;
+    }
+    setIndex((i) => i + 1);
+    setAnswer(null);
+    setChecked(false);
+  }
+
+  function finish() {
+    complete(lesson.id, xpEarned);
+    setConfetti((n) => n + 1);
+    setPhase("done");
+  }
+
+  function retry() {
+    setPhase("intro");
+    setIndex(0);
+    setAnswer(null);
+    setChecked(false);
+    setCorrectCount(0);
+  }
+
+  const filled = phase === "done" ? total : index + (checked ? 1 : 0);
+
+  return (
+    <div className="flex min-h-dvh flex-col">
+      <Confetti trigger={confetti} />
+
+      {/* 상단 바 */}
+      <header className="flex items-center gap-3 p-4">
+        <Link
+          href="/learn"
+          aria-label="학습 경로로 나가기"
+          className="rounded-full p-2 text-muted transition-colors hover:bg-foreground/5"
+        >
+          <ArrowLeft className="size-5" />
+        </Link>
+        <ProgressBar value={filled} max={total} />
+      </header>
+
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-6">
+        {phase === "intro" && (
+          <IntroView lesson={lesson} onStart={start} />
+        )}
+
+        {phase === "play" && question && (
+          <div className="flex flex-1 flex-col">
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.25 }}
+              className="flex-1"
+            >
+              <QuestionView
+                question={question}
+                answer={answer}
+                onChange={setAnswer}
+                checked={checked}
+              />
+              {checked && (
+                <div className="mt-6">
+                  <Feedback
+                    correct={isCorrect}
+                    headline={isCorrect ? pick(correctLines) : pick(wrongLines)}
+                    explanation={question.explanation}
+                  />
+                </div>
+              )}
+            </motion.div>
+
+            <div className="sticky bottom-0 mt-6 bg-background/80 py-2 backdrop-blur">
+              {!checked ? (
+                <Button
+                  size="lg"
+                  fullWidth
+                  disabled={!hasAnswer(answer)}
+                  onClick={check}
+                >
+                  정답 확인
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  fullWidth
+                  variant={isCorrect ? "success" : "primary"}
+                  onClick={next}
+                >
+                  {isLast ? "결과 보기" : "다음"}
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {phase === "done" && (
+          <SummaryView
+            correctCount={correctCount}
+            total={total}
+            xp={xpEarned}
+            onRetry={retry}
+          />
+        )}
+      </main>
+    </div>
+  );
+}
+
+function IntroView({
+  lesson,
+  onStart,
+}: {
+  lesson: Lesson;
+  onStart: () => void;
+}) {
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="flex-1">
+        <p className="text-sm font-bold text-brand-600">
+          {lesson.durationMin}분 · {lesson.questions.length}문제
+        </p>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight">{lesson.title}</h1>
+        <div className="mt-5 space-y-3 text-base leading-relaxed text-foreground/80">
+          {lesson.intro.split("\n").map((line, i) => (
+            <p key={i}>
+              <RichText text={line} />
+            </p>
+          ))}
+        </div>
+      </div>
+      <div className="sticky bottom-0 mt-6 bg-background/80 py-2 backdrop-blur">
+        <Button size="lg" fullWidth onClick={onStart}>
+          시작하기
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function SummaryView({
+  correctCount,
+  total,
+  xp,
+  onRetry,
+}: {
+  correctCount: number;
+  total: number;
+  xp: number;
+  onRetry: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-1 flex-col justify-center"
+    >
+      <Card highlight padding="lg" className="text-center">
+        <Mascot mood="celebrate" className="mx-auto size-20" />
+        <h1 className="mt-4 text-2xl font-bold tracking-tight">{pick(completeLines)}</h1>
+        <p className="mt-2 text-muted">
+          {total}문제 중 <b className="text-foreground">{correctCount}개</b> 맞혔어요.
+        </p>
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-500/10 px-4 py-2 font-bold text-brand-600">
+          +{xp} XP
+        </div>
+      </Card>
+
+      <div className="mt-6 flex flex-col gap-2">
+        <Link
+          href="/learn"
+          className={buttonVariants({ size: "lg", fullWidth: true })}
+        >
+          학습 경로로
+        </Link>
+        <Button variant="ghost" onClick={onRetry}>
+          <RotateCcw className="size-4" /> 다시 풀기
+        </Button>
+      </div>
+    </motion.div>
+  );
+}

@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/* ── 돈길 디자인 토큰 ──────────────────────────────────────────
+   모던한 핀테크 톤: 화이트 배경 + 블루/스카이 액센트, 다크모드는 딥네이비.
+   표면 계열은 CSS 변수로 두고 prefers-color-scheme에 따라 전환한다.
+   브랜드/의미색은 고정값(라이트·다크 공통), 강조 배경은 반투명 틴트(bg-brand-500/10 등)로 처리. */
+@theme inline {
+  /* 표면(테마 전환) */
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-subtle: var(--subtle); /* 칩/트랙 등 보조 면 */
+
+  /* 브랜드(블루) — 액센트 */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+
+  /* 스카이 — 보조 액센트(그래디언트/포인트) */
+  --color-sky-400: #38bdf8;
+  --color-sky-500: #0ea5e9;
+
+  /* 의미색 */
+  --color-success: #16a34a;
+  --color-danger: #ef4444;
+
+  /* 폰트 — Pretendard(모던 고딕) */
+  --font-sans:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Apple SD Gothic Neo",
+    "Noto Sans KR", sans-serif;
+  --font-display: var(--font-sans);
+
+  /* 라운드 */
+  --radius-card: 1rem;
+}
+
+:root {
+  --background: #ffffff;
+  --surface: #ffffff;
+  --foreground: #0f172a; /* slate-900 */
+  --muted: #64748b; /* slate-500 */
+  --border: #e2e8f0; /* slate-200 */
+  --subtle: #f1f5f9; /* slate-100 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b1220; /* 딥네이비 */
+    --surface: #131c31;
+    --foreground: #e8eef9;
+    --muted: #94a3b8; /* slate-400 */
+    --border: #243049;
+    --subtle: #1b2540;
+  }
+}
+
+html {
+  color-scheme: light dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum"; /* 숫자 폭 고정 — 금액 정렬에 유리 */
+}
