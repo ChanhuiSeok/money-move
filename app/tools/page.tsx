@@ -32,14 +32,14 @@ const TOOLS = [
 
 export default function ToolsPage() {
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
+    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-4xl lg:px-8 lg:py-8">
       <BackLink className="mb-2" />
       <h1 className="text-2xl font-bold tracking-tight">계산기</h1>
       <p className="mt-1 text-sm text-muted">
         배운 걸 내 숫자로 바로 써먹어요. 모두 추정치예요.
       </p>
 
-      <div className="mt-5 flex flex-col gap-3">
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {TOOLS.map((t) => (
           <Link
             key={t.href}

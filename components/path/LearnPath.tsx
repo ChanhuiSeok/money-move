@@ -22,7 +22,7 @@ export function LearnPath() {
   const states = computeNodeStates(orderedLessonIds, hydrated ? completedIds : []);
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
+    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:py-8">
       <BackLink className="mb-2" />
       <h1 className="text-2xl font-bold tracking-tight">학습 경로</h1>
 

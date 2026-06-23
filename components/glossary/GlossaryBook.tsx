@@ -33,7 +33,7 @@ export function GlossaryBook() {
   const notYet = filtered.filter((t) => !learnedSet.has(t.id));
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
+    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-4xl lg:px-8 lg:py-8">
       <BackLink className="mb-2" />
       <h1 className="text-2xl font-bold tracking-tight">용어 사전</h1>
       <p className="mt-1 text-sm text-muted">
@@ -65,7 +65,7 @@ export function GlossaryBook() {
             </h2>
 
             {learned.length > 0 ? (
-              <div className="mt-3 flex flex-col gap-2">
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {learned.map((t) => (
                   <TermCard key={t.id} term={t} />
                 ))}
@@ -85,14 +85,14 @@ export function GlossaryBook() {
               <p className="mt-1 text-xs text-muted">
                 레슨에서 맥락과 함께 한 입씩 배워요.
               </p>
-              <div className="mt-3 flex flex-col gap-2">
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {notYet.map((t) =>
                   searching ? (
                     // 검색 중엔 찾으려는 의도가 분명하니 설명을 보여준다.
                     <TermCard key={t.id} term={t} dimmed />
                   ) : (
                     <LockedTerm key={t.id} term={t} />
-                  ),
+                  )
                 )}
               </div>
             </section>
@@ -115,7 +115,9 @@ function TermCard({ term, dimmed }: { term: GlossaryTerm; dimmed?: boolean }) {
       <p className="text-base font-bold">{term.term}</p>
       <p className="mt-1 text-sm leading-relaxed text-muted">{term.short}</p>
       {term.full && (
-        <p className="mt-2 text-sm leading-relaxed text-foreground/80">{term.full}</p>
+        <p className="mt-2 text-sm leading-relaxed text-foreground/80">
+          {term.full}
+        </p>
       )}
     </Card>
   );

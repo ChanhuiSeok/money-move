@@ -32,7 +32,7 @@ export function AchievementsView() {
   const earnedCount = earned.size;
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
+    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-3xl lg:px-8 lg:py-8">
       <BackLink className="mb-2" />
       <h1 className="text-2xl font-bold tracking-tight">성취</h1>
       <p className="mt-1 text-sm text-muted">
@@ -74,7 +74,7 @@ export function AchievementsView() {
 
       {/* 배지 */}
       <h2 className="mt-6 text-sm font-bold">배지</h2>
-      <div className="mt-3 grid grid-cols-2 gap-3">
+      <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
         {BADGES.map((b) => {
           const got = earned.has(b.id);
           return (
