@@ -3,6 +3,9 @@ import {
   MAX_HEARTS,
   STORAGE_KEY,
   XP_PER_LESSON,
+  XP_PER_REVIEW,
+  addDays,
+  awardReview,
   bumpStreak,
   completeLesson,
   dayDiff,
@@ -10,7 +13,6 @@ import {
   gainHeart,
   loadProgress,
   loseHeart,
-  markWrong,
   saveProgress,
   todayKey,
 } from "@/lib/progress";
@@ -40,6 +42,12 @@ describe("날짜 헬퍼", () => {
   });
   it("todayKey: 주어진 날짜를 YYYY-MM-DD로", () => {
     expect(todayKey(new Date(2026, 5, 9))).toBe("2026-06-09");
+  });
+  it("addDays: 일수 더하기(월 경계 포함)", () => {
+    expect(addDays("2026-06-23", 1)).toBe("2026-06-24");
+    expect(addDays("2026-06-23", 7)).toBe("2026-06-30");
+    expect(addDays("2026-01-31", 1)).toBe("2026-02-01");
+    expect(addDays("2026-06-23", -1)).toBe("2026-06-22");
   });
 });
 
@@ -101,19 +109,45 @@ describe("하트", () => {
   });
 });
 
-describe("markWrong", () => {
-  it("중복 없이 추가", () => {
-    let p = markWrong(defaultProgress(), "q1");
-    p = markWrong(p, "q1");
-    p = markWrong(p, "q2");
-    expect(p.wrongQuestionIds).toEqual(["q1", "q2"]);
+describe("recordActivity (활동일·최고 스트릭)", () => {
+  it("완료하면 오늘이 활동일에 들어가고 최고 스트릭이 갱신된다", () => {
+    const p = completeLesson(defaultProgress(), "L1", { today: "2026-06-22" });
+    expect(p.activeDays).toEqual(["2026-06-22"]);
+    expect(p.bestStreak).toBe(1);
+  });
+  it("연속 학습으로 최고 스트릭이 오르고, 끊겨도 best는 유지된다", () => {
+    let p = completeLesson(defaultProgress(), "L1", { today: "2026-06-21" });
+    p = completeLesson(p, "L2", { today: "2026-06-22" }); // 연속 2
+    expect(p.bestStreak).toBe(2);
+    p = completeLesson(p, "L3", { today: "2026-06-25" }); // 끊김 → 현재 1
+    expect(p.streak.count).toBe(1);
+    expect(p.bestStreak).toBe(2); // best는 안 내려감
+    expect(p.activeDays).toEqual(["2026-06-21", "2026-06-22", "2026-06-25"]);
+  });
+  it("같은 날 여러 번 활동해도 활동일은 한 번만", () => {
+    let p = completeLesson(defaultProgress(), "L1", { today: "2026-06-22" });
+    p = awardReview(p, 1, { today: "2026-06-22" });
+    expect(p.activeDays).toEqual(["2026-06-22"]);
+  });
+});
+
+describe("awardReview", () => {
+  it("맞힌 개수만큼 XP + 스트릭 유지", () => {
+    const p = awardReview(defaultProgress(), 3, { today: "2026-06-22" });
+    expect(p.xp).toBe(3 * XP_PER_REVIEW);
+    expect(p.streak).toEqual({ count: 1, lastDate: "2026-06-22" });
+  });
+  it("0개 맞혀도 스트릭은 이어진다(들어온 건 사실)", () => {
+    const p = awardReview(defaultProgress(), 0, { today: "2026-06-22" });
+    expect(p.xp).toBe(0);
+    expect(p.streak.count).toBe(1);
   });
 });
 
 describe("저장/로드 (localStorage 목)", () => {
   beforeEach(() => {
     const store = new Map<string, string>();
-    // @ts-expect-error 테스트용 최소 목
+
     globalThis.localStorage = {
       getItem: (k: string) => (store.has(k) ? store.get(k)! : null),
       setItem: (k: string, v: string) => void store.set(k, v),
@@ -143,5 +177,23 @@ describe("저장/로드 (localStorage 목)", () => {
   it("스키마에 안 맞으면 기본값으로 복구", () => {
     globalThis.localStorage.setItem(STORAGE_KEY, JSON.stringify({ xp: "많음" }));
     expect(loadProgress()).toEqual(defaultProgress());
+  });
+  it("구버전 wrongQuestionIds는 reviewItems로 마이그레이션", () => {
+    const old = {
+      completedLessonIds: ["welcome"],
+      currentLessonId: null,
+      xp: 12,
+      streak: { count: 1, lastDate: "2026-06-22" },
+      hearts: 5,
+      wrongQuestionIds: ["welcome:1", "welcome:3"],
+    };
+    globalThis.localStorage.setItem(STORAGE_KEY, JSON.stringify(old));
+    const loaded = loadProgress();
+    expect(loaded.reviewItems).toEqual([
+      { id: "welcome:1", due: "", box: 0 },
+      { id: "welcome:3", due: "", box: 0 },
+    ]);
+    expect("wrongQuestionIds" in loaded).toBe(false);
+    expect(loaded.xp).toBe(12);
   });
 });

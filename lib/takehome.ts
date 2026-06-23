@@ -22,7 +22,7 @@ export type TakeHome = {
 };
 
 /** 근로소득공제(총급여 → 공제액), 한도 적용. */
-function earnedIncomeDeduction(annual: number): number {
+export function earnedIncomeDeduction(annual: number): number {
   const b =
     earnedIncomeDeductionBrackets.find((x) => annual <= x.ceiling) ??
     earnedIncomeDeductionBrackets[earnedIncomeDeductionBrackets.length - 1];

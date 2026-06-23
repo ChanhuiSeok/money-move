@@ -1,4 +1,5 @@
-import type { Lesson } from "@/lib/schema";
+import type { Lesson, Question } from "@/lib/schema";
+import { makeQuestionId, parseQuestionId } from "@/lib/review";
 import { welcome } from "@/content/lessons/welcome";
 import { incomeExpense } from "@/content/lessons/income-expense";
 import { budgetBasics } from "@/content/lessons/budget-basics";
@@ -30,4 +31,26 @@ export function getLessonById(id: string): Lesson | undefined {
 
 export function getLessonTitle(id: string): string {
   return byId.get(id)?.title ?? id;
+}
+
+/** 복습 항목 id("lessonId:index")로 실제 문제를 찾는다.
+   콘텐츠가 바뀌어 더는 존재하지 않으면 undefined(호출부에서 건너뛴다). */
+export function getQuestionByRef(
+  id: string,
+): { lesson: Lesson; question: Question; index: number } | undefined {
+  const ref = parseQuestionId(id);
+  if (!ref) return undefined;
+  const lesson = byId.get(ref.lessonId);
+  const question = lesson?.questions[ref.index];
+  if (!lesson || !question) return undefined;
+  return { lesson, question, index: ref.index };
+}
+
+/** 주어진 레슨들의 모든 문제 id를 학습 순서대로. (데일리 퀴즈 풀) */
+export function questionIdsOfLessons(lessonIds: string[]): string[] {
+  return lessonIds.flatMap((lessonId) => {
+    const lesson = byId.get(lessonId);
+    if (!lesson) return [];
+    return lesson.questions.map((_, i) => makeQuestionId(lessonId, i));
+  });
 }

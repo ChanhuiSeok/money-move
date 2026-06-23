@@ -43,6 +43,22 @@ export const earnedIncomeDeductionBrackets = [
   { ceiling: Infinity, base: 14_750_000, rate: 0.02, over: 100_000_000 },
 ] as const;
 
+/** 연금저축·IRP 세액공제 (조특법 제59조의3). 2023년 개편 이후 기준.
+   - 세액공제 대상 납입 한도: 연금저축 600만원, 퇴직연금(IRP) 합산 시 900만원.
+   - 공제율(소득세): 총급여 5,500만원(종합소득금액 4,500만원) 이하 15%, 초과 12%.
+   - 지방소득세 10%를 더하면 체감 16.5% / 13.2%. */
+export const pensionSavings = {
+  /** 연금저축 단독 세액공제 대상 한도(연) */
+  pensionOnlyCap: 6_000_000,
+  /** 연금저축 + IRP 합산 세액공제 대상 한도(연) */
+  combinedCap: 9_000_000,
+  /** 높은 공제율 적용 총급여 상한(이하면 15%) */
+  higherRateSalaryCeiling: 55_000_000,
+  /** 소득세 공제율 */
+  higherRate: 0.15,
+  lowerRate: 0.12,
+} as const;
+
 /** 종합소득세 누진세율: 과세표준 × rate − deduction(누진공제). */
 export const incomeTaxBrackets = [
   { ceiling: 14_000_000, rate: 0.06, deduction: 0 },

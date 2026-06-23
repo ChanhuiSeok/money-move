@@ -74,13 +74,22 @@ export const streakSchema = z.object({
   lastDate: z.string(), // YYYY-MM-DD ("" = 아직 활동 없음)
 });
 
+/* 복습 항목(간격 반복). id = "lessonId:index" 형식으로 문제를 가리킨다. */
+export const reviewItemSchema = z.object({
+  id: z.string(), // "lessonId:index"
+  due: z.string(), // 다음 복습 예정일 YYYY-MM-DD ("" = 지금 바로)
+  box: z.number().int().nonnegative(), // 라이트너 박스 단계
+});
+
 export const progressSchema = z.object({
   completedLessonIds: z.array(z.string()),
   currentLessonId: z.string().nullable(),
   xp: z.number().int().nonnegative(),
   streak: streakSchema,
   hearts: z.number().int(),
-  wrongQuestionIds: z.array(z.string()), // 복습용(Phase 2)
+  reviewItems: z.array(reviewItemSchema), // 복습 대기열(간격 반복)
+  activeDays: z.array(z.string()), // 학습 활동한 날들(YYYY-MM-DD) — 잔디용
+  bestStreak: z.number().int().nonnegative(), // 역대 최고 연속일 — 배지용(단조)
 });
 
 /* ── 타입 ─────────────────────────────────────────────── */
@@ -94,4 +103,5 @@ export type Question = z.infer<typeof questionSchema>;
 export type Lesson = z.infer<typeof lessonSchema>;
 export type GlossaryTerm = z.infer<typeof glossaryTermSchema>;
 export type Streak = z.infer<typeof streakSchema>;
+export type ReviewItem = z.infer<typeof reviewItemSchema>;
 export type Progress = z.infer<typeof progressSchema>;

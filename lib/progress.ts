@@ -7,6 +7,7 @@ import { progressSchema, type Progress, type Streak } from "@/lib/schema";
 export const STORAGE_KEY = "donpath:progress:v1";
 export const MAX_HEARTS = 5;
 export const XP_PER_LESSON = 10;
+export const XP_PER_REVIEW = 2;
 
 export function defaultProgress(): Progress {
   return {
@@ -15,7 +16,9 @@ export function defaultProgress(): Progress {
     xp: 0,
     streak: { count: 0, lastDate: "" },
     hearts: MAX_HEARTS,
-    wrongQuestionIds: [],
+    reviewItems: [],
+    activeDays: [],
+    bestStreak: 0,
   };
 }
 
@@ -35,6 +38,16 @@ export function dayDiff(a: string, b: string): number {
   return Math.round(ms / 86_400_000);
 }
 
+/** YYYY-MM-DD에 n일을 더한 날짜를 YYYY-MM-DD로. (dayDiff와 같은 UTC 기준) */
+export function addDays(key: string, n: number): string {
+  const d = new Date(`${key}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 /* ── 순수 진도 계산 ────────────────────────────────────── */
 
 /** 오늘 활동을 반영해 스트릭을 갱신한다.
@@ -50,7 +63,22 @@ export function bumpStreak(streak: Streak, today: string): Streak {
   return { count: 1, lastDate: today };
 }
 
-/** 레슨 완료 처리: 완료 목록 추가(중복 방지) + XP 적립 + 스트릭 갱신.
+/** 오늘 활동을 진도에 반영한다(스트릭 갱신 + 최고 스트릭 + 활동일 기록).
+   레슨 완료·복습 등 "오늘 들어온 모든 활동"의 공통 처리. */
+export function recordActivity(progress: Progress, today: string): Progress {
+  const streak = bumpStreak(progress.streak, today);
+  const activeDays = progress.activeDays.includes(today)
+    ? progress.activeDays
+    : [...progress.activeDays, today].sort();
+  return {
+    ...progress,
+    streak,
+    bestStreak: Math.max(progress.bestStreak, streak.count),
+    activeDays,
+  };
+}
+
+/** 레슨 완료 처리: 완료 목록 추가(중복 방지) + XP 적립 + 활동 반영.
    이미 완료한 레슨을 다시 풀면 XP는 더하지 않지만 오늘 활동으로 스트릭은 이어진다. */
 export function completeLesson(
   progress: Progress,
@@ -60,13 +88,13 @@ export function completeLesson(
   const xp = opts.xp ?? XP_PER_LESSON;
   const today = opts.today ?? todayKey();
   const already = progress.completedLessonIds.includes(lessonId);
+  const base = recordActivity(progress, today);
   return {
-    ...progress,
+    ...base,
     completedLessonIds: already
-      ? progress.completedLessonIds
-      : [...progress.completedLessonIds, lessonId],
-    xp: progress.xp + (already ? 0 : xp),
-    streak: bumpStreak(progress.streak, today),
+      ? base.completedLessonIds
+      : [...base.completedLessonIds, lessonId],
+    xp: base.xp + (already ? 0 : xp),
   };
 }
 
@@ -76,25 +104,6 @@ export function setCurrentLesson(
   lessonId: string | null,
 ): Progress {
   return { ...progress, currentLessonId: lessonId };
-}
-
-/** 틀린 문제 기록(복습용, 중복 방지). */
-export function markWrong(progress: Progress, questionId: string): Progress {
-  if (progress.wrongQuestionIds.includes(questionId)) return progress;
-  return {
-    ...progress,
-    wrongQuestionIds: [...progress.wrongQuestionIds, questionId],
-  };
-}
-
-/** 복습 완료한 문제 제거. */
-export function clearWrong(progress: Progress, questionId: string): Progress {
-  return {
-    ...progress,
-    wrongQuestionIds: progress.wrongQuestionIds.filter(
-      (id) => id !== questionId,
-    ),
-  };
 }
 
 export function loseHeart(progress: Progress): Progress {
@@ -112,6 +121,22 @@ export function isLessonCompleted(
   return progress.completedLessonIds.includes(lessonId);
 }
 
+/** 복습 세션 보상: 맞힌 개수만큼 XP 적립 + 오늘 활동으로 스트릭 유지.
+   복습도 "오늘 들어온 것"이므로 스트릭이 이어진다. */
+export function awardReview(
+  progress: Progress,
+  correctCount: number,
+  opts: { xp?: number; today?: string } = {},
+): Progress {
+  const xpEach = opts.xp ?? XP_PER_REVIEW;
+  const today = opts.today ?? todayKey();
+  const base = recordActivity(progress, today);
+  return {
+    ...base,
+    xp: base.xp + Math.max(0, correctCount) * xpEach,
+  };
+}
+
 /* ── 저장/로드 (localStorage) ──────────────────────────── */
 
 function getStorage(): Storage | null {
@@ -123,6 +148,35 @@ function getStorage(): Storage | null {
   }
 }
 
+/** 구버전 저장값을 현재 스키마로 끌어올린다.
+   - 초기형 wrongQuestionIds(평면 배열) → 박스 0, 지금 바로 복습으로 변환.
+   - activeDays·bestStreak는 없으면 스트릭 정보로 최소 복원. */
+function migrate(raw: unknown): unknown {
+  if (!raw || typeof raw !== "object") return raw;
+  const obj = { ...(raw as Record<string, unknown>) };
+
+  if (!("reviewItems" in obj) && Array.isArray(obj.wrongQuestionIds)) {
+    obj.reviewItems = (obj.wrongQuestionIds as unknown[])
+      .filter((id): id is string => typeof id === "string")
+      .map((id) => ({ id, due: "", box: 0 }));
+    delete obj.wrongQuestionIds;
+  }
+
+  const streak =
+    obj.streak && typeof obj.streak === "object"
+      ? (obj.streak as Record<string, unknown>)
+      : null;
+  if (!("activeDays" in obj)) {
+    const last = streak?.lastDate;
+    obj.activeDays = typeof last === "string" && last ? [last] : [];
+  }
+  if (!("bestStreak" in obj)) {
+    obj.bestStreak = typeof streak?.count === "number" ? streak.count : 0;
+  }
+
+  return obj;
+}
+
 /** localStorage에서 진도를 읽어 검증한다. 없거나 깨졌으면 기본값. */
 export function loadProgress(): Progress {
   const storage = getStorage();
@@ -130,7 +184,7 @@ export function loadProgress(): Progress {
   const raw = storage.getItem(STORAGE_KEY);
   if (!raw) return defaultProgress();
   try {
-    const parsed = progressSchema.safeParse(JSON.parse(raw));
+    const parsed = progressSchema.safeParse(migrate(JSON.parse(raw)));
     return parsed.success ? parsed.data : defaultProgress();
   } catch {
     return defaultProgress();

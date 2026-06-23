@@ -64,3 +64,40 @@ export const orderedLessonIds: string[] = [...levels]
   .flatMap((level) =>
     unitsOfLevel(level.id).flatMap((unit) => unit.lessonIds),
   );
+
+/** 한 레벨에 속한 모든 레슨 id(유닛 순서대로). */
+export function lessonIdsOfLevel(levelId: string): string[] {
+  return unitsOfLevel(levelId).flatMap((u) => u.lessonIds);
+}
+
+/** 레슨이 속한 레벨. */
+export function levelOfLesson(lessonId: string): Level | undefined {
+  return levels.find((level) =>
+    lessonIdsOfLevel(level.id).includes(lessonId),
+  );
+}
+
+/** 레벨의 모든 레슨을 완료했는지. */
+export function isLevelComplete(levelId: string, completedIds: string[]): boolean {
+  const ids = lessonIdsOfLevel(levelId);
+  const done = new Set(completedIds);
+  return ids.length > 0 && ids.every((id) => done.has(id));
+}
+
+/** 완료한 레벨 수. */
+export function completedLevelCount(completedIds: string[]): number {
+  return levels.filter((l) => isLevelComplete(l.id, completedIds)).length;
+}
+
+/** 이 레슨을 완료해서 "막 완성된" 레벨(직전엔 미완성, 이번에 완성). 없으면 null.
+   레벨업 팡파레용. */
+export function levelJustCompleted(
+  lessonId: string,
+  completedAfter: string[],
+): Level | null {
+  const level = levelOfLesson(lessonId);
+  if (!level) return null;
+  if (!isLevelComplete(level.id, completedAfter)) return null;
+  const before = completedAfter.filter((id) => id !== lessonId);
+  return isLevelComplete(level.id, before) ? null : level;
+}

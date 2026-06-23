@@ -14,9 +14,27 @@ import { ProgressBar } from "@/components/lesson/ProgressBar";
 import { QuestionView } from "@/components/lesson/QuestionView";
 import { RichText } from "@/components/glossary/RichText";
 import { completeLines, correctLines, pick, wrongLines } from "@/content/messages";
+import { allLessons } from "@/content/lessons";
+import { completedLevelCount, levelJustCompleted } from "@/content/levels";
+import {
+  newlyEarnedBadges,
+  type AchievementStats,
+  type Badge,
+} from "@/lib/achievements";
+import { learnedTermIds } from "@/lib/glossary";
 import { hasAnswer, isAnswerCorrect, type Answer } from "@/lib/grade";
-import type { Lesson } from "@/lib/schema";
+import type { Level, Lesson, Progress } from "@/lib/schema";
 import { useProgress } from "@/store/useProgress";
+
+function statsOf(p: Progress): AchievementStats {
+  return {
+    completedCount: p.completedLessonIds.length,
+    xp: p.xp,
+    bestStreak: p.bestStreak,
+    levelsCompleted: completedLevelCount(p.completedLessonIds),
+    termsLearned: learnedTermIds(p.completedLessonIds, allLessons).size,
+  };
+}
 
 type Phase = "intro" | "play" | "done";
 
@@ -37,6 +55,8 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const [checked, setChecked] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [confetti, setConfetti] = useState(0);
+  const [levelCleared, setLevelCleared] = useState<Level | null>(null);
+  const [newBadges, setNewBadges] = useState<Badge[]>([]);
 
   const question = lesson.questions[index];
   const isCorrect = checked && question ? isAnswerCorrect(question, answer) : false;
@@ -71,8 +91,14 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   }
 
   function finish() {
+    // 완료 전/후 진도를 비교해 새 배지·레벨 클리어를 가려낸다.
+    const before = statsOf(useProgress.getState().progress);
     complete(lesson.id, xpEarned);
-    setConfetti((n) => n + 1);
+    const after = useProgress.getState().progress;
+    const cleared = levelJustCompleted(lesson.id, after.completedLessonIds);
+    setLevelCleared(cleared);
+    setNewBadges(newlyEarnedBadges(before, statsOf(after)));
+    setConfetti((n) => n + (cleared ? 2 : 1));
     setPhase("done");
   }
 
@@ -82,6 +108,8 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
     setAnswer(null);
     setChecked(false);
     setCorrectCount(0);
+    setLevelCleared(null);
+    setNewBadges([]);
   }
 
   const filled = phase === "done" ? total : index + (checked ? 1 : 0);
@@ -162,6 +190,8 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
             correctCount={correctCount}
             total={total}
             xp={xpEarned}
+            levelCleared={levelCleared}
+            newBadges={newBadges}
             onRetry={retry}
           />
         )}
@@ -205,11 +235,15 @@ function SummaryView({
   correctCount,
   total,
   xp,
+  levelCleared,
+  newBadges,
   onRetry,
 }: {
   correctCount: number;
   total: number;
   xp: number;
+  levelCleared: Level | null;
+  newBadges: Badge[];
   onRetry: () => void;
 }) {
   return (
@@ -219,6 +253,22 @@ function SummaryView({
       transition={{ duration: 0.3 }}
       className="flex flex-1 flex-col justify-center"
     >
+      {/* 레벨 클리어 팡파레 — 한 레벨을 통째로 끝냈을 때 */}
+      {levelCleared && (
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-3 rounded-card border border-brand-500/40 bg-brand-500/10 p-4 text-center"
+        >
+          <p className="text-3xl">🏆</p>
+          <p className="mt-1 text-lg font-bold text-brand-700">
+            레벨 클리어! {levelCleared.title}
+          </p>
+          <p className="text-sm text-brand-700/80">한 단계를 통째로 끝냈어요!</p>
+        </motion.div>
+      )}
+
       <Card highlight padding="lg" className="text-center">
         <Mascot mood="celebrate" className="mx-auto size-20" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">{pick(completeLines)}</h1>
@@ -228,6 +278,24 @@ function SummaryView({
         <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-500/10 px-4 py-2 font-bold text-brand-600">
           +{xp} XP
         </div>
+
+        {/* 새로 얻은 배지 */}
+        {newBadges.length > 0 && (
+          <div className="mt-4 border-t border-border pt-4">
+            <p className="text-sm font-semibold text-brand-600">새 배지 획득! 🎉</p>
+            <div className="mt-2 flex flex-wrap justify-center gap-2">
+              {newBadges.map((b) => (
+                <span
+                  key={b.id}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/10 px-3 py-1.5 text-sm font-semibold"
+                >
+                  <span className="text-lg">{b.emoji}</span>
+                  {b.title}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
 
       <div className="mt-6 flex flex-col gap-2">
