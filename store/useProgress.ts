@@ -7,6 +7,7 @@ import {
   gainHeart,
   loadProgress,
   loseHeart,
+  placeOutLessons,
   saveProgress,
   setCurrentLesson,
   todayKey,
@@ -24,6 +25,8 @@ type ProgressState = {
   hydrate: () => void;
   complete: (lessonId: string, xp?: number) => void;
   setCurrent: (lessonId: string | null) => void;
+  /** 진단 테스트로 이미 아는 레슨들을 건너뛴다(완료 처리, 보상 없음). */
+  placeOut: (lessonIds: string[]) => void;
   /** 틀린 문제를 복습 대기열에 넣는다(박스 0). */
   markWrong: (questionId: string) => void;
   /** 복습/퀴즈에서 한 문제 채점 결과를 반영한다. */
@@ -52,6 +55,9 @@ export const useProgress = create<ProgressState>((set) => ({
 
   setCurrent: (lessonId) =>
     set((s) => ({ progress: persist(setCurrentLesson(s.progress, lessonId)) })),
+
+  placeOut: (lessonIds) =>
+    set((s) => ({ progress: persist(placeOutLessons(s.progress, lessonIds)) })),
 
   markWrong: (questionId) =>
     set((s) => ({

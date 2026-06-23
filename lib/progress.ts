@@ -98,6 +98,22 @@ export function completeLesson(
   };
 }
 
+/** 진단 테스트로 이미 아는 레슨을 건너뛴다(완료 처리).
+   건너뛰기는 '학습 활동'이 아니므로 XP·스트릭은 주지 않고 진도만 채운다.
+   이미 완료한 레슨은 그대로 둔다. */
+export function placeOutLessons(
+  progress: Progress,
+  lessonIds: string[],
+): Progress {
+  const have = new Set(progress.completedLessonIds);
+  const added = lessonIds.filter((id) => !have.has(id));
+  if (added.length === 0) return progress;
+  return {
+    ...progress,
+    completedLessonIds: [...progress.completedLessonIds, ...added],
+  };
+}
+
 /** 이어서 풀 레슨 지정. */
 export function setCurrentLesson(
   progress: Progress,
