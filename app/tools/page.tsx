@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Calculator, PiggyBank, Receipt, TrendingUp } from "lucide-react";
+import { ArrowRight, Calculator, PiggyBank, Receipt, SlidersHorizontal, TrendingUp } from "lucide-react";
 import { BackLink } from "@/components/ui/BackLink";
 
 /** 계산기 허브. 배운 걸 바로 써먹는 도구 모음. */
@@ -9,6 +9,12 @@ const TOOLS = [
     icon: Calculator,
     title: "실수령액 계산기",
     desc: "내 월급, 실제로 얼마 들어올까?",
+  },
+  {
+    href: "/tools/tax-simulator",
+    icon: SlidersHorizontal,
+    title: "연말정산 시뮬레이터",
+    desc: "공제를 움직이며 세금이 어떻게 줄까?",
   },
   {
     href: "/tools/year-end",

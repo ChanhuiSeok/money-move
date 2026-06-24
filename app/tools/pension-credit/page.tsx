@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
@@ -106,6 +108,16 @@ export default function PensionCreditPage() {
           )}
         </Card>
       )}
+
+      <Link
+        href="/tools/tax-simulator"
+        className="mt-4 flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm font-medium transition-colors hover:border-brand-400 hover:bg-brand-500/5"
+      >
+        <span>
+          낼 세금보다 공제가 크면? <span className="text-muted">시뮬레이터로 확인</span>
+        </span>
+        <ArrowRight className="size-4 shrink-0 text-brand-600" />
+      </Link>
 
       <RelatedLessons items={RELATED} />
 
