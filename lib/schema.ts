@@ -92,8 +92,21 @@ export const progressSchema = z.object({
   bestStreak: z.number().int().nonnegative(), // 역대 최고 연속일 — 배지용(단조)
 });
 
+/* ── 내 프로필 (localStorage) ─────────────────────────────
+   "내 숫자"의 단일 소스. 한 번 넣어두면 홈·계산기가 전부 내 얘기로 바뀐다.
+   진도와는 다른 관심사라 별도 키로 저장한다. amount === 0 = 아직 미설정. */
+
+export const profileSchema = z.object({
+  period: z.enum(["month", "year"]), // amount가 월급인지 연봉인지
+  amount: z.number().nonnegative(), // 세전 급여 (0 = 미설정)
+  monthlyNontax: z.number().nonnegative(), // 비과세(월) — 보통 식대 20만
+  dependents: z.number().int().min(1), // 부양가족 수(본인 포함)
+  children: z.number().int().nonnegative(), // 만 8~20세 자녀 수
+});
+
 /* ── 타입 ─────────────────────────────────────────────── */
 
+export type Profile = z.infer<typeof profileSchema>;
 export type Level = z.infer<typeof levelSchema>;
 export type Unit = z.infer<typeof unitSchema>;
 export type OxQuestion = z.infer<typeof oxQuestionSchema>;

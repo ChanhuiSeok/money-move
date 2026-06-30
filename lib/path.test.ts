@@ -4,21 +4,21 @@ import { computeNodeStates, firstIncompleteLessonId } from "@/lib/path";
 const order = ["a", "b", "c", "d"];
 
 describe("computeNodeStates", () => {
-  it("처음엔 첫 레슨이 current, 나머지는 locked", () => {
+  it("처음엔 첫 레슨이 current, 나머지는 upcoming", () => {
     expect(computeNodeStates(order, [])).toEqual({
       a: "current",
-      b: "locked",
-      c: "locked",
-      d: "locked",
+      b: "upcoming",
+      c: "upcoming",
+      d: "upcoming",
     });
   });
 
-  it("앞 레슨을 깨면 다음이 열린다", () => {
+  it("앞 레슨을 깨면 다음이 current로", () => {
     expect(computeNodeStates(order, ["a"])).toEqual({
       a: "completed",
       b: "current",
-      c: "locked",
-      d: "locked",
+      c: "upcoming",
+      d: "upcoming",
     });
   });
 
@@ -27,7 +27,7 @@ describe("computeNodeStates", () => {
       a: "completed",
       b: "completed",
       c: "current",
-      d: "locked",
+      d: "upcoming",
     });
   });
 
@@ -41,12 +41,12 @@ describe("computeNodeStates", () => {
   });
 
   it("완료 순서가 뒤섞여도 첫 미완료가 current", () => {
-    // b만 완료된 비정상 상태라도: a가 첫 미완료 → current, c/d는 locked
+    // b만 완료된 비정상 상태라도: a가 첫 미완료 → current, c/d는 upcoming
     expect(computeNodeStates(order, ["b"])).toEqual({
       a: "current",
       b: "completed",
-      c: "locked",
-      d: "locked",
+      c: "upcoming",
+      d: "upcoming",
     });
   });
 });

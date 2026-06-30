@@ -18,6 +18,27 @@ export const levels: Level[] = [
     description: "월급명세서·4대 보험·연말정산을 한 입씩.",
     unitIds: ["u-tax-1", "u-tax-2"],
   },
+  {
+    id: "l-invest",
+    order: 3,
+    title: "투자 첫걸음",
+    description: "주식·증권계좌·매수매도, 그리고 ETF·채권 같은 자산 종류까지.",
+    unitIds: ["u-invest-1", "u-invest-2", "u-invest-3"],
+  },
+  {
+    id: "l-macro",
+    order: 4,
+    title: "투자, 한 걸음 더",
+    description: "금리·환율·해외(미국) 투자와 시장을 흔드는 이벤트까지, 직관으로.",
+    unitIds: ["u-macro-1", "u-macro-2"],
+  },
+  {
+    id: "l-housing",
+    order: 5,
+    title: "전세·월세·내 집",
+    description: "보증금 지키기부터 청약까지, 집 구할 때 꼭 아는 것들.",
+    unitIds: ["u-housing-1"],
+  },
 ];
 
 export const units: Unit[] = [
@@ -48,6 +69,48 @@ export const units: Unit[] = [
     order: 2,
     title: "공제 첫걸음",
     lessonIds: ["deduction-vs-credit", "year-end-tax"],
+  },
+  {
+    id: "u-invest-1",
+    levelId: "l-invest",
+    order: 1,
+    title: "주식과 계좌",
+    lessonIds: ["stock-basics", "brokerage-account"],
+  },
+  {
+    id: "u-invest-2",
+    levelId: "l-invest",
+    order: 2,
+    title: "사고팔기",
+    lessonIds: ["buy-sell-order", "risk-diversification"],
+  },
+  {
+    id: "u-invest-3",
+    levelId: "l-invest",
+    order: 3,
+    title: "자산의 종류",
+    lessonIds: ["etf-basics", "bond-basics"],
+  },
+  {
+    id: "u-macro-1",
+    levelId: "l-macro",
+    order: 1,
+    title: "큰 흐름 읽기",
+    lessonIds: ["interest-rates", "inflation-rates", "exchange-rates"],
+  },
+  {
+    id: "u-macro-2",
+    levelId: "l-macro",
+    order: 2,
+    title: "넓게 투자하기",
+    lessonIds: ["us-investing", "market-events"],
+  },
+  {
+    id: "u-housing-1",
+    levelId: "l-housing",
+    order: 1,
+    title: "집 구하기 기본",
+    lessonIds: ["jeonse-wolse", "housing-subscription"],
   },
 ];
 

@@ -1,41 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, Calculator, PiggyBank, Receipt, SlidersHorizontal, TrendingUp } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { BackLink } from "@/components/ui/BackLink";
+import { tools as TOOLS } from "@/content/tools";
 
 /** 계산기 허브. 배운 걸 바로 써먹는 도구 모음. */
-const TOOLS = [
-  {
-    href: "/tools/take-home",
-    icon: Calculator,
-    title: "실수령액 계산기",
-    desc: "내 월급, 실제로 얼마 들어올까?",
-  },
-  {
-    href: "/tools/tax-simulator",
-    icon: SlidersHorizontal,
-    title: "연말정산 시뮬레이터",
-    desc: "공제를 움직이며 세금이 어떻게 줄까?",
-  },
-  {
-    href: "/tools/year-end",
-    icon: Receipt,
-    title: "연말정산 환급 계산기",
-    desc: "13월의 월급, 돌려받을까 더 낼까?",
-  },
-  {
-    href: "/tools/pension-credit",
-    icon: PiggyBank,
-    title: "연금저축 세액공제",
-    desc: "노후 준비하고 세금도 아끼기",
-  },
-  {
-    href: "/tools/compound",
-    icon: TrendingUp,
-    title: "복리 계산기",
-    desc: "꾸준히 모으면 얼마까지 불어날까?",
-  },
-] as const;
-
 export default function ToolsPage() {
   return (
     <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-4xl lg:px-8 lg:py-8">

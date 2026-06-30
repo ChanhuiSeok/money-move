@@ -23,12 +23,12 @@ export const payslipBasics: Lesson = {
       prompt:
         "월급명세서에서 '실제로 통장에 들어오는 돈'에 해당하는 항목은?",
       options: [
-        "공제 후 차인지급액 (실수령액)",
         "지급 합계 (세전)",
         "기본급",
         "상여금",
+        "공제 후 차인지급액 (실수령액)",
       ],
-      answerIndex: 0,
+      answerIndex: 3,
       explanation:
         "맨 아래 '차인지급액' = [실수령액](term:take-home-pay)이에요. 위쪽 지급 합계는 떼기 '전' 금액이라 더 커요. 그 둘의 차이가 바로 공제(세금·보험료)예요.",
     },

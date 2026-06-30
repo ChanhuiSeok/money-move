@@ -1,19 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Info } from "lucide-react";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
+import { Stepper } from "@/components/ui/Stepper";
 import {
   RATE_YEAR,
   insuranceRates,
   localIncomeTaxRate,
 } from "@/content/rates";
 import { formatPercent, formatWon, onlyDigits } from "@/lib/format";
+import { hasProfile } from "@/lib/profile";
+import type { Profile } from "@/lib/schema";
 import { estimateTakeHome } from "@/lib/takehome";
 import { cn } from "@/lib/utils";
+import { useProfile } from "@/store/useProfile";
 
 const RELATED = [
   { id: "payslip-basics", label: "월급명세서 읽기" },
@@ -21,12 +25,66 @@ const RELATED = [
   { id: "deduction-vs-credit", label: "소득공제 vs 세액공제" },
 ];
 
+type Inputs = {
+  period: "month" | "year";
+  amount: string;
+  nontax: string;
+  dependents: number;
+  children: number;
+};
+
+function seedFrom(profile: Profile): Inputs {
+  if (!hasProfile(profile)) {
+    return { period: "month", amount: "", nontax: "200000", dependents: 1, children: 0 };
+  }
+  return {
+    period: profile.period,
+    amount: String(profile.amount),
+    nontax: String(profile.monthlyNontax),
+    dependents: profile.dependents,
+    children: profile.children,
+  };
+}
+
 export default function TakeHomePage() {
-  const [period, setPeriod] = useState<"month" | "year">("month");
-  const [amount, setAmount] = useState("");
-  const [dependents, setDependents] = useState(1);
-  const [children, setChildren] = useState(0); // 20세 이하 자녀 수
-  const [nontax, setNontax] = useState("200000"); // 비과세(월) — 보통 식대 20만
+  const hydrate = useProfile((s) => s.hydrate);
+  const hydrated = useProfile((s) => s.hydrated);
+  const profile = useProfile((s) => s.profile);
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
+  // hydrate 전엔 빈 값, 후엔 프로필로 seed해 remount(setState-in-effect 회피).
+  return (
+    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
+      <BackLink className="mb-2" />
+      <h1 className="text-2xl font-bold tracking-tight">실수령액 계산기</h1>
+      <p className="mt-1 text-sm text-muted">
+        세전 월급/연봉을 넣으면, 4대 보험·소득세를 빼고 통장에 들어올 금액을 추정해요.
+      </p>
+
+      <MascotBubble
+        mood="idle"
+        message={
+          hydrated && hasProfile(profile)
+            ? "내 프로필로 채워뒀어요. 바꿔봐도 좋아요!"
+            : "대략 얼마 들어올지 같이 가늠해봐요!"
+        }
+        className="mt-4"
+      />
+
+      <Calculator key={hydrated ? "ready" : "empty"} initial={seedFrom(profile)} />
+    </main>
+  );
+}
+
+function Calculator({ initial }: { initial: Inputs }) {
+  const [period, setPeriod] = useState(initial.period);
+  const [amount, setAmount] = useState(initial.amount);
+  const [dependents, setDependents] = useState(initial.dependents);
+  const [children, setChildren] = useState(initial.children);
+  const [nontax, setNontax] = useState(initial.nontax);
 
   // 자녀는 본인을 뺀 부양가족 수까지만.
   const maxChildren = Math.max(0, dependents - 1);
@@ -46,19 +104,7 @@ export default function TakeHomePage() {
       : null;
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">실수령액 계산기</h1>
-      <p className="mt-1 text-sm text-muted">
-        세전 월급/연봉을 넣으면, 4대 보험·소득세를 빼고 통장에 들어올 금액을 추정해요.
-      </p>
-
-      <MascotBubble
-        mood="idle"
-        message="대략 얼마 들어올지 같이 가늠해봐요!"
-        className="mt-4"
-      />
-
+    <>
       {/* 입력 */}
       <Card padding="md" className="mt-4">
         <div className="inline-flex rounded-xl bg-subtle p-1">
@@ -207,7 +253,7 @@ export default function TakeHomePage() {
           담당)·국세청·4대 보험 기관에서 확인하세요.
         </p>
       </div>
-    </main>
+    </>
   );
 }
 
@@ -251,40 +297,4 @@ function Row({
 
 function Divider() {
   return <div className="my-1 h-px bg-border" />;
-}
-
-function Stepper({
-  value,
-  onChange,
-  min,
-  max,
-}: {
-  value: number;
-  onChange: (v: number) => void;
-  min: number;
-  max: number;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <button
-        type="button"
-        aria-label="줄이기"
-        onClick={() => onChange(Math.max(min, value - 1))}
-        className="flex size-8 items-center justify-center rounded-full border border-border text-lg font-bold text-muted transition-colors hover:bg-subtle disabled:opacity-40"
-        disabled={value <= min}
-      >
-        −
-      </button>
-      <span className="w-5 text-center font-bold tabular-nums">{value}</span>
-      <button
-        type="button"
-        aria-label="늘리기"
-        onClick={() => onChange(Math.min(max, value + 1))}
-        className="flex size-8 items-center justify-center rounded-full border border-border text-lg font-bold text-muted transition-colors hover:bg-subtle disabled:opacity-40"
-        disabled={value >= max}
-      >
-        +
-      </button>
-    </div>
-  );
 }

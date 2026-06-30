@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { Flag, MapPin } from "lucide-react";
 import { PathNode } from "@/components/path/PathNode";
 import { BackLink } from "@/components/ui/BackLink";
 import { getLessonTitle } from "@/content/lessons";
@@ -8,6 +9,44 @@ import { levels, orderedLessonIds, unitsOfLevel } from "@/content/levels";
 import { computeNodeStates } from "@/lib/path";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/store/useProgress";
+
+/** 노드가 좌우로 굽이치는 폭(px). 길처럼 보이게 한 칸씩 번갈아 어긋난다. */
+const SWAY = 38;
+const nodeOffset = (i: number) => (i % 2 === 0 ? -SWAY : SWAY);
+
+/** 두 노드를 잇는 점선 '길' — 가운데(SVG 폭 절반)를 기준으로 좌우 오프셋만큼 휜다. */
+function RoadLink({
+  from,
+  to,
+  active,
+}: {
+  from: number;
+  to: number;
+  active: boolean;
+}) {
+  const cx = 90; // viewBox 폭 180의 절반
+  const h = 46;
+  const x1 = cx + from;
+  const x2 = cx + to;
+  return (
+    <svg
+      width="180"
+      height={h}
+      viewBox={`0 0 180 ${h}`}
+      className={cn("my-1 block", active ? "text-brand-600" : "text-border")}
+      aria-hidden
+    >
+      <path
+        d={`M${x1} 2 C ${x1} ${h * 0.55}, ${x2} ${h * 0.45}, ${x2} ${h - 2}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeDasharray="0.5 9"
+      />
+    </svg>
+  );
+}
 
 export function LearnPath() {
   const hydrate = useProgress((s) => s.hydrate);
@@ -26,15 +65,32 @@ export function LearnPath() {
       <BackLink className="mb-2" />
       <h1 className="text-2xl font-bold tracking-tight">학습 경로</h1>
 
-      {levels.map((level) => (
-        <section key={level.id} className="mt-6">
-          <p className="text-sm font-semibold text-brand-600">{level.title}</p>
-          <p className="mt-0.5 text-sm text-muted">{level.description}</p>
+      {/* 출발점 — 길의 시작 */}
+      <div className="mt-5 flex justify-center">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/10 px-3 py-1 text-xs font-bold text-brand-600">
+          <MapPin className="size-3.5" /> 출발
+        </span>
+      </div>
 
-          <div className="mt-6 space-y-8">
+      {levels.map((level) => (
+        <section key={level.id} className="mt-4">
+          {/* 레벨 이정표(표지판) */}
+          <div className="flex items-center gap-2">
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">
+              <Flag className="size-4" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-brand-600">
+                {level.title}
+              </p>
+              <p className="text-xs text-muted">{level.description}</p>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-7">
             {unitsOfLevel(level.id).map((unit) => (
               <div key={unit.id}>
-                <div className="mb-4 flex items-center gap-3">
+                <div className="mb-3 flex items-center gap-3">
                   <span className="h-px flex-1 bg-border" />
                   <span className="text-xs font-semibold tracking-wide text-muted">
                     {unit.title}
@@ -44,22 +100,23 @@ export function LearnPath() {
 
                 <div className="flex flex-col items-center">
                   {unit.lessonIds.map((id, i) => (
-                    <div key={id} className="flex flex-col items-center">
+                    <div key={id} className="flex w-full flex-col items-center">
                       {i > 0 && (
-                        <span
-                          className={cn(
-                            "my-1 h-6 w-1 rounded-full",
+                        <RoadLink
+                          from={nodeOffset(i - 1)}
+                          to={nodeOffset(i)}
+                          active={
                             states[unit.lessonIds[i - 1]] === "completed"
-                              ? "bg-brand-600"
-                              : "bg-border",
-                          )}
+                          }
                         />
                       )}
-                      <PathNode
-                        id={id}
-                        title={getLessonTitle(id)}
-                        state={states[id] ?? "locked"}
-                      />
+                      <div style={{ transform: `translateX(${nodeOffset(i)}px)` }}>
+                        <PathNode
+                          id={id}
+                          title={getLessonTitle(id)}
+                          state={states[id] ?? "upcoming"}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -68,6 +125,13 @@ export function LearnPath() {
           </div>
         </section>
       ))}
+
+      {/* 도착점 — 길의 끝(깃발) */}
+      <div className="mt-8 flex justify-center">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted">
+          <Flag className="size-3.5" /> 결승
+        </span>
+      </div>
     </main>
   );
 }

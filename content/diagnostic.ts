@@ -24,8 +24,8 @@ export const diagnosticItems: DiagnosticItem[] = [
       type: "choice",
       prompt:
         "갑작스러운 일에 대비해 따로 모아두는 돈을 무엇이라고 부를까요?",
-      options: ["비상금", "보험금", "연말정산", "고정지출"],
-      answerIndex: 0,
+      options: ["보험금", "연말정산", "고정지출", "비상금"],
+      answerIndex: 3,
       explanation:
         "[비상금](term:emergency-fund)이에요. 갑작스러운 지출에 빚지지 않게 버텨주는 돈이죠.",
     },
@@ -37,8 +37,8 @@ export const diagnosticItems: DiagnosticItem[] = [
       type: "choice",
       prompt:
         "월급에서 국민연금·건강보험·고용보험·산재보험으로 빠져나가는 것을 묶어 무엇이라 할까요?",
-      options: ["4대 보험", "소득공제", "세액공제", "연말정산"],
-      answerIndex: 0,
+      options: ["소득공제", "4대 보험", "세액공제", "연말정산"],
+      answerIndex: 1,
       explanation:
         "[4대 보험](term:four-major-insurance)이에요. 월급명세서에서 세금과 함께 가장 크게 빠지는 항목이죠.",
     },

@@ -13,52 +13,53 @@
   --color-border: var(--border);
   --color-subtle: var(--subtle); /* 칩/트랙 등 보조 면 */
 
-  /* 브랜드(블루) — 액센트 */
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-200: #bfdbfe;
-  --color-brand-300: #93c5fd;
-  --color-brand-400: #60a5fa;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
+  /* 브랜드 — 코발트·인디고 계열(기본 Tailwind blue에서 한 끗 비튼 톤) */
+  --color-brand-50: #eef1ff;
+  --color-brand-100: #dfe4ff;
+  --color-brand-200: #c4ccff;
+  --color-brand-300: #a0adff;
+  --color-brand-400: #7d8bfb;
+  --color-brand-500: #5b6af0;
+  --color-brand-600: #4453da;
+  --color-brand-700: #3540b4;
 
   /* 스카이 — 보조 액센트(그래디언트/포인트) */
   --color-sky-400: #38bdf8;
   --color-sky-500: #0ea5e9;
 
-  /* 의미색 */
-  --color-success: #16a34a;
-  --color-danger: #ef4444;
+  /* 의미색 — 기본값에서 살짝 비튼 톤 */
+  --color-success: #15a45c;
+  --color-danger: #e84d4d;
 
-  /* 폰트 — Pretendard(모던 고딕) */
+  /* 폰트 — 본문 Pretendard(산세리프) + 디스플레이 Hahmlet(세리프) 대비 */
   --font-sans:
     "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Apple SD Gothic Neo",
     "Noto Sans KR", sans-serif;
-  --font-display: var(--font-sans);
+  --font-display: "Hahmlet", var(--font-sans);
 
   /* 라운드 */
   --radius-card: 1rem;
 }
 
 :root {
+  /* 라이트: 배경은 순수 화이트 유지, 중립색에만 미세한 색온도를 줘 기본 slate 티를 뺌 */
   --background: #ffffff;
   --surface: #ffffff;
-  --foreground: #0f172a; /* slate-900 */
-  --muted: #64748b; /* slate-500 */
-  --border: #e2e8f0; /* slate-200 */
-  --subtle: #f1f5f9; /* slate-100 */
+  --foreground: #1a1b22; /* 차분한 near-black */
+  --muted: #686b78;
+  --border: #e7e8ee;
+  --subtle: #f4f5f8;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0b1220; /* 딥네이비 */
-    --surface: #131c31;
-    --foreground: #e8eef9;
-    --muted: #94a3b8; /* slate-400 */
-    --border: #243049;
-    --subtle: #1b2540;
+    --background: #0b0e17; /* 딥네이비(인디고 쪽으로 미세 조정) */
+    --surface: #151a28;
+    --foreground: #e9ebf4;
+    --muted: #969aab;
+    --border: #262b3b;
+    --subtle: #1b2030;
   }
 }
 
@@ -72,4 +73,11 @@ body {
   color: var(--color-foreground);
   font-family: var(--font-sans);
   font-feature-settings: "tnum"; /* 숫자 폭 고정 — 금액 정렬에 유리 */
+}
+
+/* 페이지 제목은 디스플레이 세리프로 — 본문 산세리프와 대비를 줘 위계를 또렷하게.
+   크기는 각 화면의 유틸리티(text-2xl 등)를 그대로 쓰고, 글꼴·자간만 손본다. */
+h1 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
 }

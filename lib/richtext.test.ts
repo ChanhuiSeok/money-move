@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseRichText } from "@/lib/richtext";
+import { parseRichText, richTextToPlain } from "@/lib/richtext";
 
 describe("parseRichText", () => {
   it("용어 없는 평문은 통째로 text 한 조각", () => {
@@ -38,5 +38,17 @@ describe("parseRichText", () => {
 
   it("빈 문자열은 빈 배열", () => {
     expect(parseRichText("")).toEqual([]);
+  });
+});
+
+describe("richTextToPlain", () => {
+  it("용어 마크업을 표시어만 남긴 평문으로", () => {
+    expect(
+      richTextToPlain("[전입신고](term:move-in-report)와 [확정일자](term:confirmed-date) 받기"),
+    ).toBe("전입신고와 확정일자 받기");
+  });
+
+  it("용어 없는 평문은 그대로", () => {
+    expect(richTextToPlain("그냥 문장")).toBe("그냥 문장");
   });
 });

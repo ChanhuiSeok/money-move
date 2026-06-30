@@ -12,18 +12,24 @@ export const welcome: Lesson = {
   glossary: ["fixed-expense", "emergency-fund"],
   questions: [
     {
-      type: "ox",
-      prompt: "돈을 계획 없이 쓰면, 모으기가 더 어려워지겠죠?",
-      answer: true,
+      type: "choice",
+      prompt: "월급을 받았어요. 돈 관리에 가장 도움이 되는 '첫 습관'은 무엇일까요?",
+      options: [
+        "통장을 아예 들여다보지 않기",
+        "어디에 얼마나 쓰는지 한번 살펴보기",
+        "들어온 돈을 그날 다 써버리기",
+        "남는지 안 남는지 운에 맡기기",
+      ],
+      answerIndex: 1,
       explanation:
-        "맞아요. 어디에 쓰는지 알아야 모으기도 쉬워져요. 그 '알아보기'가 첫걸음이에요.",
+        "돈 관리의 첫걸음은 '내 돈이 어디로 가는지' 아는 거예요. 거창한 절약보다, 며칠만 들여다봐도 새는 곳이 보이기 시작해요.",
     },
     {
       type: "choice",
       prompt:
         "다음 중 매달 비슷하게 나가는 [고정지출](term:fixed-expense)에 가장 가까운 것은?",
-      options: ["월세", "충동구매한 신발", "길에서 산 떡볶이", "친구 깜짝 선물"],
-      answerIndex: 0,
+      options: ["충동구매한 신발", "길에서 산 떡볶이", "월세", "친구 깜짝 선물"],
+      answerIndex: 2,
       explanation:
         "월세처럼 매달 정해진 날, 비슷한 금액으로 나가는 돈이 [고정지출](term:fixed-expense)이에요. 나머지는 그때그때 달라지는 [변동지출](term:variable-expense)에 가까워요.",
     },

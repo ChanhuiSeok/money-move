@@ -19,10 +19,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isImmersiveRoute(pathname)) return <>{children}</>;
 
   return (
-    <div className="flex min-h-dvh flex-col lg:flex-row">
+    // 모바일: 화면 높이에 고정하고 콘텐츠만 내부 스크롤 → 스크롤바가 하단 탭바에 닿지 않음.
+    // 데스크탑(lg): 기존처럼 문서 전체가 스크롤되고 사이드바는 sticky.
+    <div className="flex h-dvh flex-col overflow-hidden lg:h-auto lg:min-h-dvh lg:flex-row lg:overflow-visible">
       <SideNav pathname={pathname} />
-      {/* 모바일 하단 탭바 높이만큼 아래 여백 확보 */}
-      <div className="flex min-w-0 flex-1 flex-col pb-[calc(env(safe-area-inset-bottom)+4rem)] lg:pb-0">
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto lg:overflow-visible">
         {children}
       </div>
       <BottomNav pathname={pathname} />
@@ -70,10 +71,10 @@ function SideNav({ pathname }: { pathname: string }) {
   );
 }
 
-/** 모바일 하단 탭바 — lg 미만에서만. 화면 하단 고정. */
+/** 모바일 하단 탭바 — lg 미만에서만. 스크롤 영역 바깥(아래)에 자리해 스크롤바와 겹치지 않음. */
 function BottomNav({ pathname }: { pathname: string }) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
+    <nav className="flex shrink-0 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden">
       {MOBILE_NAV_ITEMS.map((item) => {
         const active = isActiveNav(pathname, item.href);
         return (

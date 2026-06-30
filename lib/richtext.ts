@@ -25,3 +25,11 @@ export function parseRichText(text: string): RichSegment[] {
   }
   return segments;
 }
+
+/** `[표시어](term:id)` 마크업을 표시어만 남긴 평문으로 바꾼다.
+   선택지처럼 툴팁(인터랙티브)을 넣을 수 없는 자리에서 안전하게 쓴다. */
+export function richTextToPlain(text: string): string {
+  return parseRichText(text)
+    .map((s) => (s.kind === "text" ? s.value : s.label))
+    .join("");
+}

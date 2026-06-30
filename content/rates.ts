@@ -59,6 +59,64 @@ export const pensionSavings = {
   lowerRate: 0.12,
 } as const;
 
+/** 연말정산 항목별 공제 규칙(단순화) ─────────────────────────────
+   ⚠️ 모두 교육용 추정치. 실제 한도·문턱·예외는 훨씬 다양하니 국세청 확인 필요.
+   세액공제율은 모두 '소득세' 기준(지방세 10%는 계산기가 따로 얹는다). */
+
+/** 신용카드 등 사용금액 소득공제(조특법 §126의2, 단순화).
+   총급여의 25%를 넘는 사용분만 공제 대상. 결제수단별 공제율이 다르고,
+   문턱(25%)은 공제율이 낮은 신용카드 사용분부터 차감한다(납세자 유리). */
+export const cardDeduction = {
+  thresholdRate: 0.25, // 총급여의 25% 초과분만 공제
+  creditRate: 0.15, // 신용카드
+  checkCashRate: 0.3, // 체크카드·현금영수증
+  marketTransitRate: 0.4, // 전통시장·대중교통
+  capHigh: 3_000_000, // 공제 한도(총급여 7천만 이하)
+  capLow: 2_500_000, // 공제 한도(총급여 7천만 초과)
+  capSalaryCeiling: 70_000_000,
+} as const;
+
+/** 주택청약종합저축 소득공제(조특법 §87, 단순화).
+   무주택 세대주·총급여 7천만 이하. 납입액(연 300만 한도)의 40%를 공제. */
+export const housingSavingsDeduction = {
+  rate: 0.4,
+  paymentCap: 3_000_000,
+  salaryCeiling: 70_000_000,
+} as const;
+
+/** 의료비 세액공제(단순화). 총급여의 3%를 넘는 지출분의 15%. */
+export const medicalCredit = {
+  thresholdRate: 0.03,
+  rate: 0.15,
+} as const;
+
+/** 보장성보험료 세액공제(단순화). 납입액(연 100만 한도)의 12%. */
+export const insurancePremiumCredit = {
+  rate: 0.12,
+  paymentCap: 1_000_000,
+} as const;
+
+/** 교육비 세액공제(단순화). 지출액의 15%. (본인은 한도 없음, 자녀는 1인 300만 등 — 여기선 한도 생략) */
+export const educationCredit = {
+  rate: 0.15,
+} as const;
+
+/** 기부금 세액공제(단순화). 1천만 이하 15%, 초과분 30%. */
+export const donationCredit = {
+  rateLow: 0.15,
+  rateHigh: 0.3,
+  threshold: 10_000_000,
+} as const;
+
+/** 월세 세액공제(단순화). 총급여 5,500만 이하 17%, 8천만 이하 15%. 납입액 연 1,000만 한도. */
+export const rentCredit = {
+  rateHigh: 0.17,
+  rateLow: 0.15,
+  higherRateSalaryCeiling: 55_000_000,
+  salaryCeiling: 80_000_000,
+  paymentCap: 10_000_000,
+} as const;
+
 /** 종합소득세 누진세율: 과세표준 × rate − deduction(누진공제). */
 export const incomeTaxBrackets = [
   { ceiling: 14_000_000, rate: 0.06, deduction: 0 },

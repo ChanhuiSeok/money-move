@@ -4,7 +4,9 @@ import {
   GraduationCap,
   Home,
   RotateCcw,
+  Search,
   Trophy,
+  UserRound,
   type LucideIcon,
 } from "lucide-react";
 
@@ -23,9 +25,11 @@ export type NavItem = {
 /** 데스크탑 사이드바 항목(순서대로). mobile=true만 하단 탭바에 노출. */
 export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "홈", icon: Home, mobile: true },
+  { href: "/search", label: "검색", icon: Search, mobile: false },
   { href: "/learn", label: "학습", icon: GraduationCap, mobile: true },
   { href: "/review", label: "복습", icon: RotateCcw, mobile: true },
   { href: "/tools", label: "계산기", icon: Calculator, mobile: true },
+  { href: "/profile", label: "내 숫자", icon: UserRound, mobile: false },
   { href: "/glossary", label: "사전", icon: BookOpen, mobile: false },
   { href: "/achievements", label: "성취", icon: Trophy, mobile: true },
 ];

@@ -23,6 +23,7 @@ import {
 } from "@/lib/achievements";
 import { learnedTermIds } from "@/lib/glossary";
 import { hasAnswer, isAnswerCorrect, type Answer } from "@/lib/grade";
+import { playCorrectChime } from "@/lib/sound";
 import type { Level, Lesson, Progress } from "@/lib/schema";
 import { useProgress } from "@/store/useProgress";
 
@@ -75,6 +76,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
     if (correct) {
       setCorrectCount((c) => c + 1);
       setConfetti((n) => n + 1);
+      playCorrectChime();
     } else {
       markWrong(`${lesson.id}:${index}`);
     }

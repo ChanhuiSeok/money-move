@@ -18,8 +18,8 @@ export const fourInsurances: Lesson = {
     {
       type: "choice",
       prompt: "다음 중 [4대 보험](term:four-major-insurance)에 '속하지 않는' 것은?",
-      options: ["자동차보험", "국민연금", "건강보험", "고용보험"],
-      answerIndex: 0,
+      options: ["국민연금", "건강보험", "자동차보험", "고용보험"],
+      answerIndex: 2,
       explanation:
         "4대 보험은 [국민연금](term:national-pension)·[건강보험](term:health-insurance)·[고용보험](term:employment-insurance)·산재보험이에요. 자동차보험은 내가 따로 드는 민간 보험이라 여기엔 안 들어가요.",
     },

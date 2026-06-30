@@ -21,6 +21,7 @@ import {
   wrongLines,
 } from "@/content/messages";
 import { hasAnswer, isAnswerCorrect, type Answer } from "@/lib/grade";
+import { playCorrectChime } from "@/lib/sound";
 import { todayKey, XP_PER_REVIEW } from "@/lib/progress";
 import { buildQuiz, dueItems } from "@/lib/review";
 import type { Question } from "@/lib/schema";
@@ -85,6 +86,7 @@ export function ReviewSession() {
     if (correct) {
       setCorrectCount((c) => c + 1);
       setConfetti((n) => n + 1);
+      playCorrectChime();
     }
     // 맞으면 다음 박스로 승급/졸업, 틀리면 박스 0으로.
     reviewAnswer(current.id, correct);

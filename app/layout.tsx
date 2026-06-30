@@ -17,10 +17,19 @@ export default function RootLayout({
     <html lang="ko" className="h-full antialiased">
       <head>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
-        {/* Pretendard(모던 고딕) — App Router 루트 <head> 링크는 전역 적용됨 */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* 본문 — Pretendard(모던 고딕). App Router 루트 <head> 링크는 전역 적용됨 */}
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+        {/* 디스플레이 — Hahmlet(현대적 세리프). 제목·강조 숫자에만 사용.
+            폰트는 의도적으로 <link>로 로드(next/font CJK 서브셋 스트립 회피) → 규칙 예외 처리 */}
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;600;700&display=swap"
         />
       </head>
       <body className="min-h-full flex flex-col">

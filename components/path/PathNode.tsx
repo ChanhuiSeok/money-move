@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Check, Lock, Play } from "lucide-react";
+import { Check, Play } from "lucide-react";
+import { Mascot } from "@/components/mascot/Mascot";
 import type { NodeState } from "@/lib/path";
 import { cn } from "@/lib/utils";
 
-/** 학습 경로의 레슨 노드. 완료=체크, 현재=강조(맥동), 잠김=자물쇠. */
+/** 학습 경로의 레슨 노드. 완료=체크, 현재=강조(맥동), 예정=흐리지만 열 수 있음.
+   소프트 언락: 모든 노드가 탭 가능하고, 상태는 '어디까지 했는지' 안내용일 뿐이다. */
 export function PathNode({
   id,
   title,
@@ -15,7 +17,7 @@ export function PathNode({
   title: string;
   state: NodeState;
 }) {
-  const locked = state === "locked";
+  const upcoming = state === "upcoming";
 
   const circle = (
     <span className="relative inline-flex">
@@ -28,15 +30,18 @@ export function PathNode({
           state === "completed" && "border-brand-600 bg-brand-600 text-white",
           state === "current" &&
             "border-brand-600 bg-surface text-brand-600 shadow-md shadow-brand-500/25",
-          locked && "border-border bg-subtle text-muted",
+          upcoming && "border-border bg-subtle text-muted/70",
         )}
       >
         {state === "completed" ? (
           <Check className="size-7" />
-        ) : locked ? (
-          <Lock className="size-6" />
         ) : (
-          <Play className="size-6 translate-x-0.5 fill-current" />
+          <Play
+            className={cn(
+              "size-6 translate-x-0.5",
+              state === "current" ? "fill-current" : "fill-current opacity-60",
+            )}
+          />
         )}
       </span>
     </span>
@@ -46,25 +51,12 @@ export function PathNode({
     <span
       className={cn(
         "mt-2 max-w-[11rem] text-center text-sm font-semibold leading-tight",
-        locked ? "text-muted" : "text-foreground",
+        upcoming ? "text-muted" : "text-foreground",
       )}
     >
       {title}
     </span>
   );
-
-  if (locked) {
-    return (
-      <div
-        aria-disabled
-        title="앞 레슨을 끝내면 열려요"
-        className="flex cursor-not-allowed flex-col items-center"
-      >
-        {circle}
-        {label}
-      </div>
-    );
-  }
 
   return (
     <Link
@@ -72,6 +64,10 @@ export function PathNode({
       aria-label={`${title} 레슨 ${state === "completed" ? "다시 풀기" : "시작하기"}`}
       className="flex flex-col items-center rounded-xl outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30"
     >
+      {/* 현재 위치 표시 — 마스코트가 이 레슨에 서 있어요(나중에 교체해도 자동 반영) */}
+      {state === "current" && (
+        <Mascot mood="happy" className="-mb-1 size-9 drop-shadow-sm" />
+      )}
       {circle}
       {label}
     </Link>

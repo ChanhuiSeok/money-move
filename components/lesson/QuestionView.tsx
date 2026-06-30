@@ -3,6 +3,7 @@
 import { Check, X } from "lucide-react";
 import { RichText } from "@/components/glossary/RichText";
 import type { Answer } from "@/lib/grade";
+import { richTextToPlain } from "@/lib/richtext";
 import type { Question } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
@@ -139,7 +140,7 @@ function ChoiceInput({
               !checked && selected && "border-brand-500 bg-brand-500/10",
             )}
           >
-            <span>{opt}</span>
+            <span>{richTextToPlain(opt)}</span>
             {checked && state === "correct" && <StateIcon state="correct" />}
             {checked && state === "wrong" && <StateIcon state="wrong" />}
           </button>
