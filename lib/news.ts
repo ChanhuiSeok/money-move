@@ -75,23 +75,28 @@ export const mixedQueries: string[] = [
   "부동산",
 ];
 
-/** 발행시각(ms). 파싱 불가면 0(맨 뒤로). */
-function pubMillis(pubDate: string): number {
-  const t = Date.parse(pubDate);
-  return Number.isNaN(t) ? 0 : t;
+/** 같은 기사 판별 키(제목 정규화). */
+function dedupeKey(item: NewsItem): string {
+  return item.title.toLowerCase().replace(/\s+/g, "") || item.link;
 }
 
-/** 여러 토픽 결과를 합쳐 최신순으로 정렬하고 같은 기사를 제거한다(제목 기준). */
-export function mergeNewsItems(lists: NewsItem[][]): NewsItem[] {
-  const flat = lists.flat();
-  flat.sort((a, b) => pubMillis(b.pubDate) - pubMillis(a.pubDate)); // 최신순
+/** 여러 토픽 결과를 '주제별로 번갈아(라운드로빈)' 섞는다.
+   각 리스트는 이미 최신순(네이버 sort=date)이라, 0번째(각 주제 최신)를 한 바퀴 →
+   1번째를 한 바퀴 … 식으로 모은다. 그래서 결과 앞쪽엔 주제마다 최신 1~2개가 골고루 담긴다.
+   같은 기사(여러 주제에 중복 노출)는 제거. */
+export function interleaveNewsItems(lists: NewsItem[][]): NewsItem[] {
   const seen = new Set<string>();
   const out: NewsItem[] = [];
-  for (const item of flat) {
-    const key = item.title.toLowerCase().replace(/\s+/g, "") || item.link;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(item);
+  const maxLen = lists.reduce((m, l) => Math.max(m, l.length), 0);
+  for (let rank = 0; rank < maxLen; rank++) {
+    for (const list of lists) {
+      const item = list[rank];
+      if (!item) continue;
+      const key = dedupeKey(item);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(item);
+    }
   }
   return out;
 }

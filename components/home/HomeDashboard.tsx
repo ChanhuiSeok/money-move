@@ -97,7 +97,7 @@ export function HomeDashboard() {
         {hydrated && season && (
           <Link
             href={season.ctaHref}
-            className="flex items-center gap-3 rounded-card border border-brand-500/30 bg-brand-500/10 p-4 transition-colors hover:bg-brand-500/15"
+            className="flex items-center gap-3 rounded-card border border-brand-500/30 bg-brand-500/10 p-4 transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-brand-500/15 hover:shadow-md active:translate-y-0"
           >
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
               <CalendarClock className="size-5" />
@@ -192,9 +192,9 @@ export function HomeDashboard() {
               <Link
                 key={s.id}
                 href={`/start/${s.id}`}
-                className="flex items-center gap-2 rounded-card border border-border bg-surface p-3 transition-colors hover:border-brand-400 hover:bg-brand-500/5 lg:flex-col lg:items-start lg:gap-2"
+                className="group flex items-center gap-2 rounded-card border border-border bg-surface p-3 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0 lg:flex-col lg:items-start lg:gap-2"
               >
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 transition-transform duration-200 group-hover:scale-110">
                   <s.icon className="size-4" />
                 </span>
                 <span className="min-w-0 text-sm font-bold leading-tight">
@@ -267,9 +267,9 @@ function ChipLink({
   return (
     <Link
       href={href}
-      className="flex flex-col gap-1.5 rounded-card border border-border bg-surface p-3 transition-colors hover:border-brand-400 hover:bg-brand-500/5"
+      className="group flex flex-col gap-1.5 rounded-card border border-border bg-surface p-3 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0"
     >
-      <span className="relative flex size-8 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">
+      <span className="relative flex size-8 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 transition-transform duration-200 group-hover:scale-110">
         {icon}
         {badge !== undefined && (
           <span className="absolute -right-1 -top-1 flex min-w-4 items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-bold text-white">

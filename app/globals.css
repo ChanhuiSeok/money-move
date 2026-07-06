@@ -13,19 +13,19 @@
   --color-border: var(--border);
   --color-subtle: var(--subtle); /* 칩/트랙 등 보조 면 */
 
-  /* 브랜드 — 코발트·인디고 계열(기본 Tailwind blue에서 한 끗 비튼 톤) */
-  --color-brand-50: #eef1ff;
-  --color-brand-100: #dfe4ff;
-  --color-brand-200: #c4ccff;
-  --color-brand-300: #a0adff;
-  --color-brand-400: #7d8bfb;
-  --color-brand-500: #5b6af0;
-  --color-brand-600: #4453da;
-  --color-brand-700: #3540b4;
+  /* 브랜드 — 선명한 핀테크 블루(토스/모던 뱅킹 톤). 인디고 기 빼고 더 트렌디하게 */
+  --color-brand-50: #eef5ff;
+  --color-brand-100: #d9e8ff;
+  --color-brand-200: #b6d3ff;
+  --color-brand-300: #84b4ff;
+  --color-brand-400: #4d8eff;
+  --color-brand-500: #1f6dff; /* 비비드 블루(포인트) */
+  --color-brand-600: #0a57f2; /* 버튼/강조 */
+  --color-brand-700: #0a45c0;
 
-  /* 스카이 — 보조 액센트(그래디언트/포인트) */
-  --color-sky-400: #38bdf8;
-  --color-sky-500: #0ea5e9;
+  /* 스카이/시안 — 그래디언트 보조 액센트 */
+  --color-sky-400: #2ad0ff;
+  --color-sky-500: #07b6e6;
 
   /* 의미색 — 기본값에서 살짝 비튼 톤 */
   --color-success: #15a45c;
@@ -80,4 +80,13 @@ body {
 h1 {
   font-family: var(--font-display);
   letter-spacing: -0.015em;
+}
+
+/* 가로 스크롤 영역(토픽 칩 등)의 스크롤바 숨김 */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

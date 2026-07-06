@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   cleanNewsText,
   formatNewsDate,
-  mergeNewsItems,
+  interleaveNewsItems,
   toNewsItem,
   topicQuery,
   type NewsItem,
@@ -67,24 +67,30 @@ describe("topicQuery", () => {
   });
 });
 
-describe("mergeNewsItems", () => {
-  it("여러 리스트를 최신순으로 합친다", () => {
-    const merged = mergeNewsItems([
-      [item("A", "Tue, 30 Jun 2026 09:00:00 +0900")],
-      [item("B", "Tue, 30 Jun 2026 11:00:00 +0900")],
+describe("interleaveNewsItems", () => {
+  it("주제별로 번갈아(라운드로빈) 섞는다 — 각 주제 최신이 앞쪽에 골고루", () => {
+    const merged = interleaveNewsItems([
+      [item("주식1", "d"), item("주식2", "d")],
+      [item("코스피1", "d"), item("코스피2", "d")],
+      [item("금리1", "d")],
     ]);
-    expect(merged.map((m) => m.title)).toEqual(["B", "A"]);
+    // rank0(각 주제 최신) 한 바퀴 → rank1 한 바퀴
+    expect(merged.map((m) => m.title)).toEqual([
+      "주식1",
+      "코스피1",
+      "금리1",
+      "주식2",
+      "코스피2",
+    ]);
   });
 
-  it("같은 제목 기사는 제거하고 최신 것만 남긴다", () => {
-    const merged = mergeNewsItems([
-      [item("코스피 상승", "Tue, 30 Jun 2026 08:00:00 +0900", "x")],
-      [item("코스피 상승", "Tue, 30 Jun 2026 12:00:00 +0900", "y")],
-      [item("환율 하락", "Tue, 30 Jun 2026 10:00:00 +0900")],
+  it("여러 주제에 겹쳐 나온 같은 기사는 한 번만", () => {
+    const merged = interleaveNewsItems([
+      [item("공통기사", "d", "x")],
+      [item("공통기사", "d", "y")],
+      [item("단독기사", "d")],
     ]);
-    expect(merged.map((m) => m.title)).toEqual(["코스피 상승", "환율 하락"]);
-    // 남은 '코스피 상승'은 더 최신(12시) 쪽
-    expect(merged[0].link).toBe("y");
+    expect(merged.map((m) => m.title)).toEqual(["공통기사", "단독기사"]);
   });
 });
 
