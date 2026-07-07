@@ -7,7 +7,7 @@ export const payslipBasics: Lesson = {
   title: "월급명세서, 뭐가 이렇게 많아?",
   durationMin: 3,
   intro:
-    "월급명세서는 크게 둘이에요: 받기로 한 [세전 월급](term:gross-pay)과, 거기서 빠지는 것들.\n빠지고 남은 게 통장에 꽂히는 [실수령액](term:take-home-pay)이고요. 헷갈리기 쉬운 곳만 짚을게요.",
+    "월급명세서는 크게 둘이에요: 받기로 한 [세전 월급](term:gross-pay)과, 거기서 빠지는 것들.\n빠지고 남은 게 통장에 꽂히는 [실수령액](term:take-home-pay) — 사용자님은 매달 약 [271만원](my:takehome)쯤이에요. 헷갈리기 쉬운 곳만 짚을게요.",
   glossary: ["take-home-pay", "gross-pay", "withholding"],
   questions: [
     {
@@ -16,7 +16,7 @@ export const payslipBasics: Lesson = {
         "연봉 3,600만 원으로 계약하면, 매달 통장에 딱 300만 원(3,600÷12)이 들어온다?",
       answer: false,
       explanation:
-        "아니에요. 3,600÷12=300만은 [세전](term:gross-pay) 기준이에요. 여기서 4대 보험·세금이 빠지면 실제로는 270만 원 안팎이 들어와요. '연봉 ÷ 12 ≠ [실수령액](term:take-home-pay)' — 연봉 협상할 때 꼭 기억해요.",
+        "아니에요. 3,600÷12=300만은 [세전](term:gross-pay) 기준이에요. 여기서 4대 보험·세금이 빠지면 실제로는 270만 원 안팎이 들어와요. 사용자님 기준으로는 매달 약 [271만원](my:takehome) — 세전에서 [약 29만원](my:deduction)이 빠진 셈이죠. '연봉 ÷ 12 ≠ [실수령액](term:take-home-pay)' — 연봉 협상할 때 꼭 기억해요.",
     },
     {
       type: "choice",

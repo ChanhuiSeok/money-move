@@ -3,9 +3,7 @@ import {
   MAX_HEARTS,
   STORAGE_KEY,
   XP_PER_LESSON,
-  XP_PER_REVIEW,
   addDays,
-  awardReview,
   bumpStreak,
   completeLesson,
   dayDiff,
@@ -126,21 +124,8 @@ describe("recordActivity (활동일·최고 스트릭)", () => {
   });
   it("같은 날 여러 번 활동해도 활동일은 한 번만", () => {
     let p = completeLesson(defaultProgress(), "L1", { today: "2026-06-22" });
-    p = awardReview(p, 1, { today: "2026-06-22" });
+    p = completeLesson(p, "L2", { today: "2026-06-22" });
     expect(p.activeDays).toEqual(["2026-06-22"]);
-  });
-});
-
-describe("awardReview", () => {
-  it("맞힌 개수만큼 XP + 스트릭 유지", () => {
-    const p = awardReview(defaultProgress(), 3, { today: "2026-06-22" });
-    expect(p.xp).toBe(3 * XP_PER_REVIEW);
-    expect(p.streak).toEqual({ count: 1, lastDate: "2026-06-22" });
-  });
-  it("0개 맞혀도 스트릭은 이어진다(들어온 건 사실)", () => {
-    const p = awardReview(defaultProgress(), 0, { today: "2026-06-22" });
-    expect(p.xp).toBe(0);
-    expect(p.streak.count).toBe(1);
   });
 });
 
@@ -178,7 +163,7 @@ describe("저장/로드 (localStorage 목)", () => {
     globalThis.localStorage.setItem(STORAGE_KEY, JSON.stringify({ xp: "많음" }));
     expect(loadProgress()).toEqual(defaultProgress());
   });
-  it("구버전 wrongQuestionIds는 reviewItems로 마이그레이션", () => {
+  it("구버전의 사라진 필드(wrongQuestionIds·reviewItems)는 무시하고 로드", () => {
     const old = {
       completedLessonIds: ["welcome"],
       currentLessonId: null,
@@ -186,14 +171,13 @@ describe("저장/로드 (localStorage 목)", () => {
       streak: { count: 1, lastDate: "2026-06-22" },
       hearts: 5,
       wrongQuestionIds: ["welcome:1", "welcome:3"],
+      reviewItems: [{ id: "welcome:1", due: "", box: 0 }],
     };
     globalThis.localStorage.setItem(STORAGE_KEY, JSON.stringify(old));
     const loaded = loadProgress();
-    expect(loaded.reviewItems).toEqual([
-      { id: "welcome:1", due: "", box: 0 },
-      { id: "welcome:3", due: "", box: 0 },
-    ]);
     expect("wrongQuestionIds" in loaded).toBe(false);
+    expect("reviewItems" in loaded).toBe(false);
     expect(loaded.xp).toBe(12);
+    expect(loaded.completedLessonIds).toEqual(["welcome"]);
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPercent, formatWon, onlyDigits } from "@/lib/format";
+import { formatManwon, formatPercent, formatWon, onlyDigits } from "@/lib/format";
 
 describe("format", () => {
   it("onlyDigits: 숫자만 남긴다", () => {
@@ -11,6 +11,12 @@ describe("format", () => {
   it("formatWon: 끝에 원, 숫자 반올림", () => {
     expect(formatWon(0)).toBe("0원");
     expect(formatWon(1234.7)).toBe("1,235원");
+  });
+
+  it("formatManwon: 만원 단위 반올림", () => {
+    expect(formatManwon(2_712_340)).toBe("271만원");
+    expect(formatManwon(36_000_000)).toBe("3,600만원");
+    expect(formatManwon(3_000)).toBe("3,000원"); // 반올림하면 0만원 → 원 단위로
   });
 
   it("formatPercent: 비율을 %로, 부동소수 오차 정리", () => {

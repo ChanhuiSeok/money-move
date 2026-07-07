@@ -94,14 +94,11 @@ export function NewsList({
       )}
 
       {loading ? (
-        <div className="flex flex-col gap-2.5">
+        <div className="divide-y divide-border/60">
           {Array.from({ length: limit ?? 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 rounded-2xl border border-border/70 p-3.5"
-            >
+            <div key={i} className="flex items-center gap-3 py-3">
               {numbered && (
-                <div className="size-7 shrink-0 animate-pulse rounded-lg bg-subtle" />
+                <div className="size-6 shrink-0 animate-pulse rounded-full bg-subtle" />
               )}
               <div className="flex-1 space-y-2">
                 <div className="h-3.5 w-[88%] animate-pulse rounded bg-subtle" />
@@ -120,7 +117,7 @@ export function NewsList({
           variants={listV}
           initial="hidden"
           animate="show"
-          className="flex flex-col gap-2.5"
+          className="divide-y divide-border/60"
         >
           {items.map((item, i) => (
             <motion.li key={`${item.link}-${i}`} variants={itemV}>
@@ -128,29 +125,16 @@ export function NewsList({
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ y: -3 }}
                 whileTap={{ scale: 0.985 }}
-                transition={{ type: "spring", stiffness: 400, damping: 26 }}
-                className={cn(
-                  "group flex items-center gap-3 rounded-2xl border border-border bg-surface p-3.5",
-                  "shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-[border-color,background-color,box-shadow]",
-                  "hover:border-brand-400/60 hover:bg-brand-500/[0.05] hover:shadow-[0_10px_28px_-10px_rgba(31,109,255,0.4)]",
-                )}
+                className="group -mx-2 flex items-center gap-3 rounded-lg px-2 py-3 transition-colors hover:bg-subtle/70"
               >
                 {numbered && (
-                  <span
-                    className={cn(
-                      "flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold tabular-nums text-white shadow-sm",
-                      i === 0
-                        ? "bg-gradient-to-br from-brand-500 to-sky-500"
-                        : "bg-gradient-to-br from-brand-500/85 to-brand-600/85",
-                    )}
-                  >
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-xs font-bold tabular-nums text-brand-600">
                     {i + 1}
                   </span>
                 )}
                 <span className="min-w-0 flex-1">
-                  <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-foreground transition-colors group-hover:text-brand-700">
+                  <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-foreground">
                     {item.title}
                   </span>
                   {showDescription && item.description && (
@@ -163,7 +147,7 @@ export function NewsList({
                     {formatNewsDate(item.pubDate)}
                   </span>
                 </span>
-                <ChevronRight className="size-4 shrink-0 -translate-x-1 text-brand-500 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
+                <ChevronRight className="size-4 shrink-0 text-muted/60 transition-colors group-hover:text-brand-600" />
               </motion.a>
             </motion.li>
           ))}

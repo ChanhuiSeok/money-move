@@ -20,17 +20,6 @@ export const completeLines = [
   "오늘의 한 입, 완료! 🍪",
 ];
 
-export const reviewDoneLines = [
-  "복습 끝! 머릿속에 더 단단히 자리 잡았어요 🧠",
-  "오늘 복습 완료! 까먹기 전에 잘 잡았어요.",
-  "한 번 더 보니 확실히 내 것이 됐죠? 👍",
-];
-
-export const reviewEmptyLines = [
-  "지금은 복습할 게 없어요. 깔끔하네요! ✨",
-  "복습 대기열이 비었어요. 새 레슨으로 채워볼까요?",
-];
-
 export const greetingLines = [
   "안녕하세요! 오늘도 한 걸음 가볼까요?",
   "다시 와줘서 반가워요 😊",

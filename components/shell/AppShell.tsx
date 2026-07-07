@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Mascot } from "@/components/mascot/Mascot";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   MOBILE_NAV_ITEMS,
   NAV_ITEMS,
@@ -12,7 +13,8 @@ import {
 import { cn } from "@/lib/utils";
 
 /** 허브형 페이지에 사이드바(데스크탑)·하단 탭바(모바일)를 두르는 앱 셸.
-   몰입형 라우트(레슨·복습·진단)에서는 셸을 숨기고 children만 전체화면으로 띄운다. */
+   몰입형 라우트(레슨·모의고사·진단)에서는 셸을 숨기고 children만 전체화면으로 띄운다.
+   테마 하이드레이션·OS 다크모드 감지는 layout.tsx의 next-themes ThemeProvider가 맡는다. */
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
@@ -66,7 +68,10 @@ function SideNav({ pathname }: { pathname: string }) {
         })}
       </nav>
 
-      <p className="px-3 pt-4 text-xs text-muted">경제 문맹 퇴치 · 돈길</p>
+      <div className="mt-2 border-t border-border pt-3">
+        <ThemeToggle showLabel={false} />
+        <p className="px-1 pt-3 text-xs text-muted">경제 문맹 퇴치 · 돈길</p>
+      </div>
     </aside>
   );
 }

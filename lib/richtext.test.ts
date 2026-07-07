@@ -36,6 +36,26 @@ describe("parseRichText", () => {
     });
   });
 
+  it("내 숫자 토큰은 my 조각으로(fallback 예시값 보존)", () => {
+    expect(parseRichText("매달 약 [271만원](my:takehome)이에요")).toEqual([
+      { kind: "text", value: "매달 약 " },
+      { kind: "my", fallback: "271만원", id: "takehome" },
+      { kind: "text", value: "이에요" },
+    ]);
+  });
+
+  it("용어와 내 숫자 토큰이 섞여도 각각 구분", () => {
+    const segs = parseRichText(
+      "[실수령액](term:take-home-pay)은 [약 29만원](my:deduction)이 빠져요",
+    );
+    expect(segs).toEqual([
+      { kind: "term", label: "실수령액", id: "take-home-pay" },
+      { kind: "text", value: "은 " },
+      { kind: "my", fallback: "약 29만원", id: "deduction" },
+      { kind: "text", value: "이 빠져요" },
+    ]);
+  });
+
   it("빈 문자열은 빈 배열", () => {
     expect(parseRichText("")).toEqual([]);
   });
@@ -50,5 +70,11 @@ describe("richTextToPlain", () => {
 
   it("용어 없는 평문은 그대로", () => {
     expect(richTextToPlain("그냥 문장")).toBe("그냥 문장");
+  });
+
+  it("내 숫자 토큰은 fallback 예시값으로 평문화", () => {
+    expect(richTextToPlain("매달 약 [271만원](my:takehome)")).toBe(
+      "매달 약 271만원",
+    );
   });
 });

@@ -1,0 +1,3 @@
+- [차별화 전략: 내 숫자로 돌아가는 앱](differentiation-my-numbers.md) — 레슨을 `[예시값](my:토큰)`으로 개인화하는 방향
+- [개인화 문구 톤](feedback-personalization-tone.md) — 사용자 지칭은 "너" 금지, "사용자님"으로 통일
+- [모의고사 기능](mock-exam-feature.md) — 시험지 구조 + 문항 작성 원칙(4지선다·단답, 중급 난이도, 자족형)

@@ -58,6 +58,31 @@ export const lessonSchema = z.object({
   glossary: z.array(z.string()), // 이 레슨에서 등장하는 용어 id
 });
 
+/* ── 모의고사 ─────────────────────────────────────────────
+   학습 레슨과 별개의 "시험지". 문제는 재사용(questionSchema)하되, 콘텐츠 규칙(4지선다·단답형만,
+   보기 4개)은 content.test.ts에서 검증한다. 섹션 = 학습 테마(levelId)별 묶음. */
+
+export const examSectionSchema = z.object({
+  levelId: z.string(), // 어느 학습 테마(레벨)의 문제 묶음인지
+  questions: z.array(questionSchema).min(1),
+});
+
+export const examSchema = z.object({
+  id: z.string(),
+  order: z.number().int(), // 회차(1,2,3…)
+  title: z.string(), // "제1회 모의고사"
+  subtitle: z.string(), // 한 줄 소개
+  sections: z.array(examSectionSchema).min(1),
+});
+
+/* 모의고사 결과(localStorage) — examId → 최고 성적. */
+export const examResultSchema = z.object({
+  correct: z.number().int().nonnegative(),
+  total: z.number().int().nonnegative(),
+  takenAt: z.string(), // 마지막 응시일 YYYY-MM-DD
+});
+export const examResultsSchema = z.record(z.string(), examResultSchema);
+
 /* ── 용어 ─────────────────────────────────────────────── */
 
 export const glossaryTermSchema = z.object({
@@ -74,20 +99,12 @@ export const streakSchema = z.object({
   lastDate: z.string(), // YYYY-MM-DD ("" = 아직 활동 없음)
 });
 
-/* 복습 항목(간격 반복). id = "lessonId:index" 형식으로 문제를 가리킨다. */
-export const reviewItemSchema = z.object({
-  id: z.string(), // "lessonId:index"
-  due: z.string(), // 다음 복습 예정일 YYYY-MM-DD ("" = 지금 바로)
-  box: z.number().int().nonnegative(), // 라이트너 박스 단계
-});
-
 export const progressSchema = z.object({
   completedLessonIds: z.array(z.string()),
   currentLessonId: z.string().nullable(),
   xp: z.number().int().nonnegative(),
   streak: streakSchema,
   hearts: z.number().int(),
-  reviewItems: z.array(reviewItemSchema), // 복습 대기열(간격 반복)
   activeDays: z.array(z.string()), // 학습 활동한 날들(YYYY-MM-DD) — 잔디용
   bestStreak: z.number().int().nonnegative(), // 역대 최고 연속일 — 배지용(단조)
 });
@@ -114,7 +131,9 @@ export type ChoiceQuestion = z.infer<typeof choiceQuestionSchema>;
 export type FillQuestion = z.infer<typeof fillQuestionSchema>;
 export type Question = z.infer<typeof questionSchema>;
 export type Lesson = z.infer<typeof lessonSchema>;
+export type ExamSection = z.infer<typeof examSectionSchema>;
+export type Exam = z.infer<typeof examSchema>;
+export type ExamResult = z.infer<typeof examResultSchema>;
 export type GlossaryTerm = z.infer<typeof glossaryTermSchema>;
 export type Streak = z.infer<typeof streakSchema>;
-export type ReviewItem = z.infer<typeof reviewItemSchema>;
 export type Progress = z.infer<typeof progressSchema>;

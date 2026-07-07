@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
+import { exams } from "@/content/exams";
 import { getTerm } from "@/content/glossary";
 import { allLessons } from "@/content/lessons";
 import { levels, orderedLessonIds, units } from "@/content/levels";
 import { parseRichText } from "@/lib/richtext";
-import { lessonSchema } from "@/lib/schema";
+import { examSchema, lessonSchema } from "@/lib/schema";
 
 const lessonIds = new Set(allLessons.map((l) => l.id));
 const unitIds = new Set(units.map((u) => u.id));
+const levelIds = new Set(levels.map((l) => l.id));
 
 describe("레슨 스키마", () => {
   it.each(allLessons.map((l) => [l.id, l] as const))(
@@ -50,6 +52,73 @@ describe("레벨/유닛/레슨 연결", () => {
   it("학습 순서는 모든 레슨을 정확히 한 번씩 덮는다", () => {
     expect([...orderedLessonIds].sort()).toEqual([...lessonIds].sort());
     expect(orderedLessonIds.length).toBe(allLessons.length);
+  });
+});
+
+describe("모의고사 콘텐츠", () => {
+  it.each(exams.map((e) => [e.id, e] as const))(
+    "%s 는 스키마를 통과한다",
+    (_id, exam) => {
+      expect(examSchema.safeParse(exam).success).toBe(true);
+    },
+  );
+
+  it("총 3회차, order는 1..3", () => {
+    expect(exams.length).toBe(3);
+    expect(exams.map((e) => e.order).sort()).toEqual([1, 2, 3]);
+  });
+
+  it("회차마다 5개 영역 × 3문항 = 15문항", () => {
+    for (const exam of exams) {
+      expect(exam.sections.length).toBe(5);
+      for (const s of exam.sections) {
+        expect(s.questions.length).toBe(3);
+      }
+    }
+  });
+
+  it("섹션 levelId는 모두 실재 레벨", () => {
+    for (const exam of exams) {
+      for (const s of exam.sections) {
+        expect(levelIds.has(s.levelId), `${exam.id} → ${s.levelId}`).toBe(true);
+      }
+    }
+  });
+
+  it("문항은 4지선다·단답형만(OX 없음), 보기는 정확히 4개", () => {
+    for (const exam of exams) {
+      for (const s of exam.sections) {
+        for (const q of s.questions) {
+          expect(["choice", "fill"]).toContain(q.type);
+          if (q.type === "choice") {
+            expect(q.options.length).toBe(4);
+            expect(q.answerIndex).toBeGreaterThanOrEqual(0);
+            expect(q.answerIndex).toBeLessThan(q.options.length);
+          }
+          if (q.type === "fill") {
+            expect(q.answer.length).toBeGreaterThan(0);
+          }
+        }
+      }
+    }
+  });
+
+  it("prompt·explanation의 term:id는 모두 사전에 있다", () => {
+    const missing: string[] = [];
+    for (const exam of exams) {
+      for (const s of exam.sections) {
+        s.questions.forEach((q, i) => {
+          for (const text of [q.prompt, q.explanation]) {
+            for (const seg of parseRichText(text)) {
+              if (seg.kind === "term" && !getTerm(seg.id)) {
+                missing.push(`${exam.id}.${s.levelId}.q${i}: ${seg.id}`);
+              }
+            }
+          }
+        });
+      }
+    }
+    expect(missing).toEqual([]);
   });
 });
 

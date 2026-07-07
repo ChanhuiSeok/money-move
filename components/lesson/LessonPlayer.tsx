@@ -42,7 +42,6 @@ type Phase = "intro" | "play" | "done";
 export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const hydrate = useProgress((s) => s.hydrate);
   const complete = useProgress((s) => s.complete);
-  const markWrong = useProgress((s) => s.markWrong);
 
   // 진도를 덮어쓰지 않도록 마운트 시 저장값을 불러온다.
   useEffect(() => {
@@ -77,8 +76,6 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
       setCorrectCount((c) => c + 1);
       setConfetti((n) => n + 1);
       playCorrectChime();
-    } else {
-      markWrong(`${lesson.id}:${index}`);
     }
   }
 

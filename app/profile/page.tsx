@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Info } from "lucide-react";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
 import { ProfileForm } from "@/components/profile/ProfileForm";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
 import { formatWon } from "@/lib/format";
@@ -67,6 +68,13 @@ export default function ProfilePage() {
 
       {/* 내 숫자 요약 */}
       {hydrated && ready && <MyNumbers profile={profile} />}
+
+      {/* 화면 — 라이트/다크/시스템. 데스크탑은 사이드바 하단에도 같은 컨트롤이 있음 */}
+      <Card padding="md" className="mt-4">
+        <p className="text-sm font-bold">화면</p>
+        <p className="mt-0.5 text-xs text-muted">밝기를 골라두면 다음에도 기억해요.</p>
+        <ThemeToggle className="mt-3" />
+      </Card>
 
       <div className="mt-4 flex gap-2 rounded-xl bg-subtle p-4 text-xs leading-relaxed text-muted">
         <Info className="size-4 shrink-0 translate-y-0.5" />

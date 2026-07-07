@@ -1,9 +1,9 @@
 import {
   BookOpen,
   Calculator,
+  ClipboardCheck,
   GraduationCap,
   Home,
-  RotateCcw,
   Search,
   Trophy,
   UserRound,
@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 /* 전역 내비게이션 정의 + 라우트 분류(순수).
-   허브형 페이지는 사이드바/하단탭 shell을 두르고, 몰입형 플로우(레슨·복습·진단)는
+   허브형 페이지는 사이드바/하단탭 shell을 두르고, 몰입형 플로우(레슨·모의고사·진단)는
    집중을 위해 shell 없이 전체화면으로 띄운다. */
 
 export type NavItem = {
@@ -27,7 +27,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "홈", icon: Home, mobile: true },
   { href: "/search", label: "검색", icon: Search, mobile: false },
   { href: "/learn", label: "학습", icon: GraduationCap, mobile: true },
-  { href: "/review", label: "복습", icon: RotateCcw, mobile: true },
+  { href: "/exams", label: "모의고사", icon: ClipboardCheck, mobile: true },
   { href: "/tools", label: "계산기", icon: Calculator, mobile: true },
   { href: "/profile", label: "내 숫자", icon: UserRound, mobile: false },
   { href: "/glossary", label: "사전", icon: BookOpen, mobile: false },
@@ -38,11 +38,13 @@ export const NAV_ITEMS: NavItem[] = [
 export const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((i) => i.mobile);
 
 /** 집중이 필요한 몰입형 라우트인지. true면 shell(사이드바/탭바)을 숨긴다.
-   - /review, /diagnostic: 단계형 세션
-   - /learn/<lessonId>: 레슨 플레이어 (단, /learn 경로 트리는 허브) */
+   - /diagnostic: 단계형 세션
+   - /learn/<lessonId>: 레슨 플레이어 (단, /learn 경로 트리는 허브)
+   - /exams/<examId>: 모의고사 시험지 (단, /exams 목록은 허브) */
 export function isImmersiveRoute(pathname: string): boolean {
-  if (pathname === "/review" || pathname === "/diagnostic") return true;
+  if (pathname === "/diagnostic") return true;
   if (/^\/learn\/.+/.test(pathname)) return true;
+  if (/^\/exams\/.+/.test(pathname)) return true;
   return false;
 }
 

@@ -7,10 +7,14 @@ import {
 } from "@/lib/nav";
 
 describe("isImmersiveRoute", () => {
-  it("레슨 플레이어·복습·진단은 몰입형(셸 숨김)", () => {
+  it("레슨 플레이어·진단은 몰입형(셸 숨김)", () => {
     expect(isImmersiveRoute("/learn/welcome")).toBe(true);
-    expect(isImmersiveRoute("/review")).toBe(true);
     expect(isImmersiveRoute("/diagnostic")).toBe(true);
+  });
+
+  it("모의고사 시험지는 몰입형, 목록은 허브", () => {
+    expect(isImmersiveRoute("/exams/exam-1")).toBe(true);
+    expect(isImmersiveRoute("/exams")).toBe(false);
   });
 
   it("허브형 페이지는 몰입형이 아니다(셸 노출)", () => {

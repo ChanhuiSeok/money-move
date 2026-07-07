@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { Flag, MapPin } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ClipboardCheck, Flag, MapPin } from "lucide-react";
 import { PathNode } from "@/components/path/PathNode";
 import { BackLink } from "@/components/ui/BackLink";
 import { getLessonTitle } from "@/content/lessons";
@@ -64,6 +65,23 @@ export function LearnPath() {
     <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:py-8">
       <BackLink className="mb-2" />
       <h1 className="text-2xl font-bold tracking-tight">학습 경로</h1>
+
+      {/* 모의고사 진입 — 하단 탭바에 없어 여기서도 갈 수 있게(특히 모바일) */}
+      <Link
+        href="/exams"
+        className="mt-4 flex items-center gap-3 rounded-card border border-border bg-surface p-4 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md active:translate-y-0"
+      >
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">
+          <ClipboardCheck className="size-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-bold">모의고사 보기</span>
+          <span className="block text-xs text-muted">
+            5개 영역 실전 시험지 · 총 3회
+          </span>
+        </span>
+        <ArrowRight className="size-4 shrink-0 text-brand-600" />
+      </Link>
 
       {/* 출발점 — 길의 시작 */}
       <div className="mt-5 flex justify-center">

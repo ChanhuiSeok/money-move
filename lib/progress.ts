@@ -7,7 +7,6 @@ import { progressSchema, type Progress, type Streak } from "@/lib/schema";
 export const STORAGE_KEY = "donpath:progress:v1";
 export const MAX_HEARTS = 5;
 export const XP_PER_LESSON = 10;
-export const XP_PER_REVIEW = 2;
 
 export function defaultProgress(): Progress {
   return {
@@ -16,7 +15,6 @@ export function defaultProgress(): Progress {
     xp: 0,
     streak: { count: 0, lastDate: "" },
     hearts: MAX_HEARTS,
-    reviewItems: [],
     activeDays: [],
     bestStreak: 0,
   };
@@ -64,7 +62,7 @@ export function bumpStreak(streak: Streak, today: string): Streak {
 }
 
 /** 오늘 활동을 진도에 반영한다(스트릭 갱신 + 최고 스트릭 + 활동일 기록).
-   레슨 완료·복습 등 "오늘 들어온 모든 활동"의 공통 처리. */
+   레슨 완료 등 "오늘 들어온 모든 활동"의 공통 처리. */
 export function recordActivity(progress: Progress, today: string): Progress {
   const streak = bumpStreak(progress.streak, today);
   const activeDays = progress.activeDays.includes(today)
@@ -137,22 +135,6 @@ export function isLessonCompleted(
   return progress.completedLessonIds.includes(lessonId);
 }
 
-/** 복습 세션 보상: 맞힌 개수만큼 XP 적립 + 오늘 활동으로 스트릭 유지.
-   복습도 "오늘 들어온 것"이므로 스트릭이 이어진다. */
-export function awardReview(
-  progress: Progress,
-  correctCount: number,
-  opts: { xp?: number; today?: string } = {},
-): Progress {
-  const xpEach = opts.xp ?? XP_PER_REVIEW;
-  const today = opts.today ?? todayKey();
-  const base = recordActivity(progress, today);
-  return {
-    ...base,
-    xp: base.xp + Math.max(0, correctCount) * xpEach,
-  };
-}
-
 /* ── 저장/로드 (localStorage) ──────────────────────────── */
 
 function getStorage(): Storage | null {
@@ -165,18 +147,11 @@ function getStorage(): Storage | null {
 }
 
 /** 구버전 저장값을 현재 스키마로 끌어올린다.
-   - 초기형 wrongQuestionIds(평면 배열) → 박스 0, 지금 바로 복습으로 변환.
-   - activeDays·bestStreak는 없으면 스트릭 정보로 최소 복원. */
+   - activeDays·bestStreak는 없으면 스트릭 정보로 최소 복원.
+   (구버전의 reviewItems·wrongQuestionIds 등 사라진 필드는 스키마 검증 때 자동으로 무시된다.) */
 function migrate(raw: unknown): unknown {
   if (!raw || typeof raw !== "object") return raw;
   const obj = { ...(raw as Record<string, unknown>) };
-
-  if (!("reviewItems" in obj) && Array.isArray(obj.wrongQuestionIds)) {
-    obj.reviewItems = (obj.wrongQuestionIds as unknown[])
-      .filter((id): id is string => typeof id === "string")
-      .map((id) => ({ id, due: "", box: 0 }));
-    delete obj.wrongQuestionIds;
-  }
 
   const streak =
     obj.streak && typeof obj.streak === "object"

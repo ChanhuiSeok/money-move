@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
+/* dark: 유틸리티는 <html data-theme="dark">를 기준으로 판정한다(store/useTheme.ts가 설정).
+   시스템 설정 자체는 아래 CSS 변수 쪽에서 prefers-color-scheme로 별도 대응. */
+@custom-variant dark (&:is([data-theme="dark"] *));
+
 /* ── 돈길 디자인 토큰 ──────────────────────────────────────────
    모던한 핀테크 톤: 화이트 배경 + 블루/스카이 액센트, 다크모드는 딥네이비.
-   표면 계열은 CSS 변수로 두고 prefers-color-scheme에 따라 전환한다.
+   표면 계열은 CSS 변수로 두고 기본은 prefers-color-scheme, 사용자가 라이트/다크를
+   직접 고르면 <html data-theme>가 시스템 설정보다 우선한다(둘 다 아래에서 처리).
    브랜드/의미색은 고정값(라이트·다크 공통), 강조 배경은 반투명 틴트(bg-brand-500/10 등)로 처리. */
 @theme inline {
   /* 표면(테마 전환) */
@@ -31,12 +36,11 @@
   --color-success: #15a45c;
   --color-danger: #e84d4d;
 
-  /* 폰트 — 본문 Pretendard(산세리프) + 디스플레이 Hahmlet(세리프) 대비 */
+  /* 폰트 — 본문·제목·숫자 모두 Pretendard(산세리프)로 통일 */
   --font-sans:
     "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Apple SD Gothic Neo",
     "Noto Sans KR", sans-serif;
-  --font-display: "Hahmlet", var(--font-sans);
 
   /* 라운드 */
   --radius-card: 1rem;
@@ -52,15 +56,33 @@
   --subtle: #f4f5f8;
 }
 
+/* 시스템이 다크인 경우 — 단, 사용자가 명시적으로 "라이트"를 골랐으면(data-theme="light") 제외 */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --background: #0b0e17; /* 딥네이비(인디고 쪽으로 미세 조정) */
     --surface: #151a28;
     --foreground: #e9ebf4;
     --muted: #969aab;
     --border: #262b3b;
     --subtle: #1b2030;
+    color-scheme: dark;
   }
+}
+
+/* 사용자가 명시적으로 "다크"를 골랐으면(data-theme="dark") 시스템이 라이트여도 강제 적용.
+   속성 선택자라 위 :root보다 특이도가 높아, 소스 순서와 무관하게 항상 이긴다. */
+:root[data-theme="dark"] {
+  --background: #0b0e17;
+  --surface: #151a28;
+  --foreground: #e9ebf4;
+  --muted: #969aab;
+  --border: #262b3b;
+  --subtle: #1b2030;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 html {
@@ -75,10 +97,8 @@ body {
   font-feature-settings: "tnum"; /* 숫자 폭 고정 — 금액 정렬에 유리 */
 }
 
-/* 페이지 제목은 디스플레이 세리프로 — 본문 산세리프와 대비를 줘 위계를 또렷하게.
-   크기는 각 화면의 유틸리티(text-2xl 등)를 그대로 쓰고, 글꼴·자간만 손본다. */
+/* 페이지 제목은 자간만 살짝 좁혀 위계를 또렷하게(글꼴은 본문과 동일한 산세리프). */
 h1 {
-  font-family: var(--font-display);
   letter-spacing: -0.015em;
 }
 

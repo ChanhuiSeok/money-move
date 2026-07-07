@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { AppShell } from "@/components/shell/AppShell";
 
@@ -14,26 +15,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full antialiased">
+    // next-themes가 하이드레이션 전에 <html data-theme>를 직접 써서(깜빡임 방지)
+    // React가 모르는 속성이 됨 — suppressHydrationWarning으로 이 불일치만 무시(라이브러리 공식 권장).
+    <html lang="ko" className="h-full antialiased" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* 본문 — Pretendard(모던 고딕). App Router 루트 <head> 링크는 전역 적용됨 */}
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
-        {/* 디스플레이 — Hahmlet(현대적 세리프). 제목·강조 숫자에만 사용.
-            폰트는 의도적으로 <link>로 로드(next/font CJK 서브셋 스트립 회피) → 규칙 예외 처리 */}
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;600;700&display=swap"
-        />
       </head>
       <body className="min-h-full flex flex-col">
-        <AppShell>{children}</AppShell>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="system"
+          enableSystem
+          storageKey="donpath:theme:v1"
+          disableTransitionOnChange
+        >
+          <AppShell>{children}</AppShell>
+        </ThemeProvider>
       </body>
     </html>
   );
