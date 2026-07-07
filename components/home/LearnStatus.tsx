@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Flame, GraduationCap, Zap } from "lucide-react";
-import { buttonVariants } from "@/components/ui/buttonStyles";
+import { buttonVariants, type ButtonVariant } from "@/components/ui/buttonStyles";
 import { Card } from "@/components/ui/Card";
 import { levels, lessonIdsOfLevel } from "@/content/levels";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ export function LearnStatus({
   streakCount,
   nextHref,
   ctaLabel,
+  variant = "primary",
 }: {
   hydrated: boolean;
   completedIds: string[];
@@ -22,6 +23,7 @@ export function LearnStatus({
   streakCount: number;
   nextHref: string;
   ctaLabel: string;
+  variant?: ButtonVariant;
 }) {
   const done = new Set(completedIds);
 
@@ -85,9 +87,10 @@ export function LearnStatus({
       <Link
         href={nextHref}
         className={buttonVariants({
+          variant: hydrated ? variant : "secondary",
           size: "md",
           fullWidth: true,
-          className: "mt-5",
+          className: cn("mt-5", !hydrated && "opacity-50 pointer-events-none"),
         })}
       >
         {ctaLabel}
@@ -95,3 +98,4 @@ export function LearnStatus({
     </Card>
   );
 }
+

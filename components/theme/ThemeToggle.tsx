@@ -37,10 +37,35 @@ export function ThemeToggle({
   className?: string;
   showLabel?: boolean;
 }) {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   // next-themes는 마운트 전엔 theme을 알 수 없다(SSR엔 시스템/저장값 정보가 없음).
   // 마운트 전엔 전부 비활성으로 두어 서버 렌더와 일치시키고, 마운트 후 실제 값으로 바로잡는다.
   const mounted = useMounted();
+
+  if (!showLabel) {
+    const currentTheme = mounted ? resolvedTheme : "light";
+    const toggleTheme = () => {
+      setTheme(currentTheme === "dark" ? "light" : "dark");
+    };
+
+    return (
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className={cn(
+          "flex size-9 items-center justify-center rounded-xl bg-surface text-brand-600 border border-border hover:bg-subtle hover:text-brand-500 transition-colors",
+          className,
+        )}
+        title={`테마 전환 (${currentTheme === "dark" ? "라이트" : "다크"} 모드로)`}
+      >
+        {currentTheme === "dark" ? (
+          <Moon className="size-[18px]" />
+        ) : (
+          <Sun className="size-[18px]" />
+        )}
+      </button>
+    );
+  }
 
   return (
     <div
@@ -66,10 +91,11 @@ export function ThemeToggle({
             )}
           >
             <opt.icon className="size-4" />
-            {showLabel && opt.label}
+            {opt.label}
           </button>
         );
       })}
     </div>
   );
 }
+

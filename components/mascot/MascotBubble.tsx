@@ -9,12 +9,14 @@ export function MascotBubble({
   className,
   size = "md",
   priority = false,
+  isLoading = false,
 }: {
   variant?: MascotVariant;
-  message: string;
+  message?: string;
   className?: string;
   size?: "md" | "lg";
   priority?: boolean;
+  isLoading?: boolean;
 }) {
   const width = size === "lg" ? "w-24" : "w-16";
 
@@ -23,9 +25,26 @@ export function MascotBubble({
       <div className="shrink-0">
         <MascotImage variant={variant} className={width} priority={priority} />
       </div>
-      <div className="rounded-2xl rounded-tl-sm border border-accent-500/15 bg-accent-500/10 px-4 py-2.5 text-sm font-medium">
-        {message}
+      <div
+        className={cn(
+          "relative rounded-2xl border border-accent-500/30 bg-white px-4 py-2.5 text-sm font-bold text-foreground shadow-[0_3px_0_0_var(--edge-tile)] dark:bg-surface",
+          // 꼬리표 바깥 테두리 (border border-accent-500/30)
+          "before:absolute before:right-full before:top-4 before:h-0 before:w-0 before:border-8 before:border-transparent before:border-r-accent-500/30",
+          // 꼬리표 안쪽 채우기 (1px 테두리 라인 효과를 위해 1px 우측 이동 및 y축 중앙 정렬)
+          "after:absolute after:right-full after:top-[17px] after:translate-x-[1px] after:h-0 after:w-0 after:border-[7px] after:border-transparent after:border-r-white dark:after:border-r-surface"
+        )}
+      >
+        {isLoading ? (
+          <span className="flex h-5 items-center gap-1" aria-hidden>
+            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-500 [animation-delay:-0.3s]" />
+            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-500 [animation-delay:-0.15s]" />
+            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-500" />
+          </span>
+        ) : (
+          message
+        )}
       </div>
     </div>
   );
 }
+

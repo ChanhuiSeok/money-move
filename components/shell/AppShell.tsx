@@ -33,16 +33,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** 데스크탑 상단 헤더 — lg 이상에서만. 로고 + 전체 메뉴 + 테마 토글을 한 줄에. */
+/** 상단 헤더 — 데스크탑 및 모바일 공용.
+ *  모바일에서는 좌측 로고, 우측 테마 토글만 보이고 메뉴는 하단 탭바로 위임. */
 function TopHeader({ pathname }: { pathname: string }) {
   return (
-    <header className="sticky top-0 z-20 hidden shrink-0 border-b border-border bg-surface/95 backdrop-blur lg:block">
+    <header className="sticky top-0 z-20 shrink-0 border-b border-border bg-surface/95 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-6">
         <Link href="/" className="flex shrink-0 items-center" aria-label="머니무브 홈">
-          <Logo className="h-8" priority />
+          <Logo className="h-10" priority />
         </Link>
 
-        <nav className="flex flex-1 items-center gap-1">
+        <nav className="hidden flex-1 items-center gap-1 lg:flex">
           {NAV_ITEMS.map((item) => {
             const active = isActiveNav(pathname, item.href);
             return (
@@ -63,6 +64,9 @@ function TopHeader({ pathname }: { pathname: string }) {
             );
           })}
         </nav>
+
+        {/* 모바일 뷰에서 로고와 우측 테마 토글 간격을 벌려주는 spacer */}
+        <div className="flex-1 lg:hidden" />
 
         <ThemeToggle showLabel={false} className="shrink-0" />
       </div>

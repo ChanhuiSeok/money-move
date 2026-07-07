@@ -54,6 +54,10 @@ export function HomeDashboard() {
   const season = seasonOverride ?? currentSeason(today);
   const term = glossaryTerms[dailyIndex(today, glossaryTerms.length)];
   const greeting = greetingLines[dailyIndex(today, greetingLines.length)];
+  const showOnboardingNudge = profileHydrated && !hasProfile(profile);
+  const bubbleMessage = showOnboardingNudge
+    ? "반가워요! 아래에 월급을 딱 한 번만 적어두면, 모든 레슨과 계산기가 실제 내 숫자로 바뀐답니다!"
+    : greeting;
 
   const nextId = firstIncompleteLessonId(
     orderedLessonIds,
@@ -78,13 +82,19 @@ export function HomeDashboard() {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
       {/* 인사 */}
-      <MascotBubble variant="home" message={greeting} size="lg" priority />
+      <MascotBubble
+        variant="home"
+        message={bubbleMessage}
+        size="lg"
+        priority
+        isLoading={!profileHydrated || !hydrated}
+      />
 
       {/* 시즌 배너 — '필요한 때'에만. hydrated 게이트(SSR/클라 날짜 불일치 회피) */}
       {hydrated && season && (
         <Link
           href={season.ctaHref}
-          className="mt-5 flex items-center gap-3 rounded-card border border-brand-500/30 bg-brand-500/10 p-4 shadow-[0_3px_0_0_var(--edge-tile)] transition-[transform,box-shadow,background-color] duration-100 hover:bg-brand-500/15 active:translate-y-[2px] active:shadow-[0_1px_0_0_var(--edge-tile)]"
+          className="mt-5 flex items-center gap-3 rounded-card border-2 border-brand-500/30 bg-brand-500/10 p-4 transition-[border-color,background-color] duration-100 hover:bg-brand-500/15"
         >
           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
             <CalendarClock className="size-6" />
@@ -108,17 +118,36 @@ export function HomeDashboard() {
               <Wallet className="size-6" /> 내 돈
             </span>
 
-            {th ? (
+            {!profileHydrated ? (
+              <div className="animate-pulse">
+                {/* 타이틀 스켈레톤: text-sm (20px) 높이 및 마진 일치 */}
+                <div className="mt-3 h-5 w-40 rounded bg-subtle/50" />
+                {/* 금액 스켈레톤: text-4xl (40px) / lg:text-5xl (48px) 높이 및 마진 일치 */}
+                <div className="mt-0.5 h-10 w-56 rounded-lg bg-subtle/50 lg:h-12" />
+                {/* 비중 바 스켈레톤: h-2.5 및 마진 일치 */}
+                <div className="mt-4 h-2.5 w-full rounded-full bg-subtle/50" />
+                {/* 상세설명 스켈레톤: text-[11px] (16px) 높이 및 마진 일치 */}
+                <div className="mt-1.5 flex justify-between">
+                  <div className="h-4 w-28 rounded bg-subtle/50" />
+                  <div className="h-4 w-48 rounded bg-subtle/50" />
+                </div>
+                {/* 버튼 스켈레톤: h-11 및 마진 일치 */}
+                <div className="mt-5 flex gap-2">
+                  <div className="h-11 flex-1 rounded-xl bg-subtle/50" />
+                  <div className="h-11 w-20 rounded-xl bg-subtle/50" />
+                </div>
+              </div>
+            ) : th ? (
               <>
                 <p className="mt-3 text-sm text-muted">
-                  사용자님의 이번 달 실수령액 (추정)
+                  이번 달에 받을 예상 실수령액이에요
                 </p>
                 <p className="mt-0.5 text-4xl font-extrabold tracking-tight tabular-nums lg:text-5xl">
                   {formatWon(th.net)}
                 </p>
                 {/* 실수령 vs 공제 비중 바 */}
                 <div
-                  className="mt-4 h-2.5 overflow-hidden rounded-full bg-subtle"
+                  className="mt-4 h-2.5 overflow-hidden rounded-full bg-subtle/50"
                   aria-hidden
                 >
                   <div
@@ -136,13 +165,21 @@ export function HomeDashboard() {
                 <div className="mt-5 flex gap-2">
                   <Link
                     href="/tools/take-home"
-                    className={buttonVariants({ size: "md", className: "flex-1" })}
+                    className={buttonVariants({
+                      variant: "secondary",
+                      size: "md",
+                      className: "flex-1",
+                    })}
                   >
                     내역 자세히 <ArrowRight className="size-4" />
                   </Link>
                   <Link
                     href="/profile"
-                    className={buttonVariants({ variant: "secondary", size: "md" })}
+                    className={buttonVariants({
+                      variant: "ghost",
+                      size: "md",
+                      className: "text-muted hover:text-foreground",
+                    })}
                   >
                     내 정보
                   </Link>
@@ -151,11 +188,11 @@ export function HomeDashboard() {
             ) : (
               <>
                 <p className="mt-3 text-2xl font-extrabold tracking-tight lg:text-3xl">
-                  월급 한 번만 넣으면,
-                  <br className="hidden sm:block" /> 여기가 사용자님 얘기가 돼요
+                  월급 딱 한 번만 적어볼까요?
+                  <br className="hidden sm:block" /> 여기가 전부 내 지갑 이야기가 돼요
                 </p>
                 <p className="mt-2 text-sm text-muted">
-                  레슨·계산기가 사용자님 실제 숫자로 바뀌어요. 30초면 끝나요.
+                  모든 레슨과 계산기가 내 실제 월급 기준으로 바뀌어요. 30초면 충분해요.
                 </p>
                 <Link
                   href="/profile"
@@ -179,6 +216,7 @@ export function HomeDashboard() {
             streakCount={progress.streak.count}
             nextHref={allDone ? "/learn" : `/learn/${nextId}`}
             ctaLabel={learnCta}
+            variant={showOnboardingNudge ? "secondary" : "primary"}
           />
           {hydrated && !started && (
             <p className="-mt-1 text-center text-sm">
@@ -194,9 +232,9 @@ export function HomeDashboard() {
 
           {/* 상황별로 시작하기 — 라이프 이벤트 진입(내비엔 없는 콘텐츠 경로) */}
           <section>
-            <h2 className="text-base font-bold">지금 내 상황은?</h2>
+            <h2 className="text-base font-bold">지금 어떤 고민이 있나요?</h2>
             <p className="mt-0.5 text-sm text-muted">
-              상황을 고르면 필요한 레슨과 계산기를 한 묶음으로 모아드려요.
+              내 상황을 고르면 꼭 필요한 레슨과 계산기만 쏙쏙 골라 모아 드릴게요.
             </p>
             <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
               {scenarios.map((s) => (
@@ -224,7 +262,7 @@ export function HomeDashboard() {
           {/* 오늘의 한 입 — 용어 하나 */}
           <Card padding="md">
             <p className="text-xs font-bold tracking-wide text-brand-600">
-              오늘의 한 입
+              하루 1분, 오늘의 한 입 🍪
             </p>
             <p className="mt-1.5 text-xl font-bold">{term.term}</p>
             <p className="mt-1 text-sm leading-relaxed text-muted">{term.short}</p>
@@ -251,7 +289,7 @@ export function HomeDashboard() {
                   </p>
                   <p className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
                     <span className="size-1.5 rounded-full bg-success" />
-                    여러 주제 · 최신순
+                    놓쳐선 안 될 최신 소식들
                   </p>
                 </div>
               </div>

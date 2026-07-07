@@ -7,11 +7,9 @@ import { cn } from "@/lib/utils";
 
 export function tileVariants({ className }: { className?: string } = {}): string {
   return cn(
-    "group relative flex rounded-card border border-border bg-surface " +
-      "shadow-[0_3px_0_0_var(--edge-tile)] " +
-      "transition-[transform,box-shadow,border-color,background-color] duration-100 " +
+    "group relative flex rounded-card border-2 border-border bg-surface " +
+      "transition-[border-color,background-color] duration-100 " +
       "hover:border-brand-400 hover:bg-brand-500/[0.04] " +
-      "active:translate-y-[2px] active:shadow-[0_1px_0_0_var(--edge-tile)] " +
       "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25",
     className,
   );

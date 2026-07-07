@@ -5,7 +5,7 @@ import "./globals.css";
 import { AppShell } from "@/components/shell/AppShell";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
-const HOME_TITLE = "머니무브 — 경제 문맹 퇴치";
+const HOME_TITLE = "머니무브 - 경제 문맹 퇴치";
 const HOME_DESCRIPTION =
   "가입 없이 바로 시작하는, 짧고 명랑한 한국 실생활 금융 레슨. 월급명세서·소득공제·세액공제·연금까지 한 입씩.";
 
@@ -41,7 +41,11 @@ export default function RootLayout({
     // React가 모르는 속성이 됨 — suppressHydrationWarning으로 이 불일치만 무시(라이브러리 공식 권장).
     <html lang="ko" className="h-full antialiased" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://cdn.jsdelivr.net"
+          crossOrigin="anonymous"
+        />
         {/* 본문 — Pretendard(모던 고딕). App Router 루트 <head> 링크는 전역 적용됨 */}
         <link
           rel="stylesheet"

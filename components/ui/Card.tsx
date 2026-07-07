@@ -28,12 +28,12 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-card border bg-surface",
+        "rounded-card border-2 bg-surface",
         paddings[padding],
-        highlight ? "border-brand-500/40 ring-1 ring-brand-500/15" : "border-border",
+        highlight ? "border-brand-500/50" : "border-border",
         interactive
-          ? "shadow-[0_3px_0_0_var(--edge-tile)] transition-[transform,box-shadow,border-color,background-color] duration-100 hover:border-brand-400 hover:bg-brand-500/[0.04] active:translate-y-[2px] active:shadow-[0_1px_0_0_var(--edge-tile)]"
-          : "[box-shadow:var(--shadow-card)]",
+          ? "transition-[border-color,background-color] duration-100 hover:border-brand-400 hover:bg-brand-500/[0.04]"
+          : "",
         className,
       )}
       {...props}
