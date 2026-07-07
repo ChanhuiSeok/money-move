@@ -12,9 +12,11 @@ export const metadata = pageMetadata({
 
 export default function NewsPage() {
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-2xl lg:py-8">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">오늘의 경제뉴스</h1>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
+        오늘의 경제뉴스
+      </h1>
       <p className="mt-1 text-sm text-muted">
         최신 경제 소식을 한눈에. 제목을 누르면 기사로 이동해요.
       </p>

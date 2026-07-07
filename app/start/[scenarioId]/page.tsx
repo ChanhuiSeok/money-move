@@ -36,14 +36,16 @@ export default function ScenarioPage() {
   const Icon = scenario.icon;
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-2xl lg:px-8 lg:py-8">
-      <BackLink href="/" label="홈" className="mb-2" />
+    <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink href="/" label="홈" className="mb-3" />
 
       <div className="flex items-center gap-3">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-500/10">
           <Icon className="w-7" />
         </span>
-        <h1 className="text-2xl font-bold tracking-tight">{scenario.title}</h1>
+        <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
+          {scenario.title}
+        </h1>
       </div>
 
       <MascotBubble variant="study" message={scenario.intro} className="mt-4" />

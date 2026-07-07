@@ -54,9 +54,11 @@ export default function RentVsJeonsePage() {
           : `월세가 월 ${formatWon(r.monthlyDiff)} 저렴해요`;
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
-      <BackLink href="/tools" label="계산기" className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">전세 vs 월세</h1>
+    <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink href="/tools" label="계산기" className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
+        전세 vs 월세
+      </h1>
       <p className="mt-1 text-sm text-muted">
         전세는 보증금이 묶여 ‘이자 기회비용’이, 월세는 매달 월세가 들죠. 둘을 같은
         ‘월 실부담’으로 환산해 비교해요.

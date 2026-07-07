@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { ArrowRight, CheckCircle2, FileText } from "lucide-react";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
-import { BackLink } from "@/components/ui/BackLink";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { orderedExams } from "@/content/exams";
 import { toScore, totalQuestions } from "@/lib/exams";
 import { useExams } from "@/store/useExams";
@@ -21,18 +21,15 @@ export function ExamList() {
   }, [hydrate]);
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 p-5 lg:max-w-2xl lg:py-8">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">모의고사</h1>
-      <p className="mt-1 text-sm text-muted">
-        학습 5개 영역을 아우르는 실전 시험지예요. 한 번에 풀고 제출하면 채점과
-        해설을 볼 수 있어요.
-      </p>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <PageHeader
+        title="모의고사"
+        subtitle="학습 5개 영역을 아우르는 실전 시험지예요. 한 번에 풀고 제출하면 채점과 해설을 볼 수 있어요."
+      />
 
       <MascotBubble
         variant="exam"
         message="레슨 문제보다 살짝 어려워요. 실력을 점검해봐요!"
-        className="mt-4"
       />
 
       <ul className="mt-5 flex flex-col gap-3">
@@ -45,7 +42,7 @@ export function ExamList() {
               <Link
                 href={`/exams/${exam.id}`}
                 className={cn(
-                  "group flex items-center gap-4 rounded-card border bg-surface p-5 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md active:translate-y-0",
+                  "group flex items-center gap-4 rounded-card border bg-surface p-5 shadow-[0_3px_0_0_var(--edge-tile)] transition-[transform,box-shadow,border-color,background-color] duration-100 hover:border-brand-400 hover:bg-brand-500/[0.04] active:translate-y-[2px] active:shadow-[0_1px_0_0_var(--edge-tile)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/25",
                   done ? "border-border" : "border-brand-500/30",
                 )}
               >

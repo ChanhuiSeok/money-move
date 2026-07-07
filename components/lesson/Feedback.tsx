@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mascot } from "@/components/mascot/Mascot";
+import { MascotImage } from "@/components/mascot/MascotImage";
 import { RichText } from "@/components/glossary/RichText";
 import { cn } from "@/lib/utils";
 
@@ -28,9 +28,9 @@ export function Feedback({
       )}
     >
       <div className="flex items-center gap-3">
-        <Mascot
-          mood={correct ? "happy" : "encouraging"}
-          className="size-11 shrink-0"
+        <MascotImage
+          variant={correct ? "book" : "study"}
+          className={cn("shrink-0", correct ? "w-16" : "w-12")}
         />
         <p
           className={cn(

@@ -3,24 +3,14 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import {
-  ArrowRight,
-  CalendarClock,
-  Flame,
-  Sparkles,
-  Wallet,
-  Zap,
-} from "lucide-react";
-import {
-  BookIcon,
-  ExamIcon,
-  MoneyIcon,
-  NewsIcon,
-} from "@/components/icons/PixelIcon";
+import { ArrowRight, CalendarClock, Sparkles, Wallet } from "lucide-react";
+import { NewsIcon } from "@/components/icons/PixelIcon";
+import { LearnStatus } from "@/components/home/LearnStatus";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
 import { NewsList } from "@/components/news/NewsList";
 import { buttonVariants } from "@/components/ui/buttonStyles";
 import { Card } from "@/components/ui/Card";
+import { tileVariants } from "@/components/ui/tileStyles";
 import { glossaryTerms } from "@/content/glossary";
 import { orderedLessonIds } from "@/content/levels";
 import { greetingLines } from "@/content/messages";
@@ -71,88 +61,64 @@ export function HomeDashboard() {
   );
   const started = progress.completedLessonIds.length > 0;
   const allDone = nextId === null;
-  // 스트릭이 있는데 오늘 아직 활동 안 함 → 끊길 위험(히어로에 흡수)
   const streakAtRisk =
     hydrated && progress.streak.count > 0 && progress.streak.lastDate !== today;
 
   const th =
     profileHydrated && hasProfile(profile) ? profileTakeHome(profile) : null;
 
-  const learnSub = allDone
-    ? "다시 보기"
+  const learnCta = allDone
+    ? "학습 경로 다시 보기"
     : streakAtRisk
       ? `${progress.streak.count}일째 이어가기`
       : started
         ? "이어서 풀기"
-        : "첫 문제 풀기";
+        : "학습 시작하기";
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 p-5 lg:max-w-4xl lg:py-8">
+    <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
       {/* 인사 */}
-      <MascotBubble
-        variant="home"
-        message={greeting}
-        size="lg"
-        priority
-        className="pt-2"
-      />
+      <MascotBubble variant="home" message={greeting} size="lg" priority />
 
-      {/* PC(lg): 2단 — 좌측 메인 + 우측 경제뉴스(sticky). 모바일: 세로 스택(뉴스는 맨 아래 그대로). */}
-      <div className="mt-5 flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,1fr)_336px] lg:items-start lg:gap-6">
+      {/* 시즌 배너 — '필요한 때'에만. hydrated 게이트(SSR/클라 날짜 불일치 회피) */}
+      {hydrated && season && (
+        <Link
+          href={season.ctaHref}
+          className="mt-5 flex items-center gap-3 rounded-card border border-brand-500/30 bg-brand-500/10 p-4 shadow-[0_3px_0_0_var(--edge-tile)] transition-[transform,box-shadow,background-color] duration-100 hover:bg-brand-500/15 active:translate-y-[2px] active:shadow-[0_1px_0_0_var(--edge-tile)]"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
+            <CalendarClock className="size-6" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-bold">{season.title}</span>
+            <span className="block text-xs text-muted">{season.message}</span>
+          </span>
+          <ArrowRight className="size-4 shrink-0 text-brand-600" />
+        </Link>
+      )}
+
+      {/* PC(lg): 2단 — 좌측 메인(내 돈·내 학습·상황별·한 입) + 우측 뉴스(sticky).
+          모바일: 세로 스택. 헤더/탭바에 이미 전역 내비가 있어, 홈은 '내비 칩' 없이 콘텐츠에 집중한다. */}
+      <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-[2fr_1fr] lg:items-start lg:gap-6">
+        {/* ── 메인 컬럼 ── */}
         <div className="flex flex-col gap-5">
-          {/* 시즌 배너 — '필요한 때'에만. hydrated 게이트(SSR/클라 날짜 불일치 회피) */}
-          {hydrated && season && (
-            <Link
-              href={season.ctaHref}
-              className="reveal flex items-center gap-3 rounded-card border border-brand-500/30 bg-brand-500/10 p-4 transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-brand-500/15 hover:shadow-md active:translate-y-0"
-            >
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
-                <CalendarClock className="size-7" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-sm font-bold">{season.title}</span>
-                <span className="block text-xs text-muted">
-                  {season.message}
-                </span>
-              </span>
-              <ArrowRight className="size-4 shrink-0 text-brand-600" />
-            </Link>
-          )}
-
-          {/* ── 히어로: 내 돈 (개인화된 금융 대시보드 = 이 앱의 축) ── */}
-          <Card highlight padding="lg" className="reveal" style={{ animationDelay: "60ms" }}>
-            <div className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2 text-sm font-semibold text-brand-600">
-                <Wallet className="size-6" /> 내 돈
-              </span>
-              {hydrated && (progress.streak.count > 0 || progress.xp > 0) && (
-                <Link
-                  href="/achievements"
-                  className="flex shrink-0 items-center gap-3 rounded-full border border-border bg-surface px-3 py-1 text-xs font-bold tabular-nums"
-                >
-                  <span className="flex items-center gap-1 text-orange-500">
-                    <Flame className="size-4" />
-                    {progress.streak.count}
-                  </span>
-                  <span className="flex items-center gap-1 text-brand-600">
-                    <Zap className="size-4" />
-                    {progress.xp}
-                  </span>
-                </Link>
-              )}
-            </div>
+          {/* 내 돈 — 개인화 금융 대시보드(이 앱의 축) */}
+          <Card highlight padding="lg">
+            <span className="flex items-center gap-2 text-sm font-bold text-brand-600">
+              <Wallet className="size-6" /> 내 돈
+            </span>
 
             {th ? (
               <>
                 <p className="mt-3 text-sm text-muted">
                   사용자님의 이번 달 실수령액 (추정)
                 </p>
-                <p className="mt-0.5 text-3xl font-bold tracking-tight tabular-nums lg:text-4xl">
+                <p className="mt-0.5 text-4xl font-extrabold tracking-tight tabular-nums lg:text-5xl">
                   {formatWon(th.net)}
                 </p>
                 {/* 실수령 vs 공제 비중 바 */}
                 <div
-                  className="mt-4 h-2 overflow-hidden rounded-full bg-subtle"
+                  className="mt-4 h-2.5 overflow-hidden rounded-full bg-subtle"
                   aria-hidden
                 >
                   <div
@@ -170,19 +136,13 @@ export function HomeDashboard() {
                 <div className="mt-5 flex gap-2">
                   <Link
                     href="/tools/take-home"
-                    className={buttonVariants({
-                      size: "md",
-                      className: "flex-1",
-                    })}
+                    className={buttonVariants({ size: "md", className: "flex-1" })}
                   >
                     내역 자세히 <ArrowRight className="size-4" />
                   </Link>
                   <Link
                     href="/profile"
-                    className={buttonVariants({
-                      variant: "secondary",
-                      size: "md",
-                    })}
+                    className={buttonVariants({ variant: "secondary", size: "md" })}
                   >
                     내 정보
                   </Link>
@@ -190,10 +150,11 @@ export function HomeDashboard() {
               </>
             ) : (
               <>
-                <p className="mt-3 text-xl font-bold tracking-tight lg:text-2xl">
-                  월급 한 번만 넣으면, 여기가 사용자님 얘기가 돼요
+                <p className="mt-3 text-2xl font-extrabold tracking-tight lg:text-3xl">
+                  월급 한 번만 넣으면,
+                  <br className="hidden sm:block" /> 여기가 사용자님 얘기가 돼요
                 </p>
-                <p className="mt-1 text-sm text-muted">
+                <p className="mt-2 text-sm text-muted">
                   레슨·계산기가 사용자님 실제 숫자로 바뀌어요. 30초면 끝나요.
                 </p>
                 <Link
@@ -210,68 +171,63 @@ export function HomeDashboard() {
             )}
           </Card>
 
-          {/* ── 빠른 이동: 학습 · 계산기 · 모의고사/진단 (모두 동급) ── */}
-          <div className="grid grid-cols-3 gap-3">
-            <ChipLink
-              href={allDone ? "/learn" : `/learn/${nextId}`}
-              icon={<BookIcon className="w-8" />}
-              label="오늘의 학습"
-              sub={learnSub}
-            />
-            <ChipLink
-              href="/tools"
-              icon={<MoneyIcon className="w-8" />}
-              label="계산기"
-              sub="실수령액 등"
-            />
-            {hydrated &&
-              (started ? (
-                <ChipLink
-                  href="/exams"
-                  icon={<ExamIcon className="w-8" />}
-                  label="모의고사"
-                  sub="실전 시험지"
-                />
-              ) : (
-                <ChipLink
-                  href="/diagnostic"
-                  icon={<Sparkles className="size-6" />}
-                  label="진단"
-                  sub="레벨 건너뛰기"
-                />
-              ))}
-          </div>
+          {/* 내 학습 — 레벨별 진행 + 스트릭/XP + 이어서 풀기 */}
+          <LearnStatus
+            hydrated={hydrated}
+            completedIds={progress.completedLessonIds}
+            xp={progress.xp}
+            streakCount={progress.streak.count}
+            nextHref={allDone ? "/learn" : `/learn/${nextId}`}
+            ctaLabel={learnCta}
+          />
+          {hydrated && !started && (
+            <p className="-mt-1 text-center text-sm">
+              <Link
+                href="/diagnostic"
+                className="inline-flex items-center gap-1 font-semibold text-muted transition-colors hover:text-brand-600"
+              >
+                <Sparkles className="size-4" /> 이미 좀 아세요? 진단으로 레벨
+                건너뛰기
+              </Link>
+            </p>
+          )}
 
-          {/* ── 상황별로 시작하기 (보조) ── */}
+          {/* 상황별로 시작하기 — 라이프 이벤트 진입(내비엔 없는 콘텐츠 경로) */}
           <section>
-            <h2 className="text-sm font-bold text-muted">상황별로 시작하기</h2>
-            <div className="mt-3 grid grid-cols-2 gap-3">
+            <h2 className="text-base font-bold">지금 내 상황은?</h2>
+            <p className="mt-0.5 text-sm text-muted">
+              상황을 고르면 필요한 레슨과 계산기를 한 묶음으로 모아드려요.
+            </p>
+            <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
               {scenarios.map((s) => (
                 <Link
                   key={s.id}
                   href={`/start/${s.id}`}
-                  className="flex items-center gap-2 rounded-card border border-border bg-surface p-3 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0 lg:flex-col lg:items-start lg:gap-2"
+                  className={tileVariants({
+                    className: "flex-col items-start gap-2 p-4",
+                  })}
                 >
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
                     <s.icon className="w-8" />
                   </span>
-                  <span className="min-w-0 text-sm font-bold leading-tight">
+                  <span className="mt-0.5 block text-sm font-bold leading-tight">
                     {s.title}
+                  </span>
+                  <span className="hidden text-xs leading-snug text-muted sm:block">
+                    {s.blurb}
                   </span>
                 </Link>
               ))}
             </div>
           </section>
 
-          {/* ── 오늘의 한 입 (하단, 가볍게) ── */}
-          <Card padding="md" className="reveal" style={{ animationDelay: "240ms" }}>
-            <p className="text-xs font-semibold tracking-wide text-muted">
+          {/* 오늘의 한 입 — 용어 하나 */}
+          <Card padding="md">
+            <p className="text-xs font-bold tracking-wide text-brand-600">
               오늘의 한 입
             </p>
-            <p className="mt-1 text-lg font-bold">{term.term}</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">
-              {term.short}
-            </p>
+            <p className="mt-1.5 text-xl font-bold">{term.term}</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">{term.short}</p>
             <Link
               href="/glossary"
               className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700"
@@ -282,8 +238,8 @@ export function HomeDashboard() {
         </div>
 
         {/* ── 오늘의 경제뉴스 — PC(lg)에서는 우측 sticky 컬럼, 모바일에선 맨 아래 ── */}
-        <div className="lg:sticky lg:top-8">
-          <Card padding="md" className="reveal" style={{ animationDelay: "160ms" }}>
+        <aside className="lg:sticky lg:top-24">
+          <Card padding="md">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
@@ -294,7 +250,7 @@ export function HomeDashboard() {
                     오늘의 경제뉴스
                   </p>
                   <p className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
-                    <span className="size-1.5 animate-pulse rounded-full bg-success" />
+                    <span className="size-1.5 rounded-full bg-success" />
                     여러 주제 · 최신순
                   </p>
                 </div>
@@ -310,35 +266,8 @@ export function HomeDashboard() {
               <NewsList limit={8} numbered mixed />
             </div>
           </Card>
-        </div>
+        </aside>
       </div>
     </main>
-  );
-}
-
-function ChipLink({
-  href,
-  icon,
-  label,
-  sub,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-  sub?: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex flex-col gap-1.5 rounded-card border border-border bg-surface p-3 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0"
-    >
-      <span className="relative flex size-10 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">
-        {icon}
-      </span>
-      <span className="text-sm font-bold leading-none">{label}</span>
-      {sub && (
-        <span className="truncate text-xs text-muted tabular-nums">{sub}</span>
-      )}
-    </Link>
   );
 }

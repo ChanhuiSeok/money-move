@@ -79,9 +79,11 @@ function PensionCredit({ initialSalary }: { initialSalary: string }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
-      <BackLink href="/tools" label="계산기" className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">연금저축·IRP 세액공제</h1>
+    <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink href="/tools" label="계산기" className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
+        연금저축·IRP 세액공제
+      </h1>
       <p className="mt-1 text-sm text-muted">
         연금저축·IRP에 넣은 돈으로 연말정산 때 얼마나 돌려받는지, 그리고 둘을 어떻게
         나누면 좋은지 알려줘요.

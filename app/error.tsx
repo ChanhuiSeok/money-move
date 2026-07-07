@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Mascot } from "@/components/mascot/Mascot";
+import { MascotImage } from "@/components/mascot/MascotImage";
 import { Button } from "@/components/ui/Button";
 import { buttonVariants } from "@/components/ui/buttonStyles";
 
@@ -21,7 +21,7 @@ export default function ErrorBoundary({
 
   return (
     <main className="mx-auto flex min-h-[70dvh] w-full max-w-md flex-1 flex-col items-center justify-center gap-6 p-5 text-center lg:max-w-lg">
-      <Mascot mood="encouraging" className="size-20" />
+      <MascotImage variant="home" className="w-28" />
       <div>
         <h1 className="text-xl">어라, 잠깐 문제가 생겼어요</h1>
         <p className="mt-2 text-sm text-muted">

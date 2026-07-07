@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { BackLink } from "@/components/ui/BackLink";
+import { tileVariants } from "@/components/ui/tileStyles";
 import { search, type SearchHit, type SearchKind } from "@/lib/search";
 
 const KIND_META: Record<SearchKind, { label: string; icon: LucideIcon }> = {
@@ -34,9 +35,11 @@ export default function SearchPage() {
   })).filter((g) => g.items.length > 0);
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-2xl lg:py-8">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">검색</h1>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
+        검색
+      </h1>
       <p className="mt-1 text-sm text-muted">
         레슨·계산기·용어·상황을 한 번에 찾아요.
       </p>
@@ -88,10 +91,7 @@ export default function SearchPage() {
 
 function HitRow({ hit }: { hit: SearchHit }) {
   return (
-    <Link
-      href={hit.href}
-      className="flex items-center gap-3 rounded-card border border-border bg-surface p-4 transition-colors hover:border-brand-400 hover:bg-brand-500/5"
-    >
+    <Link href={hit.href} className={tileVariants({ className: "items-center gap-3 p-4" })}>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-bold">{hit.title}</span>
         <span className="block truncate text-xs text-muted">{hit.sub}</span>

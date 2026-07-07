@@ -38,9 +38,11 @@ export default function ProfilePage() {
   const ready = hasProfile(profile);
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-2xl lg:px-8 lg:py-8">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">내 프로필</h1>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
+        내 프로필
+      </h1>
       <p className="mt-1 text-sm text-muted">
         월급을 한 번만 넣어두면, 홈·계산기가 전부 <b>내 얘기</b>로 바뀌어요.
       </p>

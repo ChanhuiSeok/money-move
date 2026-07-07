@@ -38,8 +38,8 @@
       없음. Sentry(또는 다른 APM) 계정 만들고 DSN 받아서 그 자리에 `Sentry.captureException(error)` 추가.
 
 - [ ] **파비콘 / 앱 아이콘 교체**
-      `app/favicon.ico`가 Next.js 기본 아이콘인지 확인. 마스코트(`components/mascot/Mascot.tsx`)
-      기반으로 `app/icon.png`, `app/apple-icon.png` 만들어 교체 권장.
+      `app/favicon.ico`가 Next.js 기본 아이콘인지 확인. 픽셀아트 마스코트/로고(`components/mascot/assets`,
+      `components/brand/assets/logo.png`) 기반으로 `app/icon.png`, `app/apple-icon.png` 만들어 교체 권장.
       필요하면 `app/manifest.ts`도 추가(PWA 설치 배너, 홈 화면 추가 지원).
 
 - [ ] **`next.config.ts`에 보안 헤더 추가**

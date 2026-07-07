@@ -44,9 +44,11 @@ export default function CompoundPage() {
     : null;
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">복리 계산기</h1>
+    <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
+        복리 계산기
+      </h1>
       <p className="mt-1 text-sm text-muted">
         매달 꾸준히 모으면 이자가 이자를 낳는 복리로 얼마까지 불어날까요?
       </p>

@@ -67,9 +67,11 @@ export function LearnPath() {
     : 0;
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:py-8">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">학습 경로</h1>
+    <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
+        학습 경로
+      </h1>
 
       <ProgressTrack
         completed={completedCount}
@@ -80,7 +82,7 @@ export function LearnPath() {
       {/* 모의고사 진입 — 하단 탭바에 없어 여기서도 갈 수 있게(특히 모바일) */}
       <Link
         href="/exams"
-        className="mt-4 flex items-center gap-3 rounded-card border border-border bg-surface p-4 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md active:translate-y-0"
+        className="mt-4 flex items-center gap-3 rounded-card border border-border bg-surface p-4 shadow-[0_3px_0_0_var(--edge-tile)] transition-[transform,box-shadow,border-color,background-color] duration-100 hover:border-brand-400 hover:bg-brand-500/[0.04] active:translate-y-[2px] active:shadow-[0_1px_0_0_var(--edge-tile)]"
       >
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
           <ExamIcon className="w-6" />

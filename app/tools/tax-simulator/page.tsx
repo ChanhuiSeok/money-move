@@ -164,9 +164,11 @@ function TaxSimulator({ initialSalary }: { initialSalary: string }) {
       setCred((s) => ({ ...s, [k]: v }));
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-5xl lg:px-8 lg:py-8">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">연말정산 시뮬레이터</h1>
+    <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
+        연말정산 시뮬레이터
+      </h1>
       <p className="mt-1 text-sm text-muted">
         내 공제 항목을 대략 입력하면, 세금이 어떻게 줄고 얼마를 돌려받는지 흐름으로
         보여 줘요.

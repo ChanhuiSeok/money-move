@@ -32,17 +32,19 @@ export function AchievementsView() {
   const earnedCount = earned.size;
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:max-w-3xl lg:px-8 lg:py-8">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">성취</h1>
-      <p className="mt-1 text-sm text-muted">
+    <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink href="/" label="홈" className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
+        성취
+      </h1>
+      <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-muted">
         {hydrated
           ? `배지 ${earnedCount}/${BADGES.length} · ${progress.activeDays.length}일 학습했어요.`
           : " "}
       </p>
 
-      {/* 핵심 지표 */}
-      <div className="mt-4 grid grid-cols-3 gap-3">
+      {/* 핵심 지표 — 게임 HUD 느낌의 스탯 타일 */}
+      <div className="mt-6 grid grid-cols-3 gap-3">
         <Metric
           icon={<Flame className="size-4" />}
           value={hydrated ? progress.bestStreak : 0}
@@ -141,7 +143,7 @@ function Metric({
   accent: "flame" | "brand";
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-card border border-border bg-surface p-3">
+    <div className="flex flex-col items-center gap-1 rounded-card border border-border bg-surface p-3 shadow-[0_3px_0_0_var(--edge-tile)]">
       <span
         className={cn(
           "flex size-8 items-center justify-center rounded-full",

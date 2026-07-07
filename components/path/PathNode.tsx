@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Check, Play } from "lucide-react";
-import { Mascot } from "@/components/mascot/Mascot";
+import { MascotImage } from "@/components/mascot/MascotImage";
 import type { NodeState } from "@/lib/path";
 import { cn } from "@/lib/utils";
 
@@ -64,9 +64,9 @@ export function PathNode({
       aria-label={`${title} 레슨 ${state === "completed" ? "다시 풀기" : "시작하기"}`}
       className="flex flex-col items-center rounded-xl outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30"
     >
-      {/* 현재 위치 표시 — 마스코트가 이 레슨에 서 있어요(나중에 교체해도 자동 반영) */}
+      {/* 현재 위치 표시 — 마스코트가 이 레슨을 향해 달려요 */}
       {state === "current" && (
-        <Mascot mood="happy" className="-mb-1 size-9 drop-shadow-sm" />
+        <MascotImage variant="run" className="-mb-1 w-10 drop-shadow-sm" />
       )}
       {circle}
       {label}

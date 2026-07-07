@@ -57,9 +57,11 @@ export default function TakeHomePage() {
 
   // hydrate 전엔 빈 값, 후엔 프로필로 seed해 remount(setState-in-effect 회피).
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-5 py-6">
-      <BackLink className="mb-2" />
-      <h1 className="text-2xl font-bold tracking-tight">실수령액 계산기</h1>
+    <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      <BackLink className="mb-3" />
+      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
+        실수령액 계산기
+      </h1>
       <p className="mt-1 text-sm text-muted">
         세전 월급/연봉을 넣으면, 4대 보험·소득세를 빼고 통장에 들어올 금액을 추정해요.
       </p>

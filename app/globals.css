@@ -53,8 +53,8 @@
     system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Apple SD Gothic Neo",
     "Noto Sans KR", sans-serif;
 
-  /* 라운드 */
-  --radius-card: 1rem;
+  /* 라운드 — 살짝 큼직하게(청크한 톤) */
+  --radius-card: 1.25rem;
 }
 
 :root {
@@ -64,8 +64,31 @@
   --surface: #ffffff;
   --foreground: #1f1b19; /* 차분한 웜 near-black */
   --muted: #6d6a70;
-  --border: #eae7e3;
-  --subtle: #f6f4f1;
+  --border: #e7e3dd;
+  --subtle: #f5f2ee;
+
+  /* 청크 UI — 입체 눌림(솔리드 엣지) 색. 애니메이션 대신 '두께'로 물성을 준다.
+     tile=카드/타일 아래 굳은 테두리, brand/success=주요 버튼의 아래 엣지(라이트·다크 공통). */
+  --edge-tile: #dcd7cf;
+  --edge-tile-hover: #b6d3ff;
+  --edge-brand: #0a45c0;
+  --edge-success: #0c7a44;
+  /* 카드 부양 그림자(은은한 2겹) */
+  --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 10px 26px -14px rgba(28, 25, 23, 0.14);
+}
+
+/* 시스템이 다크인 경우와 명시적 다크에서 청크 엣지/그림자를 딥네이비에 맞게 조정 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --edge-tile: #05070d;
+    --edge-tile-hover: #123a86;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 30px -16px rgba(0, 0, 0, 0.7);
+  }
+}
+:root[data-theme="dark"] {
+  --edge-tile: #05070d;
+  --edge-tile-hover: #123a86;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 30px -16px rgba(0, 0, 0, 0.7);
 }
 
 /* 시스템이 다크인 경우 — 단, 사용자가 명시적으로 "라이트"를 골랐으면(data-theme="light") 제외 */
@@ -109,9 +132,14 @@ body {
   font-feature-settings: "tnum"; /* 숫자 폭 고정 — 금액 정렬에 유리 */
 }
 
-/* 페이지 제목은 자간만 살짝 좁혀 위계를 또렷하게(글꼴은 본문과 동일한 산세리프). */
+/* 제목은 굵고 자간을 좁혀 위계를 또렷하게(청크한 톤). h1은 무겁게, h2는 준하게. */
 h1 {
+  letter-spacing: -0.022em;
+  font-weight: 800;
+}
+h2 {
   letter-spacing: -0.015em;
+  font-weight: 700;
 }
 
 /* 가로 스크롤 영역(토픽 칩 등)의 스크롤바 숨김 */

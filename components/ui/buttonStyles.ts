@@ -6,21 +6,26 @@ import { cn } from "@/lib/utils";
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "success";
 export type ButtonSize = "sm" | "md" | "lg";
 
+// 청크 UI — 버튼은 아래 '솔리드 엣지'로 두께를 갖고, 누르면 그만큼 내려앉는다(물성).
+// 연속 애니메이션은 없고, 누름/포커스에만 짧게(100ms) 반응한다.
 export const buttonBase =
-  "inline-flex items-center justify-center gap-2 rounded-xl font-semibold " +
-  "transition-[transform,background-color,border-color,color] duration-150 " +
-  "active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 " +
-  "disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100";
+  "inline-flex items-center justify-center gap-2 rounded-xl font-bold " +
+  "transition-[transform,box-shadow,background-color,border-color,color] duration-100 " +
+  "focus-visible:outline-none focus-visible:ring-4 " +
+  "disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:active:translate-y-0";
 
 export const buttonVariantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-brand-600 text-white shadow-sm hover:bg-brand-700 focus-visible:ring-brand-500/30",
+    "bg-brand-600 text-white shadow-[0_4px_0_0_var(--edge-brand)] hover:bg-brand-500 " +
+    "active:translate-y-[3px] active:shadow-[0_1px_0_0_var(--edge-brand)] focus-visible:ring-brand-500/30",
   secondary:
-    "bg-surface text-brand-600 border border-border hover:bg-subtle focus-visible:ring-brand-500/20",
+    "bg-surface text-brand-600 border border-border shadow-[0_3px_0_0_var(--edge-tile)] hover:border-brand-400 " +
+    "active:translate-y-[2px] active:shadow-[0_1px_0_0_var(--edge-tile)] focus-visible:ring-brand-500/20",
   ghost:
     "bg-transparent text-foreground hover:bg-foreground/5 focus-visible:ring-foreground/10",
   success:
-    "bg-success text-white shadow-sm hover:brightness-95 focus-visible:ring-success/30",
+    "bg-success text-white shadow-[0_4px_0_0_var(--edge-success)] hover:brightness-105 " +
+    "active:translate-y-[3px] active:shadow-[0_1px_0_0_var(--edge-success)] focus-visible:ring-success/30",
 };
 
 export const buttonSizeClasses: Record<ButtonSize, string> = {
