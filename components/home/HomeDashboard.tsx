@@ -485,6 +485,32 @@ export function HomeDashboard() {
               <NewsList limit={8} numbered mixed />
             </div>
           </Card>
+
+          {/* 청약 정보 광고 배너 */}
+          <div
+            className="mt-4 p-3 rounded-card bg-subtle/80 hover:bg-subtle dark:bg-subtle/30 dark:hover:bg-subtle/50 transition-colors"
+          >
+            <a
+              href="https://www.applyhome.co.kr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3"
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 text-xl">
+                🏢
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-brand-600">청약 가이드 🔔</p>
+                <p className="mt-0.5 text-sm font-bold leading-tight text-foreground truncate">
+                  내 지역 청약정보를 알고 싶다면?
+                </p>
+                <p className="mt-0.5 text-[11px] text-muted">
+                  청약홈 바로가기 · 청약 일정 확인
+                </p>
+              </div>
+              <ArrowRight className="size-4 shrink-0 text-brand-600" />
+            </a>
+          </div>
         </aside>
       </div>
     </main>

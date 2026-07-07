@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Search } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useProgress } from "@/store/useProgress";
@@ -71,7 +72,7 @@ function HeaderAvatar() {
 function TopHeader({ pathname }: { pathname: string }) {
   return (
     <header className="sticky top-0 z-20 shrink-0 border-b-2 border-border bg-surface/95 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-6">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-6 px-4">
         <Link href="/" className="flex shrink-0 items-center" aria-label="머니무브 홈">
           <Logo className="h-10" priority />
         </Link>
@@ -101,10 +102,18 @@ function TopHeader({ pathname }: { pathname: string }) {
         {/* 모바일 뷰에서 로고와 우측 테마 토글 간격을 벌려주는 spacer */}
         <div className="flex-1 lg:hidden" />
 
-        {/* 헤더 프로필 레벨 아바타 배지 */}
-        <HeaderAvatar />
-
-        <ThemeToggle showLabel={false} className="shrink-0" />
+        {/* 우측 유틸리티 영역 (레벨 아바타, 검색, 테마 토글 조밀하게 배치) */}
+        <div className="flex items-center gap-2 shrink-0">
+          <HeaderAvatar />
+          <Link
+            href="/search"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-muted hover:bg-subtle hover:text-foreground active:scale-95 transition-all"
+            aria-label="검색"
+          >
+            <Search className="size-4" />
+          </Link>
+          <ThemeToggle showLabel={false} className="shrink-0" />
+        </div>
       </div>
     </header>
   );
