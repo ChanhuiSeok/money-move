@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
-import { Mascot } from "@/components/mascot/Mascot";
+import { MascotImage } from "@/components/mascot/MascotImage";
 import { Button } from "@/components/ui/Button";
 import { buttonVariants } from "@/components/ui/buttonStyles";
 import { Card } from "@/components/ui/Card";
@@ -123,7 +123,7 @@ function IntroView({ onStart }: { onStart: () => void }) {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center text-center"
       >
-        <Mascot mood="idle" className="size-24" />
+        <MascotImage variant="study" className="w-28" />
         <h1 className="mt-5 text-2xl font-bold tracking-tight">
           이미 좀 아세요?
         </h1>
@@ -171,7 +171,7 @@ function ResultView({
         transition={{ duration: 0.3 }}
       >
         <Card highlight padding="lg" className="text-center">
-          <Mascot mood="celebrate" className="mx-auto size-20" />
+          <MascotImage variant="home" className="mx-auto w-28" />
           <h1 className="mt-4 text-2xl font-bold tracking-tight">
             {canSkip ? "이미 많이 알고 계시네요!" : "기초부터 차근차근 가요!"}
           </h1>

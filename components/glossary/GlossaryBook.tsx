@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BookOpen, Lock, Search } from "lucide-react";
-import { Mascot } from "@/components/mascot/Mascot";
+import { MascotImage } from "@/components/mascot/MascotImage";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
 import { buttonVariants } from "@/components/ui/buttonStyles";
@@ -140,7 +140,7 @@ function EmptyLearned({ searching }: { searching: boolean }) {
   }
   return (
     <Card padding="lg" className="mt-3 text-center">
-      <Mascot mood="idle" className="mx-auto size-16" />
+      <MascotImage variant="study" className="mx-auto w-20" />
       <p className="mt-3 text-sm font-semibold">아직 배운 용어가 없어요.</p>
       <p className="mt-1 text-sm text-muted">
         첫 레슨을 끝내면 여기에 하나씩 쌓여요.

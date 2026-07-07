@@ -40,13 +40,13 @@ export default function ScenarioPage() {
       <BackLink href="/" label="홈" className="mb-2" />
 
       <div className="flex items-center gap-3">
-        <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-500/10 text-brand-600">
-          <Icon className="size-6" />
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-500/10">
+          <Icon className="w-7" />
         </span>
         <h1 className="text-2xl font-bold tracking-tight">{scenario.title}</h1>
       </div>
 
-      <MascotBubble mood="idle" message={scenario.intro} className="mt-4" />
+      <MascotBubble variant="study" message={scenario.intro} className="mt-4" />
 
       {/* 관련 레슨 */}
       <section className="mt-6">

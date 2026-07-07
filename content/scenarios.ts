@@ -1,11 +1,11 @@
+import type { ComponentType } from "react";
 import {
-  Home,
-  PiggyBank,
-  Receipt,
-  TrendingUp,
-  Wallet,
-  type LucideIcon,
-} from "lucide-react";
+  HouseIcon,
+  MoneyIcon,
+  PigIcon,
+  StockIcon,
+  WalletIcon,
+} from "@/components/icons/PixelIcon";
 
 /** 라이프 이벤트 진입점. "지금 내 상황"에서 관련 레슨+도구를 한 묶음으로.
    금융은 사건 기반으로 소비되니, 선형 트리와 별개로 상황에서 바로 들어오게 한다.
@@ -15,7 +15,7 @@ export type ScenarioTool = { href: string; label: string };
 
 export type Scenario = {
   id: string;
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   title: string; // "첫 월급 받았어요"
   blurb: string; // 카드용 한 줄
   intro: string; // 상세 상단 안내(2~3문장)
@@ -26,7 +26,7 @@ export type Scenario = {
 export const scenarios: Scenario[] = [
   {
     id: "first-paycheck",
-    icon: Wallet,
+    icon: WalletIcon,
     title: "첫 월급 받았어요",
     blurb: "월급명세서·4대 보험·실수령액 한 번에",
     intro:
@@ -39,7 +39,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: "year-end-tax",
-    icon: Receipt,
+    icon: MoneyIcon,
     title: "연말정산 시즌이에요",
     blurb: "공제 챙기고 13월의 월급 받기",
     intro:
@@ -52,7 +52,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: "saving-habit",
-    icon: PiggyBank,
+    icon: PigIcon,
     title: "돈을 모으고 싶어요",
     blurb: "예산·비상금·복리로 굴리기",
     intro:
@@ -62,7 +62,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: "start-investing",
-    icon: TrendingUp,
+    icon: StockIcon,
     title: "첫 투자 하려고요",
     blurb: "주식·계좌·분산투자 기초부터",
     intro:
@@ -77,7 +77,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: "finding-home",
-    icon: Home,
+    icon: HouseIcon,
     title: "집 구해요",
     blurb: "전세·월세·청약, 보증금 지키기",
     intro:

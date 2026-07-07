@@ -63,7 +63,7 @@ export default function RentVsJeonsePage() {
       </p>
 
       <MascotBubble
-        mood="idle"
+        variant="study"
         message="큰 보증금도 ‘묶이는 비용’이 있어요. 같이 따져봐요!"
         className="mt-4"
       />

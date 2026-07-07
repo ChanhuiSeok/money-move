@@ -65,7 +65,7 @@ export default function TakeHomePage() {
       </p>
 
       <MascotBubble
-        mood="idle"
+        variant="study"
         message={
           hydrated && hasProfile(profile)
             ? "내 프로필로 채워뒀어요. 바꿔봐도 좋아요!"

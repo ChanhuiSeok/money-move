@@ -5,16 +5,18 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import {
   ArrowRight,
-  BookOpen,
-  Calculator,
   CalendarClock,
-  ClipboardCheck,
   Flame,
-  Newspaper,
   Sparkles,
   Wallet,
   Zap,
 } from "lucide-react";
+import {
+  BookIcon,
+  ExamIcon,
+  MoneyIcon,
+  NewsIcon,
+} from "@/components/icons/PixelIcon";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
 import { NewsList } from "@/components/news/NewsList";
 import { buttonVariants } from "@/components/ui/buttonStyles";
@@ -87,7 +89,13 @@ export function HomeDashboard() {
   return (
     <main className="mx-auto w-full max-w-md flex-1 p-5 lg:max-w-4xl lg:py-8">
       {/* 인사 */}
-      <MascotBubble mood="idle" message={greeting} className="pt-2" />
+      <MascotBubble
+        variant="home"
+        message={greeting}
+        size="lg"
+        priority
+        className="pt-2"
+      />
 
       {/* PC(lg): 2단 — 좌측 메인 + 우측 경제뉴스(sticky). 모바일: 세로 스택(뉴스는 맨 아래 그대로). */}
       <div className="mt-5 flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,1fr)_336px] lg:items-start lg:gap-6">
@@ -98,8 +106,8 @@ export function HomeDashboard() {
               href={season.ctaHref}
               className="reveal flex items-center gap-3 rounded-card border border-brand-500/30 bg-brand-500/10 p-4 transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-brand-500/15 hover:shadow-md active:translate-y-0"
             >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
-                <CalendarClock className="size-5" />
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
+                <CalendarClock className="size-7" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-bold">{season.title}</span>
@@ -115,7 +123,7 @@ export function HomeDashboard() {
           <Card highlight padding="lg" className="reveal" style={{ animationDelay: "60ms" }}>
             <div className="flex items-center justify-between gap-2">
               <span className="flex items-center gap-2 text-sm font-semibold text-brand-600">
-                <Wallet className="size-4" /> 내 돈
+                <Wallet className="size-6" /> 내 돈
               </span>
               {hydrated && (progress.streak.count > 0 || progress.xp > 0) && (
                 <Link
@@ -123,11 +131,11 @@ export function HomeDashboard() {
                   className="flex shrink-0 items-center gap-3 rounded-full border border-border bg-surface px-3 py-1 text-xs font-bold tabular-nums"
                 >
                   <span className="flex items-center gap-1 text-orange-500">
-                    <Flame className="size-3.5" />
+                    <Flame className="size-4" />
                     {progress.streak.count}
                   </span>
                   <span className="flex items-center gap-1 text-brand-600">
-                    <Zap className="size-3.5" />
+                    <Zap className="size-4" />
                     {progress.xp}
                   </span>
                 </Link>
@@ -203,16 +211,16 @@ export function HomeDashboard() {
           </Card>
 
           {/* ── 빠른 이동: 학습 · 계산기 · 모의고사/진단 (모두 동급) ── */}
-          <div className="reveal grid grid-cols-3 gap-3" style={{ animationDelay: "120ms" }}>
+          <div className="grid grid-cols-3 gap-3">
             <ChipLink
               href={allDone ? "/learn" : `/learn/${nextId}`}
-              icon={<BookOpen className="size-4" />}
+              icon={<BookIcon className="w-8" />}
               label="오늘의 학습"
               sub={learnSub}
             />
             <ChipLink
               href="/tools"
-              icon={<Calculator className="size-4" />}
+              icon={<MoneyIcon className="w-8" />}
               label="계산기"
               sub="실수령액 등"
             />
@@ -220,14 +228,14 @@ export function HomeDashboard() {
               (started ? (
                 <ChipLink
                   href="/exams"
-                  icon={<ClipboardCheck className="size-4" />}
+                  icon={<ExamIcon className="w-8" />}
                   label="모의고사"
                   sub="실전 시험지"
                 />
               ) : (
                 <ChipLink
                   href="/diagnostic"
-                  icon={<Sparkles className="size-4" />}
+                  icon={<Sparkles className="size-6" />}
                   label="진단"
                   sub="레벨 건너뛰기"
                 />
@@ -235,17 +243,17 @@ export function HomeDashboard() {
           </div>
 
           {/* ── 상황별로 시작하기 (보조) ── */}
-          <section className="reveal" style={{ animationDelay: "180ms" }}>
+          <section>
             <h2 className="text-sm font-bold text-muted">상황별로 시작하기</h2>
             <div className="mt-3 grid grid-cols-2 gap-3">
               {scenarios.map((s) => (
                 <Link
                   key={s.id}
                   href={`/start/${s.id}`}
-                  className="group flex items-center gap-2 rounded-card border border-border bg-surface p-3 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0 lg:flex-col lg:items-start lg:gap-2"
+                  className="flex items-center gap-2 rounded-card border border-border bg-surface p-3 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0 lg:flex-col lg:items-start lg:gap-2"
                 >
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 transition-transform duration-200 group-hover:scale-110">
-                    <s.icon className="size-4" />
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
+                    <s.icon className="w-8" />
                   </span>
                   <span className="min-w-0 text-sm font-bold leading-tight">
                     {s.title}
@@ -278,8 +286,8 @@ export function HomeDashboard() {
           <Card padding="md" className="reveal" style={{ animationDelay: "160ms" }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">
-                  <Newspaper className="size-5" />
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
+                  <NewsIcon className="w-8" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-bold leading-none">
@@ -322,9 +330,9 @@ function ChipLink({
   return (
     <Link
       href={href}
-      className="group flex flex-col gap-1.5 rounded-card border border-border bg-surface p-3 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0"
+      className="flex flex-col gap-1.5 rounded-card border border-border bg-surface p-3 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0"
     >
-      <span className="relative flex size-8 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 transition-transform duration-200 group-hover:scale-110">
+      <span className="relative flex size-10 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">
         {icon}
       </span>
       <span className="text-sm font-bold leading-none">{label}</span>

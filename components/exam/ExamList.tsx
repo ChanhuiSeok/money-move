@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { ArrowRight, CheckCircle2, FileText } from "lucide-react";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
+import { BackLink } from "@/components/ui/BackLink";
 import { orderedExams } from "@/content/exams";
 import { toScore, totalQuestions } from "@/lib/exams";
 import { useExams } from "@/store/useExams";
@@ -21,6 +22,7 @@ export function ExamList() {
 
   return (
     <main className="mx-auto w-full max-w-md flex-1 p-5 lg:max-w-2xl lg:py-8">
+      <BackLink className="mb-2" />
       <h1 className="text-2xl font-bold tracking-tight">모의고사</h1>
       <p className="mt-1 text-sm text-muted">
         학습 5개 영역을 아우르는 실전 시험지예요. 한 번에 풀고 제출하면 채점과
@@ -28,7 +30,7 @@ export function ExamList() {
       </p>
 
       <MascotBubble
-        mood="idle"
+        variant="exam"
         message="레슨 문제보다 살짝 어려워요. 실력을 점검해봐요!"
         className="mt-4"
       />

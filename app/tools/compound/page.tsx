@@ -52,7 +52,7 @@ export default function CompoundPage() {
       </p>
 
       <MascotBubble
-        mood="idle"
+        variant="study"
         message="시간이 가장 큰 무기예요. 길게 볼수록 차이가 커져요!"
         className="mt-4"
       />

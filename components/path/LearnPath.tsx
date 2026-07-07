@@ -2,8 +2,10 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, ClipboardCheck, Flag, MapPin } from "lucide-react";
+import { ArrowRight, Flag, MapPin } from "lucide-react";
+import { ExamIcon } from "@/components/icons/PixelIcon";
 import { PathNode } from "@/components/path/PathNode";
+import { ProgressTrack } from "@/components/path/ProgressTrack";
 import { BackLink } from "@/components/ui/BackLink";
 import { getLessonTitle } from "@/content/lessons";
 import { levels, orderedLessonIds, unitsOfLevel } from "@/content/levels";
@@ -60,19 +62,28 @@ export function LearnPath() {
 
   // 하이드레이션 전에는 저장값을 모르므로 빈 진도로 계산(첫 레슨만 current).
   const states = computeNodeStates(orderedLessonIds, hydrated ? completedIds : []);
+  const completedCount = hydrated
+    ? completedIds.filter((id) => orderedLessonIds.includes(id)).length
+    : 0;
 
   return (
     <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 lg:py-8">
       <BackLink className="mb-2" />
       <h1 className="text-2xl font-bold tracking-tight">학습 경로</h1>
 
+      <ProgressTrack
+        completed={completedCount}
+        total={orderedLessonIds.length}
+        className="mt-4"
+      />
+
       {/* 모의고사 진입 — 하단 탭바에 없어 여기서도 갈 수 있게(특히 모바일) */}
       <Link
         href="/exams"
         className="mt-4 flex items-center gap-3 rounded-card border border-border bg-surface p-4 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md active:translate-y-0"
       >
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">
-          <ClipboardCheck className="size-5" />
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
+          <ExamIcon className="w-6" />
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-bold">모의고사 보기</span>

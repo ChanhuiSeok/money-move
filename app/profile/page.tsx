@@ -46,7 +46,7 @@ export default function ProfilePage() {
       </p>
 
       <MascotBubble
-        mood={justSaved ? "happy" : "idle"}
+        variant="home"
         message={
           justSaved
             ? "좋아요, 내 숫자가 준비됐어요!"

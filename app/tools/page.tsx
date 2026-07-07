@@ -21,15 +21,14 @@ export default function ToolsPage() {
       </p>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {TOOLS.map((t, i) => (
+        {TOOLS.map((t) => (
           <Link
             key={t.href}
             href={t.href}
-            style={{ animationDelay: `${i * 55}ms` }}
-            className="group reveal flex items-center gap-3 rounded-card border border-border bg-surface p-4 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0"
+            className="group flex items-center gap-3 rounded-card border border-border bg-surface p-4 transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-brand-500/5 hover:shadow-md active:translate-y-0"
           >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 transition-transform duration-200 group-hover:scale-110">
-              <t.icon className="size-5" />
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
+              <t.icon className="w-6" />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-bold">{t.title}</span>

@@ -32,6 +32,17 @@
   --color-sky-400: #2ad0ff;
   --color-sky-500: #07b6e6;
 
+  /* 액센트 — 마스코트 스웨터의 따뜻한 레드. 블루(멜빵=신뢰)에 대비되는 '사람다움'의 웜 포인트.
+     인사 말풍선·강조 넛지 등 소수 스팟에만 쓴다(주역은 여전히 brand 블루). */
+  --color-accent-50: #fdeceb;
+  --color-accent-100: #fbd7d4;
+  --color-accent-200: #f6b3ad;
+  --color-accent-300: #ee897f;
+  --color-accent-400: #e35f56;
+  --color-accent-500: #d5453d; /* 스웨터 레드(포인트) */
+  --color-accent-600: #bd3a33;
+  --color-accent-700: #99302b;
+
   /* 의미색 — 기본값에서 살짝 비튼 톤 */
   --color-success: #15a45c;
   --color-danger: #e84d4d;
@@ -47,13 +58,14 @@
 }
 
 :root {
-  /* 라이트: 배경은 순수 화이트 유지, 중립색에만 미세한 색온도를 줘 기본 slate 티를 뺌 */
+  /* 라이트: 배경은 순수 화이트 유지, 중립색엔 마스코트(웜 피치·크림)와 어울리게 미세한 웜 색온도.
+     기존의 cool slate 티를 완전히 빼고 살짝 따뜻한 그레이로. */
   --background: #ffffff;
   --surface: #ffffff;
-  --foreground: #1a1b22; /* 차분한 near-black */
-  --muted: #686b78;
-  --border: #e7e8ee;
-  --subtle: #f4f5f8;
+  --foreground: #1f1b19; /* 차분한 웜 near-black */
+  --muted: #6d6a70;
+  --border: #eae7e3;
+  --subtle: #f6f4f1;
 }
 
 /* 시스템이 다크인 경우 — 단, 사용자가 명시적으로 "라이트"를 골랐으면(data-theme="light") 제외 */
@@ -120,11 +132,6 @@ h1 {
   .reveal {
     animation: mm-fade-up 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
   }
-
-  /* 마스코트 등 살아있는 느낌을 주는 은은한 상하 부유. */
-  .animate-bob {
-    animation: mm-bob 3.4s ease-in-out infinite;
-  }
 }
 
 @keyframes mm-fade-up {
@@ -138,12 +145,3 @@ h1 {
   }
 }
 
-@keyframes mm-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-3.5px);
-  }
-}

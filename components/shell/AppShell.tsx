@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mascot } from "@/components/mascot/Mascot";
+import { Logo } from "@/components/brand/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   MOBILE_NAV_ITEMS,
@@ -12,7 +12,7 @@ import {
 } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-/** 허브형 페이지에 사이드바(데스크탑)·하단 탭바(모바일)를 두르는 앱 셸.
+/** 허브형 페이지에 상단 헤더(데스크탑)·하단 탭바(모바일)를 두르는 앱 셸.
    몰입형 라우트(레슨·모의고사·진단)에서는 셸을 숨기고 children만 전체화면으로 띄운다.
    테마 하이드레이션·OS 다크모드 감지는 layout.tsx의 next-themes ThemeProvider가 맡는다. */
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -22,9 +22,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     // 모바일: 화면 높이에 고정하고 콘텐츠만 내부 스크롤 → 스크롤바가 하단 탭바에 닿지 않음.
-    // 데스크탑(lg): 기존처럼 문서 전체가 스크롤되고 사이드바는 sticky.
-    <div className="flex h-dvh flex-col overflow-hidden lg:h-auto lg:min-h-dvh lg:flex-row lg:overflow-visible">
-      <SideNav pathname={pathname} />
+    // 데스크탑(lg): 문서 전체가 스크롤되고 상단 헤더는 sticky.
+    <div className="flex h-dvh flex-col overflow-hidden lg:h-auto lg:min-h-dvh lg:overflow-visible">
+      <TopHeader pathname={pathname} />
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto lg:overflow-visible">
         {children}
       </div>
@@ -33,46 +33,40 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** 데스크탑 좌측 사이드바 — lg 이상에서만. 스크롤해도 고정. */
-function SideNav({ pathname }: { pathname: string }) {
+/** 데스크탑 상단 헤더 — lg 이상에서만. 로고 + 전체 메뉴 + 테마 토글을 한 줄에. */
+function TopHeader({ pathname }: { pathname: string }) {
   return (
-    <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-border bg-surface px-3 py-5 lg:flex">
-      <Link
-        href="/"
-        className="mb-6 flex items-center gap-2 px-2"
-        aria-label="머니무브 홈"
-      >
-        <Mascot mood="happy" className="size-8" />
-        <span className="text-lg font-bold tracking-tight">머니무브</span>
-      </Link>
+    <header className="sticky top-0 z-20 hidden shrink-0 border-b border-border bg-surface/95 backdrop-blur lg:block">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-6">
+        <Link href="/" className="flex shrink-0 items-center" aria-label="머니무브 홈">
+          <Logo className="h-8" priority />
+        </Link>
 
-      <nav className="flex flex-1 flex-col gap-1">
-        {NAV_ITEMS.map((item) => {
-          const active = isActiveNav(pathname, item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors",
-                active
-                  ? "bg-brand-500/10 text-brand-600"
-                  : "text-muted hover:bg-foreground/5 hover:text-foreground",
-              )}
-            >
-              <item.icon className="size-5 shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+        <nav className="flex flex-1 items-center gap-1">
+          {NAV_ITEMS.map((item) => {
+            const active = isActiveNav(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+                  active
+                    ? "bg-brand-500/10 text-brand-600"
+                    : "text-muted hover:bg-foreground/5 hover:text-foreground",
+                )}
+              >
+                <item.icon className="size-4 shrink-0" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-      <div className="mt-2 border-t border-border pt-3">
-        <ThemeToggle showLabel={false} />
-        <p className="px-1 pt-3 text-xs text-muted">경제 문맹 퇴치 · 머니무브</p>
+        <ThemeToggle showLabel={false} className="shrink-0" />
       </div>
-    </aside>
+    </header>
   );
 }
 

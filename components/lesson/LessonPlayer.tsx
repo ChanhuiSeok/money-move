@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, RotateCcw } from "lucide-react";
-import { Mascot } from "@/components/mascot/Mascot";
+import { MascotImage } from "@/components/mascot/MascotImage";
 import { Confetti } from "@/components/ui/Confetti";
 import { Button } from "@/components/ui/Button";
 import { buttonVariants } from "@/components/ui/buttonStyles";
@@ -269,7 +269,7 @@ function SummaryView({
       )}
 
       <Card highlight padding="lg" className="text-center">
-        <Mascot mood="celebrate" className="mx-auto size-20" />
+        <MascotImage variant="home" className="mx-auto w-28" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">{pick(completeLines)}</h1>
         <p className="mt-2 text-muted">
           {total}문제 중 <b className="text-foreground">{correctCount}개</b> 맞혔어요.

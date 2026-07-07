@@ -173,7 +173,7 @@ function TaxSimulator({ initialSalary }: { initialSalary: string }) {
       </p>
 
       <MascotBubble
-        mood="idle"
+        variant="study"
         message="카드값·연금·의료비… 아는 만큼만 넣어 보세요. 빈칸은 0으로 둬도 괜찮아요!"
         className="mt-4"
       />

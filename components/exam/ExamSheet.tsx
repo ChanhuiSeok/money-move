@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Home, RotateCcw, X } from "lucide-react";
 import { ExamQuestionCard } from "@/components/exam/ExamQuestionCard";
-import { Mascot } from "@/components/mascot/Mascot";
+import { MascotImage } from "@/components/mascot/MascotImage";
 import { Button } from "@/components/ui/Button";
 import { buttonVariants } from "@/components/ui/buttonStyles";
 import { Card } from "@/components/ui/Card";
@@ -199,7 +199,7 @@ function ResultSummary({ exam, grade }: { exam: Exam; grade: ExamGrade }) {
       className="mb-8"
     >
       <Card highlight padding="lg" className="text-center">
-        <Mascot mood="celebrate" className="mx-auto size-16" />
+        <MascotImage variant="exam" className="mx-auto w-24" />
         <p className="mt-3 text-sm font-semibold text-brand-600">
           {exam.title} 결과
         </p>

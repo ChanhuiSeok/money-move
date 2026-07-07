@@ -88,7 +88,7 @@ function PensionCredit({ initialSalary }: { initialSalary: string }) {
       </p>
 
       <MascotBubble
-        mood="idle"
+        variant="study"
         message="더 유연한 연금저축부터 600만, 남으면 IRP로 900만까지! 같이 짜봐요."
         className="mt-4"
       />

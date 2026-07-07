@@ -29,7 +29,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/learn", label: "학습", icon: GraduationCap, mobile: true },
   { href: "/exams", label: "모의고사", icon: ClipboardCheck, mobile: true },
   { href: "/tools", label: "계산기", icon: Calculator, mobile: true },
-  { href: "/profile", label: "내 숫자", icon: UserRound, mobile: false },
+  { href: "/profile", label: "내 프로필", icon: UserRound, mobile: false },
   { href: "/glossary", label: "사전", icon: BookOpen, mobile: false },
   { href: "/achievements", label: "성취", icon: Trophy, mobile: true },
 ];
