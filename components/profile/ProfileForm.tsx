@@ -39,6 +39,7 @@ export function ProfileForm({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onSave({
+      ...initial,
       period,
       amount: amountNum,
       monthlyNontax: Number(nontax || "0"),

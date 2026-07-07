@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, CalendarClock, Sparkles, Wallet } from "lucide-react";
 import { NewsIcon } from "@/components/icons/PixelIcon";
 import { LearnStatus } from "@/components/home/LearnStatus";
@@ -17,11 +17,13 @@ import { greetingLines } from "@/content/messages";
 import { scenarios } from "@/content/scenarios";
 import { formatWon } from "@/lib/format";
 import { firstIncompleteLessonId } from "@/lib/path";
-import { hasProfile, profileTakeHome } from "@/lib/profile";
+import { hasProfile, profileTakeHome, saveProfile } from "@/lib/profile";
 import { todayKey } from "@/lib/progress";
 import { currentSeason, getSeasonById } from "@/lib/season";
 import { useProfile } from "@/store/useProfile";
 import { useProgress } from "@/store/useProgress";
+import type { Profile } from "@/lib/schema";
+import { cn } from "@/lib/utils";
 
 /** 날짜 문자열을 시드로 한 안정적 인덱스(서버·클라이언트 동일 → 하이드레이션 안전). */
 function dailyIndex(key: string, mod: number): number {
@@ -30,6 +32,123 @@ function dailyIndex(key: string, mod: number): number {
   for (let i = 0; i < key.length; i++) sum += key.charCodeAt(i);
   return sum % mod;
 }
+
+function AnimatedWon({ value }: { value: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = value;
+    if (start === end) {
+      setDisplayValue(end);
+      return;
+    }
+
+    const duration = 800;
+    const startTime = performance.now();
+    let frameId: number;
+
+    function run(now: number) {
+      const progress = Math.min(1, (now - startTime) / duration);
+      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const current = Math.floor(ease * end);
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(run);
+      }
+    }
+
+    frameId = requestAnimationFrame(run);
+    return () => cancelAnimationFrame(frameId);
+  }, [value]);
+
+  return <>{formatWon(displayValue)}</>;
+}
+
+function DDayWidgetView({
+  profile,
+  onSalaryDayChange,
+}: {
+  profile: Profile;
+  onSalaryDayChange: (day: number) => void;
+}) {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 });
+
+  useEffect(() => {
+    function update() {
+      const now = new Date();
+      const day = profile.salaryDay ?? 25;
+      let target = new Date(now.getFullYear(), now.getMonth(), day, 0, 0, 0, 0);
+      if (now >= target) {
+        target = new Date(now.getFullYear(), now.getMonth() + 1, day, 0, 0, 0, 0);
+      }
+      const diff = target.getTime() - now.getTime();
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 });
+        return;
+      }
+      const totalSecs = Math.floor(diff / 1000);
+      const d = Math.floor(totalSecs / (3600 * 24));
+      const h = Math.floor((totalSecs % (3600 * 24)) / 3600);
+      const m = Math.floor((totalSecs % 3600) / 60);
+      const s = totalSecs % 60;
+      setTimeLeft({ days: d, hours: h, minutes: m, seconds: s, totalSeconds: totalSecs });
+    }
+
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, [profile.salaryDay]);
+
+  return (
+    <div className="flex-1 flex flex-col justify-between">
+      <div>
+        <p className="text-sm text-muted">다음 월급날까지 남은 시간</p>
+        
+        <div className="mt-1 flex flex-wrap items-baseline gap-2">
+          <span className="text-4xl font-extrabold tracking-tight text-brand-600 lg:text-5xl">
+            D-{timeLeft.days}
+          </span>
+          <span className="text-base font-bold tabular-nums text-foreground/80">
+            {timeLeft.hours.toString().padStart(2, "0")}시간{" "}
+            {timeLeft.minutes.toString().padStart(2, "0")}분{" "}
+            {timeLeft.seconds.toString().padStart(2, "0")}초
+          </span>
+        </div>
+
+        <p className="mt-3 text-xs text-muted/80">
+          남은 시간: <span className="font-bold tabular-nums text-foreground">{timeLeft.totalSeconds.toLocaleString()}초</span>
+        </p>
+      </div>
+
+      <div className="mt-5 flex items-center justify-between border-t border-border/40 pt-4 text-xs">
+        <span className="font-semibold text-muted">내 월급날 설정</span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onSalaryDayChange((profile.salaryDay ?? 25) - 1)}
+            className="flex size-6 items-center justify-center rounded border border-border bg-surface font-bold text-muted hover:bg-subtle active:scale-95 transition-transform"
+          >
+            −
+          </button>
+          <span className="w-16 text-center font-bold text-foreground">
+            매월 {profile.salaryDay ?? 25}일
+          </span>
+          <button
+            type="button"
+            onClick={() => onSalaryDayChange((profile.salaryDay ?? 25) + 1)}
+            className="flex size-6 items-center justify-center rounded border border-border bg-surface font-bold text-muted hover:bg-subtle active:scale-95 transition-transform"
+          >
+            +
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// NudgeWidgetView removed
 
 export function HomeDashboard() {
   const hydrate = useProgress((s) => s.hydrate);
@@ -54,10 +173,37 @@ export function HomeDashboard() {
   const season = seasonOverride ?? currentSeason(today);
   const term = glossaryTerms[dailyIndex(today, glossaryTerms.length)];
   const greeting = greetingLines[dailyIndex(today, greetingLines.length)];
+
+  const saveProfileStore = useProfile((s) => s.save);
+  const widgetType = profile.widgetType ?? "salary";
+
+  function handleWidgetChange(type: "salary" | "dday") {
+    saveProfileStore({
+      ...profile,
+      widgetType: type,
+    });
+  }
+
+  function handleSalaryDayChange(day: number) {
+    const clamped = Math.min(31, Math.max(1, day));
+    saveProfileStore({
+      ...profile,
+      salaryDay: clamped,
+    });
+  }
+
   const showOnboardingNudge = profileHydrated && !hasProfile(profile);
   const bubbleMessage = showOnboardingNudge
     ? "반가워요! 아래에 월급을 딱 한 번만 적어두면, 모든 레슨과 계산기가 실제 내 숫자로 바뀐답니다!"
-    : greeting;
+    : widgetType === "dday"
+      ? "월급날까지 지갑 사수 대작전! 🪙 조금만 더 힘내볼까요?"
+      : greeting;
+
+  const mascotVariant = !hasProfile(profile)
+    ? "home"
+    : widgetType === "dday"
+      ? "run"
+      : "study";
 
   const nextId = firstIncompleteLessonId(
     orderedLessonIds,
@@ -83,7 +229,7 @@ export function HomeDashboard() {
     <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
       {/* 인사 */}
       <MascotBubble
-        variant="home"
+        variant={mascotVariant}
         message={bubbleMessage}
         size="lg"
         priority
@@ -114,9 +260,32 @@ export function HomeDashboard() {
         <div className="flex flex-col gap-5">
           {/* 내 돈 — 개인화 금융 대시보드(이 앱의 축) */}
           <Card highlight padding="lg">
-            <span className="flex items-center gap-2 text-sm font-bold text-brand-600">
-              <Wallet className="size-6" /> 내 돈
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-sm font-bold text-brand-600">
+                <Wallet className="size-6" /> 내 돈
+              </span>
+
+              {/* 위젯 스위처 버튼 */}
+              {profileHydrated && hasProfile(profile) && (
+                <div className="flex gap-0.5 rounded-lg bg-subtle p-0.5 text-[10px]">
+                  {(["salary", "dday"] as const).map((w) => (
+                    <button
+                      key={w}
+                      type="button"
+                      onClick={() => handleWidgetChange(w)}
+                      className={cn(
+                        "rounded-md px-2 py-1 font-bold transition-colors",
+                        widgetType === w
+                          ? "bg-surface text-brand-600 shadow-sm"
+                          : "text-muted hover:text-foreground",
+                      )}
+                    >
+                      {w === "salary" ? "실수령" : "디데이"}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {!profileHydrated ? (
               <div className="animate-pulse">
@@ -138,53 +307,61 @@ export function HomeDashboard() {
                 </div>
               </div>
             ) : th ? (
-              <>
-                <p className="mt-3 text-sm text-muted">
-                  이번 달에 받을 예상 실수령액이에요
-                </p>
-                <p className="mt-0.5 text-4xl font-extrabold tracking-tight tabular-nums lg:text-5xl">
-                  {formatWon(th.net)}
-                </p>
-                {/* 실수령 vs 공제 비중 바 */}
-                <div
-                  className="mt-4 h-2.5 overflow-hidden rounded-full bg-subtle/50"
-                  aria-hidden
-                >
-                  <div
-                    className="h-full rounded-full bg-brand-500"
-                    style={{ width: `${(th.net / th.monthlyGross) * 100}%` }}
-                  />
-                </div>
-                <div className="mt-1.5 flex justify-between text-[11px] text-muted tabular-nums">
-                  <span>실수령 {formatWon(th.net)}</span>
-                  <span>
-                    세전 {formatWon(th.monthlyGross)} · 공제 −
-                    {formatWon(th.totalDeduction)}
-                  </span>
-                </div>
-                <div className="mt-5 flex gap-2">
-                  <Link
-                    href="/tools/take-home"
-                    className={buttonVariants({
-                      variant: "secondary",
-                      size: "md",
-                      className: "flex-1",
-                    })}
-                  >
-                    내역 자세히 <ArrowRight className="size-4" />
-                  </Link>
-                  <Link
-                    href="/profile"
-                    className={buttonVariants({
-                      variant: "ghost",
-                      size: "md",
-                      className: "text-muted hover:text-foreground",
-                    })}
-                  >
-                    내 정보
-                  </Link>
-                </div>
-              </>
+              <div className="mt-3 min-h-[186px] flex flex-col justify-between">
+                {widgetType === "salary" ? (
+                  <>
+                    <div>
+                      <p className="text-sm text-muted">
+                        이번 달에 받을 예상 실수령액이에요
+                      </p>
+                      <p className="mt-0.5 text-4xl font-extrabold tracking-tight tabular-nums lg:text-5xl">
+                        <AnimatedWon value={th.net} />
+                      </p>
+                      {/* 실수령 vs 공제 비중 바 */}
+                      <div
+                        className="mt-4 h-2.5 overflow-hidden rounded-full bg-subtle/50"
+                        aria-hidden
+                      >
+                        <div
+                          className="h-full rounded-full bg-brand-500"
+                          style={{ width: `${(th.net / th.monthlyGross) * 100}%` }}
+                        />
+                      </div>
+                      <div className="mt-1.5 flex justify-between text-[11px] text-muted tabular-nums">
+                        <span>실수령 {formatWon(th.net)}</span>
+                        <span>
+                          세전 {formatWon(th.monthlyGross)} · 공제 −
+                          {formatWon(th.totalDeduction)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-5 flex gap-2">
+                      <Link
+                        href="/tools/take-home"
+                        className={buttonVariants({
+                          variant: "secondary",
+                          size: "md",
+                          className: "flex-1",
+                        })}
+                      >
+                        내역 자세히 <ArrowRight className="size-4" />
+                      </Link>
+                      <Link
+                        href="/profile"
+                        className={buttonVariants({
+                          variant: "ghost",
+                          size: "md",
+                          className: "text-muted hover:text-foreground",
+                        })}
+                      >
+                        내 정보
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <DDayWidgetView profile={profile} onSalaryDayChange={handleSalaryDayChange} />
+                )}
+              </div>
             ) : (
               <>
                 <p className="mt-3 text-2xl font-extrabold tracking-tight lg:text-3xl">

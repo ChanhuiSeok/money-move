@@ -17,21 +17,21 @@ export function ProgressTrack({
   return (
     <div
       className={cn(
-        "rounded-card border border-border bg-surface p-4",
-        className,
+        "bg-transparent px-0 py-2",
+        className
       )}
     >
       <div className="flex items-baseline justify-between">
-        <span className="text-sm font-bold">내 진행도</span>
         <span className="text-xs font-semibold tabular-nums text-brand-600">
           {completed}/{total} 레슨 · {pct}%
         </span>
       </div>
 
-      <div className="relative mt-5 h-14">
+      {/* mt-10으로 간격을 충분히 확보하여 마스코트 머리가 위쪽 텍스트를 침범하지 못하도록 차단 */}
+      <div className="relative mt-10 h-14">
         <div className="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-full bg-subtle">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-brand-400 to-brand-600"
+            className="h-full rounded-full bg-linear-to-r from-brand-400 to-brand-600"
             style={{ width: `${pct}%` }}
           />
         </div>

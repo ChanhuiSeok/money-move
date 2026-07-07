@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { Check, Flame, Sparkles, Zap } from "lucide-react";
 import { StreakCalendar } from "@/components/achievements/StreakCalendar";
-import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
 import { allLessons } from "@/content/lessons";
 import { completedLevelCount } from "@/content/levels";
@@ -12,7 +11,7 @@ import { learnedTermIds } from "@/lib/glossary";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/store/useProgress";
 
-export function AchievementsView() {
+export function AchievementsSection() {
   const hydrate = useProgress((s) => s.hydrate);
   const hydrated = useProgress((s) => s.hydrated);
   const progress = useProgress((s) => s.progress);
@@ -32,19 +31,16 @@ export function AchievementsView() {
   const earnedCount = earned.size;
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
-      <BackLink href="/" label="홈" className="mb-3" />
-      <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
-        성취
-      </h1>
-      <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-muted">
+    <section className="mt-8 border-t border-border pt-6">
+      <h2 className="text-xl font-bold">내 성취</h2>
+      <p className="mt-1 text-xs text-muted">
         {hydrated
-          ? `배지 ${earnedCount}/${BADGES.length} · ${progress.activeDays.length}일 학습했어요.`
+          ? `배지 ${earnedCount}/${BADGES.length} · ${progress.activeDays.length}일 동안 학습했어요.`
           : " "}
       </p>
 
       {/* 핵심 지표 — 게임 HUD 느낌의 스탯 타일 */}
-      <div className="mt-6 grid grid-cols-3 gap-3">
+      <div className="mt-4 grid grid-cols-3 gap-3">
         <Metric
           icon={<Flame className="size-4" />}
           value={hydrated ? progress.bestStreak : 0}
@@ -75,7 +71,7 @@ export function AchievementsView() {
       </Card>
 
       {/* 배지 */}
-      <h2 className="mt-6 text-sm font-bold">배지</h2>
+      <h3 className="mt-6 text-sm font-bold">배지</h3>
       <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
         {BADGES.map((b) => {
           const got = earned.has(b.id);
@@ -127,7 +123,7 @@ export function AchievementsView() {
           );
         })}
       </div>
-    </main>
+    </section>
   );
 }
 
@@ -143,7 +139,7 @@ function Metric({
   accent: "flame" | "brand";
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-card border border-border bg-surface p-3 shadow-[0_3px_0_0_var(--edge-tile)]">
+    <div className="flex flex-col items-center gap-1 rounded-card border-2 border-border bg-surface p-3">
       <span
         className={cn(
           "flex size-8 items-center justify-center rounded-full",
@@ -159,3 +155,4 @@ function Metric({
     </div>
   );
 }
+

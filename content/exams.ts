@@ -68,8 +68,7 @@ export const exams: Exam[] = [
           },
           {
             type: "choice",
-            prompt:
-              "다음 중 매달 월급에서 '원천징수'로 빠져나가지 않는 것은?",
+            prompt: "다음 중 매달 월급에서 '원천징수'로 빠져나가지 않는 것은?",
             options: ["국민연금", "건강보험료", "고용보험료", "재산세"],
             answerIndex: 3,
             explanation:
@@ -223,7 +222,12 @@ export const exams: Exam[] = [
             type: "choice",
             prompt:
               "원금 100만 원을 연 10% '복리'로 3년간 굴리면 원리금은 얼마에 가장 가까운가? (세금·수수료 무시)",
-            options: ["약 130만 원", "약 133만 원", "약 140만 원", "약 150만 원"],
+            options: [
+              "약 130만 원",
+              "약 133만 원",
+              "약 140만 원",
+              "약 150만 원",
+            ],
             answerIndex: 1,
             explanation:
               "복리는 이자에 다시 이자가 붙어요. 100 × 1.1³ ≈ 133.1만 원. 단리였다면 130만 원이니, 그 차이가 복리 효과예요.",
@@ -245,7 +249,7 @@ export const exams: Exam[] = [
           {
             type: "fill",
             prompt:
-              "물가가 전반적이고 지속적으로 오르는 현상을 뜻하는 경제 용어는? (외래어, 여섯 글자)",
+              "물가가 전반적이고 지속적으로 오르는 현상을 뜻하는 경제 용어는? (외래어, 다섯 글자)",
             answer: ["인플레이션"],
             explanation:
               "'인플레이션'이에요. 완만한 인플레는 정상이지만, 너무 빠르면 화폐 가치가 떨어져 생활이 팍팍해져요.",
@@ -293,8 +297,7 @@ export const exams: Exam[] = [
         questions: [
           {
             type: "choice",
-            prompt:
-              "'지정가 주문(limit order)'의 특징으로 옳은 것은?",
+            prompt: "'지정가 주문(limit order)'의 특징으로 옳은 것은?",
             options: [
               "원하는 가격을 정해, 그 조건에 맞을 때만 체결된다(체결이 안 될 수도 있다)",
               "가격과 무관하게 무조건 즉시 체결된다",
@@ -389,8 +392,7 @@ export const exams: Exam[] = [
           },
           {
             type: "choice",
-            prompt:
-              "주택청약종합저축의 일반적인 용도로 가장 적절한 것은?",
+            prompt: "주택청약종합저축의 일반적인 용도로 가장 적절한 것은?",
             options: [
               "아파트 분양에 청약할 자격과 가점을 쌓는 것",
               "언제든 바로 빼 쓰는 비상금 통장",
@@ -502,8 +504,7 @@ export const exams: Exam[] = [
         questions: [
           {
             type: "choice",
-            prompt:
-              "예금과 주식투자의 차이에 대한 설명으로 가장 적절한 것은?",
+            prompt: "예금과 주식투자의 차이에 대한 설명으로 가장 적절한 것은?",
             options: [
               "주식은 원금 손실이 가능하지만, 예금은 예금자보호 한도 안에서 원금이 보장된다",
               "둘 다 원금이 100% 보장된다",
@@ -544,7 +545,12 @@ export const exams: Exam[] = [
             type: "choice",
             prompt:
               "경기 침체와 물가 상승이 '동시에' 나타나는, 대응이 까다로운 상황을 뜻하는 말은?",
-            options: ["스태그플레이션", "디플레이션", "골디락스", "하이퍼그로스"],
+            options: [
+              "스태그플레이션",
+              "디플레이션",
+              "골디락스",
+              "하이퍼그로스",
+            ],
             answerIndex: 0,
             explanation:
               "침체(stagnation) + 물가상승(inflation)을 합친 '스태그플레이션'이에요. 금리를 올리면 경기가 더 나빠지고, 내리면 물가가 더 오르니 정책 선택이 어려워요.",
@@ -578,8 +584,7 @@ export const exams: Exam[] = [
         questions: [
           {
             type: "choice",
-            prompt:
-              "집을 '살 때(취득 단계)' 내는 세금으로 옳은 것은?",
+            prompt: "집을 '살 때(취득 단계)' 내는 세금으로 옳은 것은?",
             options: ["취득세", "양도소득세", "종합부동산세", "재산세"],
             answerIndex: 0,
             explanation:
@@ -619,4 +624,6 @@ export function getExamById(id: string): Exam | undefined {
 }
 
 /** 회차 순으로 정렬된 목록. */
-export const orderedExams: Exam[] = [...exams].sort((a, b) => a.order - b.order);
+export const orderedExams: Exam[] = [...exams].sort(
+  (a, b) => a.order - b.order
+);

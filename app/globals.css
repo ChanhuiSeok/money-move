@@ -64,12 +64,12 @@
   --surface: #ffffff;
   --foreground: #1f1b19; /* 차분한 웜 near-black */
   --muted: #6d6a70;
-  --border: #e7e3dd;
-  --subtle: #f5f2ee;
+  --border: #d9e2ec;
+  --subtle: #eef2f6;
 
   /* 청크 UI — 입체 눌림(솔리드 엣지) 색. 애니메이션 대신 '두께'로 물성을 준다.
      tile=카드/타일 아래 굳은 테두리, brand/success=주요 버튼의 아래 엣지(라이트·다크 공통). */
-  --edge-tile: #dcd7cf;
+  --edge-tile: #cbd6e2;
   --edge-tile-hover: #b6d3ff;
   --edge-brand: #0a45c0;
   --edge-success: #0c7a44;

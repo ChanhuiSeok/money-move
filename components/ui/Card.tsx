@@ -28,9 +28,11 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-card border-2 bg-surface",
+        "rounded-card border-2",
+        highlight
+          ? "border-brand-500/50 bg-gradient-to-br from-brand-50/30 to-brand-100/10 dark:from-brand-500/[0.05] dark:to-brand-500/[0.01]"
+          : "border-border bg-surface",
         paddings[padding],
-        highlight ? "border-brand-500/50" : "border-border",
         interactive
           ? "transition-[border-color,background-color] duration-100 hover:border-brand-400 hover:bg-brand-500/[0.04]"
           : "",

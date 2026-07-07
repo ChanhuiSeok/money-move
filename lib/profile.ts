@@ -14,6 +14,8 @@ export function defaultProfile(): Profile {
     monthlyNontax: DEFAULT_MONTHLY_NONTAX,
     dependents: 1,
     children: 0,
+    widgetType: "salary",
+    salaryDay: 25,
   };
 }
 
@@ -31,6 +33,8 @@ export function normalizeProfile(p: Profile): Profile {
     monthlyNontax: Math.max(0, p.monthlyNontax),
     dependents,
     children: Math.min(Math.max(0, Math.floor(p.children)), dependents - 1),
+    widgetType: p.widgetType === "dday" ? "dday" : "salary",
+    salaryDay: Math.min(31, Math.max(1, Math.floor(p.salaryDay ?? 25))),
   };
 }
 

@@ -119,6 +119,8 @@ export const profileSchema = z.object({
   monthlyNontax: z.number().nonnegative(), // 비과세(월) — 보통 식대 20만
   dependents: z.number().int().min(1), // 부양가족 수(본인 포함)
   children: z.number().int().nonnegative(), // 만 8~20세 자녀 수
+  widgetType: z.enum(["salary", "dday"]).optional().default("salary"),
+  salaryDay: z.number().int().min(1).max(31).optional().default(25),
 });
 
 /* ── 타입 ─────────────────────────────────────────────── */

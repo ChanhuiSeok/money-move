@@ -6,6 +6,7 @@ import { ArrowRight, Info } from "lucide-react";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { AchievementsSection } from "@/components/achievements/AchievementsView";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
 import { formatWon } from "@/lib/format";
@@ -55,6 +56,7 @@ export default function ProfilePage() {
             : "세전 월급만 알면 충분해요. 나머지는 비워둬도 돼요."
         }
         className="mt-4"
+        size="lg"
       />
 
       {/* 입력 폼 — 저장값으로 seed하려고 hydrate 이후 마운트 */}
@@ -70,6 +72,9 @@ export default function ProfilePage() {
 
       {/* 내 숫자 요약 */}
       {hydrated && ready && <MyNumbers profile={profile} />}
+
+      {/* 내 성취 기록 */}
+      <AchievementsSection />
 
       {/* 화면 — 라이트/다크/시스템. 데스크탑은 사이드바 하단에도 같은 컨트롤이 있음 */}
       <Card padding="md" className="mt-4">

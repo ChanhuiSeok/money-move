@@ -22,20 +22,24 @@ export type NavItem = {
   mobile: boolean;
 };
 
-/** 데스크탑 사이드바 항목(순서대로). mobile=true만 하단 탭바에 노출. */
+/** 데스크탑 상단 헤더 메뉴 목록 (순서대로) */
 export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "홈", icon: Home, mobile: true },
-  { href: "/search", label: "검색", icon: Search, mobile: false },
   { href: "/learn", label: "학습", icon: GraduationCap, mobile: true },
-  { href: "/exams", label: "모의고사", icon: ClipboardCheck, mobile: true },
+  { href: "/exams", label: "모의고사", icon: ClipboardCheck, mobile: false },
   { href: "/tools", label: "계산기", icon: Calculator, mobile: true },
-  { href: "/profile", label: "내 프로필", icon: UserRound, mobile: false },
-  { href: "/glossary", label: "사전", icon: BookOpen, mobile: false },
-  { href: "/achievements", label: "성취", icon: Trophy, mobile: true },
+  { href: "/glossary", label: "사전", icon: BookOpen, mobile: true },
+  { href: "/profile", label: "내 프로필", icon: UserRound, mobile: true },
 ];
 
-/** 하단 탭바용(모바일) — 최대 5개. */
-export const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((i) => i.mobile);
+/** 모바일 하단 탭바 메뉴 목록 — 홈 - 학습 - 계산기 - 사전 - 내 프로필 */
+export const MOBILE_NAV_ITEMS: NavItem[] = [
+  { href: "/", label: "홈", icon: Home, mobile: true },
+  { href: "/learn", label: "학습", icon: GraduationCap, mobile: true },
+  { href: "/tools", label: "계산기", icon: Calculator, mobile: true },
+  { href: "/glossary", label: "사전", icon: BookOpen, mobile: true },
+  { href: "/profile", label: "내 프로필", icon: UserRound, mobile: true },
+];
 
 /** 집중이 필요한 몰입형 라우트인지. true면 shell(사이드바/탭바)을 숨긴다.
    - /diagnostic: 단계형 세션

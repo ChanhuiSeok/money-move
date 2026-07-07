@@ -5,8 +5,9 @@ import mascotStudy from "./assets/mascot-study.png";
 import mascotExam from "./assets/mascot-exam.png";
 import mascotRun from "./assets/mascot-run.png";
 import mascotBook from "./assets/mascot-book.png";
+import mascotCry from "./assets/mascot-cry.png";
 
-export type MascotVariant = "home" | "study" | "exam" | "run" | "book";
+export type MascotVariant = "home" | "study" | "exam" | "run" | "book" | "cry";
 
 const ASSETS: Record<MascotVariant, StaticImageData> = {
   home: mascotHome,
@@ -14,6 +15,7 @@ const ASSETS: Record<MascotVariant, StaticImageData> = {
   exam: mascotExam,
   run: mascotRun,
   book: mascotBook,
+  cry: mascotCry,
 };
 
 const LABEL: Record<MascotVariant, string> = {
@@ -22,6 +24,7 @@ const LABEL: Record<MascotVariant, string> = {
   exam: "머니무브 마스코트가 결과 신문을 들고 있어요",
   run: "머니무브 마스코트가 힘차게 달려가요",
   book: "책과 동전 더미 — 잘했어요",
+  cry: "머니무브 마스코트가 울고 있어요",
 };
 
 /** 머니무브 마스코트(픽셀아트). home=태블릿·동전과 함께 자랑스러운 포즈(홈·축하),

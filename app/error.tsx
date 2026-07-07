@@ -21,11 +21,11 @@ export default function ErrorBoundary({
 
   return (
     <main className="mx-auto flex min-h-[70dvh] w-full max-w-md flex-1 flex-col items-center justify-center gap-6 p-5 text-center lg:max-w-lg">
-      <MascotImage variant="home" className="w-28" />
+      <MascotImage variant="cry" className="w-24" />
       <div>
-        <h1 className="text-xl">어라, 잠깐 문제가 생겼어요</h1>
+        <h1 className="text-xl">잠깐 문제가 생겼어요</h1>
         <p className="mt-2 text-sm text-muted">
-          걱정 마세요, 잘못은 아니에요. 다시 시도해보거나 홈으로 돌아가볼게요.
+          걱정 마세요, 다시 시도해보거나 홈으로 돌아갈 수 있어요.
         </p>
       </div>
       <div className="flex gap-3">

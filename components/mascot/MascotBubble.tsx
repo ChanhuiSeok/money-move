@@ -18,12 +18,12 @@ export function MascotBubble({
   priority?: boolean;
   isLoading?: boolean;
 }) {
-  const width = size === "lg" ? "w-24" : "w-16";
+  const containerSize = size === "lg" ? "w-24 h-24" : "w-16 h-16";
 
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <div className="shrink-0">
-        <MascotImage variant={variant} className={width} priority={priority} />
+      <div className={cn("shrink-0 flex items-end justify-center", containerSize)}>
+        <MascotImage variant={variant} className="max-h-full max-w-full object-contain h-auto w-auto" priority={priority} />
       </div>
       <div
         className={cn(
