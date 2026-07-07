@@ -1,12 +1,34 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { AppShell } from "@/components/shell/AppShell";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
+
+const HOME_TITLE = "머니무브 — 경제 문맹 퇴치";
+const HOME_DESCRIPTION =
+  "가입 없이 바로 시작하는, 짧고 명랑한 한국 실생활 금융 레슨. 월급명세서·소득공제·세액공제·연금까지 한 입씩.";
 
 export const metadata: Metadata = {
-  title: "돈길 — 경제 문맹 퇴치",
-  description:
-    "가입 없이 바로 시작하는, 짧고 명랑한 한국 실생활 금융 레슨. 월급명세서·소득공제·세액공제·연금까지 한 입씩.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: HOME_TITLE,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: HOME_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: SITE_NAME,
+    url: SITE_URL,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
@@ -36,6 +58,7 @@ export default function RootLayout({
         >
           <AppShell>{children}</AppShell>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

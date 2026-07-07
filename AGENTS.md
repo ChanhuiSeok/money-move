@@ -1,4 +1,4 @@
-# 돈길 (donpath)
+# 머니무브 (money-move)
 
 경제 문맹 퇴치 금융 학습 웹앱. 전체 로드맵·원칙은 `PROJECT.md`, 문구 톤은 `docs/tone-guide.md`를 따른다.
 

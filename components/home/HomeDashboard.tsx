@@ -96,7 +96,7 @@ export function HomeDashboard() {
           {hydrated && season && (
             <Link
               href={season.ctaHref}
-              className="flex items-center gap-3 rounded-card border border-brand-500/30 bg-brand-500/10 p-4 transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-brand-500/15 hover:shadow-md active:translate-y-0"
+              className="reveal flex items-center gap-3 rounded-card border border-brand-500/30 bg-brand-500/10 p-4 transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-brand-500/15 hover:shadow-md active:translate-y-0"
             >
               <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
                 <CalendarClock className="size-5" />
@@ -112,7 +112,7 @@ export function HomeDashboard() {
           )}
 
           {/* ── 히어로: 내 돈 (개인화된 금융 대시보드 = 이 앱의 축) ── */}
-          <Card highlight padding="lg">
+          <Card highlight padding="lg" className="reveal" style={{ animationDelay: "60ms" }}>
             <div className="flex items-center justify-between gap-2">
               <span className="flex items-center gap-2 text-sm font-semibold text-brand-600">
                 <Wallet className="size-4" /> 내 돈
@@ -203,7 +203,7 @@ export function HomeDashboard() {
           </Card>
 
           {/* ── 빠른 이동: 학습 · 계산기 · 모의고사/진단 (모두 동급) ── */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="reveal grid grid-cols-3 gap-3" style={{ animationDelay: "120ms" }}>
             <ChipLink
               href={allDone ? "/learn" : `/learn/${nextId}`}
               icon={<BookOpen className="size-4" />}
@@ -235,7 +235,7 @@ export function HomeDashboard() {
           </div>
 
           {/* ── 상황별로 시작하기 (보조) ── */}
-          <section>
+          <section className="reveal" style={{ animationDelay: "180ms" }}>
             <h2 className="text-sm font-bold text-muted">상황별로 시작하기</h2>
             <div className="mt-3 grid grid-cols-2 gap-3">
               {scenarios.map((s) => (
@@ -256,7 +256,7 @@ export function HomeDashboard() {
           </section>
 
           {/* ── 오늘의 한 입 (하단, 가볍게) ── */}
-          <Card padding="md">
+          <Card padding="md" className="reveal" style={{ animationDelay: "240ms" }}>
             <p className="text-xs font-semibold tracking-wide text-muted">
               오늘의 한 입
             </p>
@@ -275,7 +275,7 @@ export function HomeDashboard() {
 
         {/* ── 오늘의 경제뉴스 — PC(lg)에서는 우측 sticky 컬럼, 모바일에선 맨 아래 ── */}
         <div className="lg:sticky lg:top-8">
-          <Card padding="md">
+          <Card padding="md" className="reveal" style={{ animationDelay: "160ms" }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600">

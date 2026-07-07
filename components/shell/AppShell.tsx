@@ -40,10 +40,10 @@ function SideNav({ pathname }: { pathname: string }) {
       <Link
         href="/"
         className="mb-6 flex items-center gap-2 px-2"
-        aria-label="돈길 홈"
+        aria-label="머니무브 홈"
       >
         <Mascot mood="happy" className="size-8" />
-        <span className="text-lg font-bold tracking-tight">돈길</span>
+        <span className="text-lg font-bold tracking-tight">머니무브</span>
       </Link>
 
       <nav className="flex flex-1 flex-col gap-1">
@@ -70,7 +70,7 @@ function SideNav({ pathname }: { pathname: string }) {
 
       <div className="mt-2 border-t border-border pt-3">
         <ThemeToggle showLabel={false} />
-        <p className="px-1 pt-3 text-xs text-muted">경제 문맹 퇴치 · 돈길</p>
+        <p className="px-1 pt-3 text-xs text-muted">경제 문맹 퇴치 · 머니무브</p>
       </div>
     </aside>
   );

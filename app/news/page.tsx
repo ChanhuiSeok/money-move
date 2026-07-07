@@ -2,6 +2,13 @@ import { Info } from "lucide-react";
 import { BackLink } from "@/components/ui/BackLink";
 import { Card } from "@/components/ui/Card";
 import { NewsList } from "@/components/news/NewsList";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata({
+  title: "경제뉴스",
+  description: "주식·코스피·금리·환율·부동산까지, 주제별로 골라보는 오늘의 경제 뉴스.",
+  path: "/news",
+});
 
 export default function NewsPage() {
   return (
@@ -20,7 +27,7 @@ export default function NewsPage() {
         <Info className="size-4 shrink-0 translate-y-0.5" />
         <p>
           네이버 검색 뉴스에서 ‘경제’ 키워드로 가져온 최신순 결과예요. 기사 내용은
-          각 언론사의 것이며, 돈길은 학습 참고용으로 보여드려요.
+          각 언론사의 것이며, 머니무브는 학습 참고용으로 보여드려요.
         </p>
       </div>
     </main>
