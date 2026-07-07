@@ -165,7 +165,7 @@ function TaxSimulator({ initialSalary }: { initialSalary: string }) {
 
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
-      <BackLink className="mb-3" />
+      <BackLink href="/tools" label="계산기" className="mb-3" />
       <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
         연말정산 시뮬레이터
       </h1>
@@ -178,6 +178,7 @@ function TaxSimulator({ initialSalary }: { initialSalary: string }) {
         variant="study"
         message="카드값·연금·의료비… 아는 만큼만 넣어 보세요. 빈칸은 0으로 둬도 괜찮아요!"
         className="mt-4"
+        size="lg"
       />
 
       {/* 입력 — 총급여 + 항목별 소득공제/세액공제 */}

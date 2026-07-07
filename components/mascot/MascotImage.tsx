@@ -6,8 +6,24 @@ import mascotExam from "./assets/mascot-exam.png";
 import mascotRun from "./assets/mascot-run.png";
 import mascotBook from "./assets/mascot-book.png";
 import mascotCry from "./assets/mascot-cry.png";
+import mascotLv0 from "./assets/mascot-lv0.png";
+import mascotLv1 from "./assets/mascot-lv1.png";
+import mascotLv2 from "./assets/mascot-lv2.png";
+import mascotLv3 from "./assets/mascot-lv3.png";
+import mascotLv4 from "./assets/mascot-lv4.png";
 
-export type MascotVariant = "home" | "study" | "exam" | "run" | "book" | "cry";
+export type MascotVariant =
+  | "home"
+  | "study"
+  | "exam"
+  | "run"
+  | "book"
+  | "cry"
+  | "lv0"
+  | "lv1"
+  | "lv2"
+  | "lv3"
+  | "lv4";
 
 const ASSETS: Record<MascotVariant, StaticImageData> = {
   home: mascotHome,
@@ -16,6 +32,11 @@ const ASSETS: Record<MascotVariant, StaticImageData> = {
   run: mascotRun,
   book: mascotBook,
   cry: mascotCry,
+  lv0: mascotLv0,
+  lv1: mascotLv1,
+  lv2: mascotLv2,
+  lv3: mascotLv3,
+  lv4: mascotLv4,
 };
 
 const LABEL: Record<MascotVariant, string> = {
@@ -25,6 +46,11 @@ const LABEL: Record<MascotVariant, string> = {
   run: "머니무브 마스코트가 힘차게 달려가요",
   book: "책과 동전 더미 — 잘했어요",
   cry: "머니무브 마스코트가 울고 있어요",
+  lv0: "레벨 0 마스코트",
+  lv1: "레벨 1 마스코트",
+  lv2: "레벨 2 마스코트",
+  lv3: "레벨 3 마스코트",
+  lv4: "레벨 4 마스코트",
 };
 
 /** 머니무브 마스코트(픽셀아트). home=태블릿·동전과 함께 자랑스러운 포즈(홈·축하),

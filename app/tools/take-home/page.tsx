@@ -58,7 +58,7 @@ export default function TakeHomePage() {
   // hydrate 전엔 빈 값, 후엔 프로필로 seed해 remount(setState-in-effect 회피).
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
-      <BackLink className="mb-3" />
+      <BackLink href="/tools" label="계산기" className="mb-3" />
       <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
         실수령액 계산기
       </h1>
@@ -74,6 +74,7 @@ export default function TakeHomePage() {
             : "대략 얼마 들어올지 같이 가늠해봐요!"
         }
         className="mt-4"
+        size="lg"
       />
 
       <Calculator key={hydrated ? "ready" : "empty"} initial={seedFrom(profile)} />

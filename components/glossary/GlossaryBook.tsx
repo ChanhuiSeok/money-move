@@ -33,7 +33,7 @@ export function GlossaryBook() {
   const notYet = filtered.filter((t) => !learnedSet.has(t.id));
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+    <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
       <BackLink className="mb-3" />
       <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
         용어 사전

@@ -45,7 +45,7 @@ export default function CompoundPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
-      <BackLink className="mb-3" />
+      <BackLink href="/tools" label="계산기" className="mb-3" />
       <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-3xl">
         복리 계산기
       </h1>
@@ -57,6 +57,7 @@ export default function CompoundPage() {
         variant="study"
         message="시간이 가장 큰 무기예요. 길게 볼수록 차이가 커져요!"
         className="mt-4"
+        size="lg"
       />
 
       {/* 입력 */}

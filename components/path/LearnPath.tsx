@@ -67,7 +67,7 @@ export function LearnPath() {
     : 0;
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+    <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
       <BackLink className="mb-3" />
       <h1 className="text-[1.75rem] font-extrabold leading-tight tracking-tight sm:text-4xl">
         학습 경로

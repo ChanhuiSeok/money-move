@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { useProgress } from "@/store/useProgress";
+import { getUserLevelInfo } from "@/lib/achievements";
+import { MascotImage, type MascotVariant } from "@/components/mascot/MascotImage";
 import {
   MOBILE_NAV_ITEMS,
   NAV_ITEMS,
@@ -31,6 +34,35 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       <BottomNav pathname={pathname} />
     </div>
+  );
+}
+
+function HeaderAvatar() {
+  const hydrate = useProgress((s) => s.hydrate);
+  const hydrated = useProgress((s) => s.hydrated);
+  const progress = useProgress((s) => s.progress);
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
+  if (!hydrated) return null;
+
+  const lvl = getUserLevelInfo(progress.xp);
+
+  return (
+    <Link
+      href="/profile"
+      className="flex items-center gap-1.5 rounded-full border border-border bg-surface pl-1.5 pr-2.5 py-1 hover:bg-subtle active:scale-95 transition-all text-xs font-bold text-foreground"
+    >
+      <div className="flex size-6 items-center justify-center overflow-hidden rounded-full bg-subtle border border-brand-500/10 shrink-0">
+        <MascotImage
+          variant={`lv${lvl.level}` as MascotVariant}
+          className="max-h-full max-w-full object-contain h-auto w-auto scale-[1.75] -translate-y-[2px]"
+        />
+      </div>
+      <span>Lv.{lvl.level}</span>
+    </Link>
   );
 }
 
@@ -69,6 +101,9 @@ function TopHeader({ pathname }: { pathname: string }) {
         {/* 모바일 뷰에서 로고와 우측 테마 토글 간격을 벌려주는 spacer */}
         <div className="flex-1 lg:hidden" />
 
+        {/* 헤더 프로필 레벨 아바타 배지 */}
+        <HeaderAvatar />
+
         <ThemeToggle showLabel={false} className="shrink-0" />
       </div>
     </header>
@@ -97,7 +132,7 @@ function BottomNav({ pathname }: { pathname: string }) {
                     className="fixed inset-0 z-30"
                     onClick={() => setLearnMenuOpen(false)}
                   />
-                  <div className="absolute bottom-full mb-3.5 z-40 w-32 rounded-xl border-2 border-border bg-surface p-1 flex flex-col gap-0.5
+                  <div className="absolute bottom-full mb-3.5 z-40 w-32 rounded-xl border-2 border-border bg-surface p-1 flex flex-col
                     before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 before:h-0 before:w-0 before:border-8 before:border-transparent before:border-t-border
                     after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:-translate-y-[1px] after:h-0 after:w-0 after:border-[7px] after:border-transparent after:border-t-surface"
                   >
@@ -105,7 +140,7 @@ function BottomNav({ pathname }: { pathname: string }) {
                       href="/learn"
                       onClick={() => setLearnMenuOpen(false)}
                       className={cn(
-                        "flex items-center justify-center rounded-lg py-2.5 text-xs font-bold transition-colors",
+                        "flex h-9 items-center justify-center rounded-lg text-xs font-bold transition-colors",
                         isActiveNav(pathname, "/learn")
                           ? "bg-brand-500/10 text-brand-600"
                           : "text-muted hover:bg-foreground/5 hover:text-foreground",
@@ -113,11 +148,15 @@ function BottomNav({ pathname }: { pathname: string }) {
                     >
                       학습 코스
                     </Link>
+
+                    {/* 디바이터 라인을 독립하여 링크 패딩 간섭 제거 */}
+                    <div className="h-px bg-border/40 my-0.5 mx-1" />
+
                     <Link
                       href="/exams"
                       onClick={() => setLearnMenuOpen(false)}
                       className={cn(
-                        "flex items-center justify-center border-t border-border/40 pt-0.5 rounded-lg py-2.5 text-xs font-bold transition-colors",
+                        "flex h-9 items-center justify-center rounded-lg text-xs font-bold transition-colors",
                         isActiveNav(pathname, "/exams")
                           ? "bg-brand-500/10 text-brand-600"
                           : "text-muted hover:bg-foreground/5 hover:text-foreground",

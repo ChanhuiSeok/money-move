@@ -24,6 +24,8 @@ import { useProfile } from "@/store/useProfile";
 import { useProgress } from "@/store/useProgress";
 import type { Profile } from "@/lib/schema";
 import { cn } from "@/lib/utils";
+import { getUserLevelInfo } from "@/lib/achievements";
+import type { MascotVariant } from "@/components/mascot/MascotImage";
 
 /** 날짜 문자열을 시드로 한 안정적 인덱스(서버·클라이언트 동일 → 하이드레이션 안전). */
 function dailyIndex(key: string, mod: number): number {
@@ -199,11 +201,8 @@ export function HomeDashboard() {
       ? "월급날까지 지갑 사수 대작전! 🪙 조금만 더 힘내볼까요?"
       : greeting;
 
-  const mascotVariant = !hasProfile(profile)
-    ? "home"
-    : widgetType === "dday"
-      ? "run"
-      : "study";
+  const currentLvl = getUserLevelInfo(progress.xp);
+  const mascotVariant = `lv${currentLvl.level}` as MascotVariant;
 
   const nextId = firstIncompleteLessonId(
     orderedLessonIds,
@@ -226,7 +225,7 @@ export function HomeDashboard() {
         : "학습 시작하기";
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
       {/* 인사 */}
       <MascotBubble
         variant={mascotVariant}
@@ -255,18 +254,20 @@ export function HomeDashboard() {
 
       {/* PC(lg): 2단 — 좌측 메인(내 돈·내 학습·상황별·한 입) + 우측 뉴스(sticky).
           모바일: 세로 스택. 헤더/탭바에 이미 전역 내비가 있어, 홈은 '내비 칩' 없이 콘텐츠에 집중한다. */}
-      <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-[2fr_1fr] lg:items-start lg:gap-6">
+      <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-[1.7fr_1fr] lg:items-start lg:gap-6">
         {/* ── 메인 컬럼 ── */}
         <div className="flex flex-col gap-5">
           {/* 내 돈 — 개인화 금융 대시보드(이 앱의 축) */}
           <Card highlight padding="lg">
-            <div className="flex items-center justify-between">
+            <div className="h-8 flex items-center justify-between">
               <span className="flex items-center gap-2 text-sm font-bold text-brand-600">
                 <Wallet className="size-6" /> 내 돈
               </span>
 
-              {/* 위젯 스위처 버튼 */}
-              {profileHydrated && hasProfile(profile) && (
+              {/* 위젯 스위처 버튼 & 로딩 중 스켈레톤 스페이서 */}
+              {!profileHydrated ? (
+                <div className="h-6 w-24 animate-pulse rounded-lg bg-subtle/50" />
+              ) : hasProfile(profile) ? (
                 <div className="flex gap-0.5 rounded-lg bg-subtle p-0.5 text-[10px]">
                   {(["salary", "dday"] as const).map((w) => (
                     <button
@@ -284,32 +285,33 @@ export function HomeDashboard() {
                     </button>
                   ))}
                 </div>
-              )}
+              ) : null}
             </div>
-
-            {!profileHydrated ? (
-              <div className="animate-pulse">
-                {/* 타이틀 스켈레톤: text-sm (20px) 높이 및 마진 일치 */}
-                <div className="mt-3 h-5 w-40 rounded bg-subtle/50" />
-                {/* 금액 스켈레톤: text-4xl (40px) / lg:text-5xl (48px) 높이 및 마진 일치 */}
-                <div className="mt-0.5 h-10 w-56 rounded-lg bg-subtle/50 lg:h-12" />
-                {/* 비중 바 스켈레톤: h-2.5 및 마진 일치 */}
-                <div className="mt-4 h-2.5 w-full rounded-full bg-subtle/50" />
-                {/* 상세설명 스켈레톤: text-[11px] (16px) 높이 및 마진 일치 */}
-                <div className="mt-1.5 flex justify-between">
-                  <div className="h-4 w-28 rounded bg-subtle/50" />
-                  <div className="h-4 w-48 rounded bg-subtle/50" />
+            <div className="mt-3 h-[208px] flex flex-col justify-between">
+              {!profileHydrated ? (
+                <div className="animate-pulse flex-1 flex flex-col justify-between">
+                  <div>
+                    {/* 타이틀 스켈레톤 */}
+                    <div className="h-5 w-40 rounded bg-subtle/50" />
+                    {/* 금액 스켈레톤 */}
+                    <div className="mt-2.5 h-10 w-56 rounded-lg bg-subtle/50 lg:h-12" />
+                    {/* 비중 바 스켈레톤 */}
+                    <div className="mt-5 h-2.5 w-full rounded-full bg-subtle/50" />
+                    {/* 상세설명 스켈레톤 */}
+                    <div className="mt-2 flex justify-between">
+                      <div className="h-4 w-28 rounded bg-subtle/50" />
+                      <div className="h-4 w-48 rounded bg-subtle/50" />
+                    </div>
+                  </div>
+                  {/* 버튼 스켈레톤 */}
+                  <div className="flex gap-2">
+                    <div className="h-11 flex-1 rounded-xl bg-subtle/50" />
+                    <div className="h-11 w-20 rounded-xl bg-subtle/50" />
+                  </div>
                 </div>
-                {/* 버튼 스켈레톤: h-11 및 마진 일치 */}
-                <div className="mt-5 flex gap-2">
-                  <div className="h-11 flex-1 rounded-xl bg-subtle/50" />
-                  <div className="h-11 w-20 rounded-xl bg-subtle/50" />
-                </div>
-              </div>
-            ) : th ? (
-              <div className="mt-3 min-h-[186px] flex flex-col justify-between">
-                {widgetType === "salary" ? (
-                  <>
+              ) : th ? (
+                widgetType === "salary" ? (
+                  <div className="flex-1 flex flex-col justify-between">
                     <div>
                       <p className="text-sm text-muted">
                         이번 달에 받을 예상 실수령액이에요
@@ -357,32 +359,34 @@ export function HomeDashboard() {
                         내 정보
                       </Link>
                     </div>
-                  </>
+                  </div>
                 ) : (
                   <DDayWidgetView profile={profile} onSalaryDayChange={handleSalaryDayChange} />
-                )}
-              </div>
-            ) : (
-              <>
-                <p className="mt-3 text-2xl font-extrabold tracking-tight lg:text-3xl">
-                  월급 딱 한 번만 적어볼까요?
-                  <br className="hidden sm:block" /> 여기가 전부 내 지갑 이야기가 돼요
-                </p>
-                <p className="mt-2 text-sm text-muted">
-                  모든 레슨과 계산기가 내 실제 월급 기준으로 바뀌어요. 30초면 충분해요.
-                </p>
-                <Link
-                  href="/profile"
-                  className={buttonVariants({
-                    size: "lg",
-                    fullWidth: true,
-                    className: "mt-5",
-                  })}
-                >
-                  월급 넣기 <ArrowRight className="size-5" />
-                </Link>
-              </>
-            )}
+                )
+              ) : (
+                <div className="flex-1 flex flex-col justify-between">
+                  <div>
+                    <p className="text-2xl font-extrabold tracking-tight lg:text-3xl leading-tight text-foreground">
+                      월급 딱 한 번만 적어볼까요?
+                      <br className="hidden sm:block" /> 여기가 전부 내 지갑 이야기가 돼요
+                    </p>
+                    <p className="mt-2 text-sm text-muted">
+                      모든 레슨과 계산기가 내 실제 월급 기준으로 바뀌어요. 30초면 충분해요.
+                    </p>
+                  </div>
+                  <Link
+                    href="/profile"
+                    className={buttonVariants({
+                      size: "lg",
+                      fullWidth: true,
+                      className: "mt-5",
+                    })}
+                  >
+                    월급 넣기 <ArrowRight className="size-5" />
+                  </Link>
+                </div>
+              )}
+            </div>
           </Card>
 
           {/* 내 학습 — 레벨별 진행 + 스트릭/XP + 이어서 풀기 */}

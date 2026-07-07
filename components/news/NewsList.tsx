@@ -94,7 +94,7 @@ export function NewsList({
       )}
 
       {loading ? (
-        <div className="divide-y divide-border/60">
+        <div className="divide-y divide-border/60 h-[580px]">
           {Array.from({ length: limit ?? 6 }).map((_, i) => (
             <div key={i} className="flex items-center gap-3 py-3">
               {numbered && (

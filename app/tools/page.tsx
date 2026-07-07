@@ -14,7 +14,7 @@ export const metadata = pageMetadata({
 /** 계산기 허브. 배운 걸 바로 써먹는 도구 모음. */
 export default function ToolsPage() {
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+    <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
       <PageHeader
         title="계산기"
         subtitle="배운 걸 내 숫자로 바로 써먹어요. 모두 추정치예요."

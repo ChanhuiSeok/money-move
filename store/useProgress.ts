@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { Progress } from "@/lib/schema";
 import {
+  addXp,
   completeLesson,
   defaultProgress,
   gainHeart,
@@ -26,6 +27,8 @@ type ProgressState = {
   placeOut: (lessonIds: string[]) => void;
   loseHeart: () => void;
   gainHeart: () => void;
+  gainXp: (amount: number) => void;
+  resetXp: () => void;
   reset: () => void;
 };
 
@@ -53,6 +56,12 @@ export const useProgress = create<ProgressState>((set) => ({
   loseHeart: () => set((s) => ({ progress: persist(loseHeart(s.progress)) })),
 
   gainHeart: () => set((s) => ({ progress: persist(gainHeart(s.progress)) })),
+
+  gainXp: (amount) =>
+    set((s) => ({ progress: persist(addXp(s.progress, amount)) })),
+
+  resetXp: () =>
+    set((s) => ({ progress: persist({ ...s.progress, xp: 0 }) })),
 
   reset: () => set(() => ({ progress: persist(defaultProgress()) })),
 }));

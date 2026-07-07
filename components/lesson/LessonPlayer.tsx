@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, RotateCcw } from "lucide-react";
-import { MascotImage } from "@/components/mascot/MascotImage";
+import { MascotImage, type MascotVariant } from "@/components/mascot/MascotImage";
 import { Confetti } from "@/components/ui/Confetti";
 import { Button } from "@/components/ui/Button";
 import { buttonVariants } from "@/components/ui/buttonStyles";
@@ -16,32 +16,19 @@ import { RichText } from "@/components/glossary/RichText";
 import { completeLines, correctLines, pick, wrongLines } from "@/content/messages";
 import { allLessons } from "@/content/lessons";
 import { completedLevelCount, levelJustCompleted } from "@/content/levels";
-import {
-  newlyEarnedBadges,
-  type AchievementStats,
-  type Badge,
-} from "@/lib/achievements";
+import { getUserLevelInfo } from "@/lib/achievements";
 import { learnedTermIds } from "@/lib/glossary";
 import { hasAnswer, isAnswerCorrect, type Answer } from "@/lib/grade";
 import { playCorrectChime } from "@/lib/sound";
 import type { Level, Lesson, Progress } from "@/lib/schema";
 import { useProgress } from "@/store/useProgress";
 
-function statsOf(p: Progress): AchievementStats {
-  return {
-    completedCount: p.completedLessonIds.length,
-    xp: p.xp,
-    bestStreak: p.bestStreak,
-    levelsCompleted: completedLevelCount(p.completedLessonIds),
-    termsLearned: learnedTermIds(p.completedLessonIds, allLessons).size,
-  };
-}
-
 type Phase = "intro" | "play" | "done";
 
 export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const hydrate = useProgress((s) => s.hydrate);
   const complete = useProgress((s) => s.complete);
+  const progress = useProgress((s) => s.progress);
 
   // 진도를 덮어쓰지 않도록 마운트 시 저장값을 불러온다.
   useEffect(() => {
@@ -56,7 +43,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const [correctCount, setCorrectCount] = useState(0);
   const [confetti, setConfetti] = useState(0);
   const [levelCleared, setLevelCleared] = useState<Level | null>(null);
-  const [newBadges, setNewBadges] = useState<Badge[]>([]);
+  const [levelUpInfo, setLevelUpInfo] = useState<{ level: number; title: string; emoji: string } | null>(null);
 
   const question = lesson.questions[index];
   const isCorrect = checked && question ? isAnswerCorrect(question, answer) : false;
@@ -90,13 +77,23 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   }
 
   function finish() {
-    // 완료 전/후 진도를 비교해 새 배지·레벨 클리어를 가려낸다.
-    const before = statsOf(useProgress.getState().progress);
+    const beforeXp = useProgress.getState().progress.xp;
     complete(lesson.id, xpEarned);
     const after = useProgress.getState().progress;
     const cleared = levelJustCompleted(lesson.id, after.completedLessonIds);
     setLevelCleared(cleared);
-    setNewBadges(newlyEarnedBadges(before, statsOf(after)));
+    
+    // 레벨업 판정
+    const beforeLvl = getUserLevelInfo(beforeXp);
+    const afterLvl = getUserLevelInfo(after.xp);
+    if (afterLvl.level > beforeLvl.level) {
+      setLevelUpInfo({
+        level: afterLvl.level,
+        title: afterLvl.title,
+        emoji: afterLvl.badgeEmoji,
+      });
+    }
+
     setConfetti((n) => n + (cleared ? 2 : 1));
     setPhase("done");
   }
@@ -108,7 +105,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
     setChecked(false);
     setCorrectCount(0);
     setLevelCleared(null);
-    setNewBadges([]);
+    setLevelUpInfo(null);
   }
 
   const filled = phase === "done" ? total : index + (checked ? 1 : 0);
@@ -190,7 +187,8 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
             total={total}
             xp={xpEarned}
             levelCleared={levelCleared}
-            newBadges={newBadges}
+            levelUpInfo={levelUpInfo}
+            progressXp={progress.xp}
             onRetry={retry}
           />
         )}
@@ -235,14 +233,16 @@ function SummaryView({
   total,
   xp,
   levelCleared,
-  newBadges,
+  levelUpInfo,
+  progressXp,
   onRetry,
 }: {
   correctCount: number;
   total: number;
   xp: number;
   levelCleared: Level | null;
-  newBadges: Badge[];
+  levelUpInfo: { level: number; title: string; emoji: string } | null;
+  progressXp: number;
   onRetry: () => void;
 }) {
   return (
@@ -269,7 +269,10 @@ function SummaryView({
       )}
 
       <Card highlight padding="lg" className="text-center">
-        <MascotImage variant="home" className="mx-auto w-28" />
+        <MascotImage 
+          variant={`lv${getUserLevelInfo(progressXp).level}` as MascotVariant} 
+          className="mx-auto w-28" 
+        />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">{pick(completeLines)}</h1>
         <p className="mt-2 text-muted">
           {total}문제 중 <b className="text-foreground">{correctCount}개</b> 맞혔어요.
@@ -278,20 +281,13 @@ function SummaryView({
           +{xp} XP
         </div>
 
-        {/* 새로 얻은 배지 */}
-        {newBadges.length > 0 && (
+        {/* 레벨업 축하 */}
+        {levelUpInfo && (
           <div className="mt-4 border-t border-border pt-4">
-            <p className="text-sm font-semibold text-brand-600">새 배지 획득! 🎉</p>
-            <div className="mt-2 flex flex-wrap justify-center gap-2">
-              {newBadges.map((b) => (
-                <span
-                  key={b.id}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/10 px-3 py-1.5 text-sm font-semibold"
-                >
-                  <span className="text-lg">{b.emoji}</span>
-                  {b.title}
-                </span>
-              ))}
+            <p className="text-sm font-semibold text-brand-600">레벨 업! 🎉</p>
+            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-500/10 px-4 py-2 text-sm font-extrabold text-brand-700">
+              <span className="text-lg">{levelUpInfo.emoji}</span>
+              Lv.{levelUpInfo.level} {levelUpInfo.title} 달성!
             </div>
           </div>
         )}

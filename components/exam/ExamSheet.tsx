@@ -23,6 +23,7 @@ import {
 import { todayKey } from "@/lib/progress";
 import type { Exam } from "@/lib/schema";
 import { useExams } from "@/store/useExams";
+import { useProgress } from "@/store/useProgress";
 
 const ROMAN = ["Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ", "Ⅶ"];
 const levelTitle = (id: string) => levels.find((l) => l.id === id)?.title ?? id;
@@ -30,6 +31,7 @@ const levelTitle = (id: string) => levels.find((l) => l.id === id)?.title ?? id;
 export function ExamSheet({ exam }: { exam: Exam }) {
   const hydrate = useExams((s) => s.hydrate);
   const record = useExams((s) => s.record);
+  const gainXp = useProgress((s) => s.gainXp);
 
   useEffect(() => {
     hydrate();
@@ -59,6 +61,13 @@ export function ExamSheet({ exam }: { exam: Exam }) {
     const g = gradeExam(exam, answers);
     setGrade(g);
     record(exam.id, { correct: g.correct, total: g.total, takenAt: todayKey() });
+
+    // 모의고사 제출 보상 XP 계산
+    const baseReward = 30; // 기본 완료 보상
+    const correctReward = g.correct * 5; // 문제당 5 XP
+    const bonusReward = g.correct / g.total >= 0.8 ? 20 : 0; // 정답률 80% 이상 고득점 보너스 20 XP
+    gainXp(baseReward + correctReward + bonusReward);
+
     if (g.passed) setConfetti((n) => n + 1);
     window.scrollTo({ top: 0, behavior: "auto" });
   }

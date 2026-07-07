@@ -48,7 +48,7 @@ export default function ScenarioPage() {
         </h1>
       </div>
 
-      <MascotBubble variant="study" message={scenario.intro} className="mt-4" />
+      <MascotBubble variant="study" message={scenario.intro} className="mt-4" size="lg" />
 
       {/* 관련 레슨 */}
       <section className="mt-6">

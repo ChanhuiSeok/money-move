@@ -21,7 +21,7 @@ export function ExamList() {
   }, [hydrate]);
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+    <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
       <PageHeader
         title="모의고사"
         subtitle="학습 5개 영역을 아우르는 실전 시험지예요. 한 번에 풀고 제출하면 채점과 해설을 볼 수 있어요."
@@ -30,6 +30,7 @@ export function ExamList() {
       <MascotBubble
         variant="exam"
         message="레슨 문제보다 살짝 어려워요. 실력을 점검해봐요!"
+        size="lg"
       />
 
       <ul className="mt-5 flex flex-col gap-3">

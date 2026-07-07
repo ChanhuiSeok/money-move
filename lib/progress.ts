@@ -96,6 +96,13 @@ export function completeLesson(
   };
 }
 
+export function addXp(progress: Progress, amount: number): Progress {
+  return {
+    ...progress,
+    xp: progress.xp + amount,
+  };
+}
+
 /** 진단 테스트로 이미 아는 레슨을 건너뛴다(완료 처리).
    건너뛰기는 '학습 활동'이 아니므로 XP·스트릭은 주지 않고 진도만 채운다.
    이미 완료한 레슨은 그대로 둔다. */
