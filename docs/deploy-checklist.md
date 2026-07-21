@@ -11,9 +11,12 @@
       넣어야 `sitemap.xml`·`robots.txt`·OG 태그의 canonical URL이 전부 맞게 바뀐다.
 
 - [ ] **네이버 검색 API 키 재발급 + 배포 환경에 등록**
-      `.env.local`의 `NAVER_SEARCH_CLIENT_ID`/`NAVER_SEARCH_CLIENT_SECRET`은 로컬 전용(gitignore됨,
-      커밋된 적 없음)이지만 로컬에 평문으로 있던 이력이 있으니 배포 전 [네이버 개발자센터](https://developers.naver.com/apps)에서
-      재발급 후, Vercel 프로젝트 Environment Variables에 새 키로 등록. `.env.local`은 절대 커밋하지 않는다.
+      `app/api/news/route.ts`는 이제 NAVER API HUB(`https://naverapihub.apigw.ntruss.com`)를 쓴다 —
+      키는 [네이버 개발자센터](https://developers.naver.com/apps)가 아니라
+      [NAVER Cloud Platform 콘솔](https://console.ncloud.com)의 API Gateway/API Hub 상품에서 발급받은
+      Client ID/Secret이어야 한다. `.env.local`의 `NAVER_SEARCH_CLIENT_ID`/`NAVER_SEARCH_CLIENT_SECRET`은
+      로컬 전용(gitignore됨, 커밋된 적 없음)이지만 로컬에 평문으로 있던 이력이 있으니 배포 전 재발급 후,
+      Vercel 프로젝트 Environment Variables에 새 키로 등록. `.env.local`은 절대 커밋하지 않는다.
 
 - [ ] **저장소 정리**
 

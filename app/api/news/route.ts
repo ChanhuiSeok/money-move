@@ -16,7 +16,7 @@ import { checkRateLimit, clientIpFromHeaders } from "@/lib/rateLimit";
    - ?topic=<id>: 주제별 검색.
    - ?topic=mixed: 관리 쿼리들을 병렬로 가져와 '주제별 최신'을 번갈아 섞음(홈 카드용). */
 
-const ENDPOINT = "https://openapi.naver.com/v1/search/news.json";
+const ENDPOINT = "https://naverapihub.apigw.ntruss.com/search/v1/news";
 const REVALIDATE_SECONDS = 120;
 const RATE_LIMIT = 30;
 const RATE_WINDOW_MS = 60_000;
@@ -30,12 +30,12 @@ async function fetchNaver(
 ): Promise<NewsItem[]> {
   const url = `${ENDPOINT}?query=${encodeURIComponent(
     query
-  )}&display=${display}&sort=date`;
+  )}&display=${display}&sort=date&format=json`;
   try {
     const res = await fetch(url, {
       headers: {
-        "X-Naver-Client-Id": clientId,
-        "X-Naver-Client-Secret": clientSecret,
+        "X-NCP-APIGW-API-KEY-ID": clientId,
+        "X-NCP-APIGW-API-KEY": clientSecret,
       },
       next: { revalidate: REVALIDATE_SECONDS },
     });
