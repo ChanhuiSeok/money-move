@@ -7,7 +7,7 @@ import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const HOME_TITLE = "머니무브 - 경제 문맹 퇴치";
 const HOME_DESCRIPTION =
-  "가입 없이 바로 시작하는, 짧고 명랑한 한국 실생활 금융 레슨. 월급명세서·소득공제·세액공제·연금까지 한 입씩.";
+  "가입 없이 바로 시작하는 실생활 금융 레슨. 월급명세서·소득공제·세액공제·연금까지 한 입씩.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
