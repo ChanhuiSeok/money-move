@@ -205,7 +205,7 @@ export const useHomeOrder = create<HomeOrderState>((set) => ({
       const remaining = state.mobileSectionIds.filter(
         (id) => id !== "news-aside"
       );
-      const nextIds =
+      const nextIds: HomeSectionId[] =
         tab === "news"
           ? ["news-aside", ...remaining]
           : [...remaining, "news-aside"];

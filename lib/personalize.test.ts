@@ -4,6 +4,7 @@ import { defaultProfile } from "@/lib/profile";
 import type { Profile } from "@/lib/schema";
 
 const setProfile: Profile = {
+  ...defaultProfile(),
   period: "month",
   amount: 3_000_000,
   monthlyNontax: 200_000,

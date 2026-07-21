@@ -31,6 +31,7 @@ describe("profile", () => {
 
   it("normalizeProfile은 자녀 수를 본인 뺀 부양가족 이내로 클램프", () => {
     const p = normalizeProfile({
+      ...defaultProfile(),
       period: "month",
       amount: -100,
       monthlyNontax: -1,
@@ -49,6 +50,7 @@ describe("profile", () => {
 
   it("profileTakeHome은 실수령액 계산기와 같은 결과", () => {
     const p = {
+      ...defaultProfile(),
       period: "month" as const,
       amount: 3_000_000,
       monthlyNontax: 200_000,
