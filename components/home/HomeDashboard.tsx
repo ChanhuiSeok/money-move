@@ -215,14 +215,14 @@ function MobileToggleBar() {
   const setMobileTab = useHomeOrder((s) => s.setMobileTab);
 
   return (
-    <div className="mt-4 flex rounded-xl bg-subtle/80 p-1 border border-border/50 lg:hidden">
+    <div className="mt-4 flex rounded-xl bg-subtle p-1 border border-border/60 lg:hidden">
       <button
         type="button"
         onClick={() => setMobileTab("news")}
         className={cn(
-          "flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm transition-all",
+          "flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm font-bold transition-all",
           mobileTab === "news"
-            ? "bg-surface text-foreground font-extrabold shadow-sm border border-border/40"
+            ? "bg-surface text-foreground shadow-sm border border-border/50 dark:bg-[#2b3248] dark:text-foreground dark:border-white/10 dark:shadow-md"
             : "text-muted font-medium hover:text-foreground"
         )}
       >
@@ -232,9 +232,9 @@ function MobileToggleBar() {
         type="button"
         onClick={() => setMobileTab("my-economy")}
         className={cn(
-          "flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm transition-all",
+          "flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm font-bold transition-all",
           mobileTab === "my-economy"
-            ? "bg-surface text-foreground font-extrabold shadow-sm border border-border/40"
+            ? "bg-surface text-foreground shadow-sm border border-border/50 dark:bg-[#2b3248] dark:text-foreground dark:border-white/10 dark:shadow-md"
             : "text-muted font-medium hover:text-foreground"
         )}
       >
