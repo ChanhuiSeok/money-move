@@ -10,7 +10,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const paddings = {
   none: "",
-  sm: "p-4",
+  sm: "p-5",
   md: "p-6",
   lg: "p-7 sm:p-8",
 };

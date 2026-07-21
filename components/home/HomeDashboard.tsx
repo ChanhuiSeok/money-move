@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArrowRight, CalendarClock, Sparkles, Wallet } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarClock,
+  GripVertical,
+  RotateCcw,
+  Sparkles,
+  Wallet,
+} from "lucide-react";
 import { NewsIcon } from "@/components/icons/PixelIcon";
 import { LearnStatus } from "@/components/home/LearnStatus";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
@@ -17,11 +24,18 @@ import { greetingLines } from "@/content/messages";
 import { scenarios } from "@/content/scenarios";
 import { formatWon } from "@/lib/format";
 import { firstIncompleteLessonId } from "@/lib/path";
-import { hasProfile, profileTakeHome, saveProfile } from "@/lib/profile";
+import { hasProfile, profileTakeHome } from "@/lib/profile";
 import { todayKey } from "@/lib/progress";
 import { currentSeason, getSeasonById } from "@/lib/season";
 import { useProfile } from "@/store/useProfile";
 import { useProgress } from "@/store/useProgress";
+import {
+  useHomeOrder,
+  type HomeSectionId,
+  type MobileTab,
+  DEFAULT_PC_COLUMNS,
+  DEFAULT_MOBILE_SECTION_IDS,
+} from "@/store/useHomeOrder";
 import type { Profile } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { getUserLevelInfo } from "@/lib/achievements";
@@ -75,7 +89,13 @@ function DDayWidgetView({
   profile: Profile;
   onSalaryDayChange: (day: number) => void;
 }) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    totalSeconds: 0,
+  });
 
   useEffect(() => {
     function update() {
@@ -83,11 +103,25 @@ function DDayWidgetView({
       const day = profile.salaryDay ?? 25;
       let target = new Date(now.getFullYear(), now.getMonth(), day, 0, 0, 0, 0);
       if (now >= target) {
-        target = new Date(now.getFullYear(), now.getMonth() + 1, day, 0, 0, 0, 0);
+        target = new Date(
+          now.getFullYear(),
+          now.getMonth() + 1,
+          day,
+          0,
+          0,
+          0,
+          0
+        );
       }
       const diff = target.getTime() - now.getTime();
       if (diff <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 });
+        setTimeLeft({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          totalSeconds: 0,
+        });
         return;
       }
       const totalSecs = Math.floor(diff / 1000);
@@ -95,7 +129,13 @@ function DDayWidgetView({
       const h = Math.floor((totalSecs % (3600 * 24)) / 3600);
       const m = Math.floor((totalSecs % 3600) / 60);
       const s = totalSecs % 60;
-      setTimeLeft({ days: d, hours: h, minutes: m, seconds: s, totalSeconds: totalSecs });
+      setTimeLeft({
+        days: d,
+        hours: h,
+        minutes: m,
+        seconds: s,
+        totalSeconds: totalSecs,
+      });
     }
 
     update();
@@ -107,7 +147,7 @@ function DDayWidgetView({
     <div className="flex-1 flex flex-col justify-between">
       <div>
         <p className="text-sm text-muted">다음 월급날까지 남은 시간</p>
-        
+
         <div className="mt-1 flex flex-wrap items-baseline gap-2">
           <span className="text-4xl font-extrabold tracking-tight text-brand-600 lg:text-5xl">
             D-{timeLeft.days}
@@ -120,7 +160,10 @@ function DDayWidgetView({
         </div>
 
         <p className="mt-3 text-xs text-muted/80">
-          남은 시간: <span className="font-bold tabular-nums text-foreground">{timeLeft.totalSeconds.toLocaleString()}초</span>
+          남은 시간:{" "}
+          <span className="font-bold tabular-nums text-foreground">
+            {timeLeft.totalSeconds.toLocaleString()}초
+          </span>
         </p>
       </div>
 
@@ -150,7 +193,96 @@ function DDayWidgetView({
   );
 }
 
-// NudgeWidgetView removed
+/** 카드 드래그 핸들 UI (PC 마우스 전용 인디케이터) */
+function DragHandle() {
+  return (
+    <div
+      className="flex size-6 items-center justify-center text-muted/40 hover:text-brand-600 transition-colors shrink-0"
+      title="카드를 잡고 이동 (Drag & Drop)"
+    >
+      <GripVertical className="size-4" />
+    </div>
+  );
+}
+
+/** PC 전용 카드 컨트롤러 */
+function CardControl() {
+  return (
+    <div className="hidden lg:block shrink-0">
+      <DragHandle />
+    </div>
+  );
+}
+
+/** 모바일 전용 모던 세그먼트 토글 바 */
+function MobileToggleBar() {
+  const mobileTab = useHomeOrder((s) => s.mobileTab);
+  const setMobileTab = useHomeOrder((s) => s.setMobileTab);
+
+  return (
+    <div className="mt-4 flex rounded-xl bg-subtle/80 p-1 border border-border/50 lg:hidden">
+      <button
+        type="button"
+        onClick={() => setMobileTab("news")}
+        className={cn(
+          "flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm transition-all",
+          mobileTab === "news"
+            ? "bg-surface text-foreground font-extrabold shadow-sm border border-border/40"
+            : "text-muted font-medium hover:text-foreground"
+        )}
+      >
+        <span>경제 뉴스</span>
+      </button>
+      <button
+        type="button"
+        onClick={() => setMobileTab("my-economy")}
+        className={cn(
+          "flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm transition-all",
+          mobileTab === "my-economy"
+            ? "bg-surface text-foreground font-extrabold shadow-sm border border-border/40"
+            : "text-muted font-medium hover:text-foreground"
+        )}
+      >
+        <span>나의 경제</span>
+      </button>
+    </div>
+  );
+}
+
+/** 도톰하고 명확한 드롭 위치 안내 칩 */
+function DropIndicator() {
+  return (
+    <div className="my-1.5 flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-brand-500 bg-brand-500/10 py-3 transition-all duration-150 animate-pulse">
+      <span className="size-2 rounded-full bg-brand-500 animate-ping" />
+      <span className="text-xs font-bold text-brand-600">
+        이곳에 놓아 카드를 이동합니다
+      </span>
+    </div>
+  );
+}
+
+/** 빈 컬럼 엠프티 스테이트 및 드롭 타겟 전환 박스 */
+function EmptyColumnBox({ isDropTarget }: { isDropTarget: boolean }) {
+  if (isDropTarget) {
+    return (
+      <div className="my-2 flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-brand-500 bg-brand-500/10 py-10 transition-all duration-150 animate-pulse">
+        <span className="size-2 rounded-full bg-brand-500 animate-ping" />
+        <span className="text-xs font-bold text-brand-600">
+          이곳에 놓아 카드를 이동합니다
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="my-2 flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-border/60 bg-subtle/30 py-10 text-center text-muted transition-colors">
+      <GripVertical className="size-4 text-muted/50" />
+      <span className="text-xs font-semibold text-muted">
+        여기에 영역을 옮길 수 있어요
+      </span>
+    </div>
+  );
+}
 
 export function HomeDashboard() {
   const hydrate = useProgress((s) => s.hydrate);
@@ -160,13 +292,31 @@ export function HomeDashboard() {
   const profileHydrated = useProfile((s) => s.hydrated);
   const profile = useProfile((s) => s.profile);
 
+  // PC & 모바일 독립 스토어 상태 및 메소드
+  const pcColumns = useHomeOrder((s) => s.pcColumns);
+  const mobileSectionIds = useHomeOrder((s) => s.mobileSectionIds);
+  const orderHydrated = useHomeOrder((s) => s.hydrated);
+  const hydrateHomeOrder = useHomeOrder((s) => s.hydrate);
+  const movePcSectionToPosition = useHomeOrder(
+    (s) => s.movePcSectionToPosition
+  );
+  const resetPcColumns = useHomeOrder((s) => s.resetPcColumns);
+  const resetMobileOrder = useHomeOrder((s) => s.resetMobileOrder);
+
+  // Cross-Column Drag and Drop 상태 (PC전용)
+  const [draggedId, setDraggedId] = useState<HomeSectionId | null>(null);
+  const [dropTarget, setDropTarget] = useState<{
+    column: "left" | "right";
+    index: number;
+  } | null>(null);
+
   useEffect(() => {
     hydrate();
     hydrateProfile();
-  }, [hydrate, hydrateProfile]);
+    hydrateHomeOrder();
+  }, [hydrate, hydrateProfile, hydrateHomeOrder]);
 
   const today = todayKey();
-  // 개발 모드에서만 ?season=year-end|year-end-prep 로 시즌 배너를 미리 띄워볼 수 있다.
   const searchParams = useSearchParams();
   const seasonOverride =
     process.env.NODE_ENV !== "production"
@@ -198,15 +348,15 @@ export function HomeDashboard() {
   const bubbleMessage = showOnboardingNudge
     ? "반가워요! 아래에 월급을 딱 한 번만 적어두면, 모든 레슨과 계산기가 실제 내 숫자로 바뀐답니다!"
     : widgetType === "dday"
-      ? "월급날까지 지갑 사수 대작전! 🪙 조금만 더 힘내볼까요?"
-      : greeting;
+    ? "월급날까지 지갑 사수 대작전! 🪙 조금만 더 힘내볼까요?"
+    : greeting;
 
   const currentLvl = getUserLevelInfo(progress.xp);
   const mascotVariant = `lv${currentLvl.level}` as MascotVariant;
 
   const nextId = firstIncompleteLessonId(
     orderedLessonIds,
-    progress.completedLessonIds,
+    progress.completedLessonIds
   );
   const started = progress.completedLessonIds.length > 0;
   const allDone = nextId === null;
@@ -219,91 +369,237 @@ export function HomeDashboard() {
   const learnCta = allDone
     ? "학습 경로 다시 보기"
     : streakAtRisk
-      ? `${progress.streak.count}일째 이어가기`
-      : started
-        ? "이어서 풀기"
-        : "학습 시작하기";
+    ? `${progress.streak.count}일째 이어가기`
+    : started
+    ? "이어서 풀기"
+    : "학습 시작하기";
 
-  return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
-      {/* 인사 */}
-      <MascotBubble
-        variant={mascotVariant}
-        message={bubbleMessage}
-        size="lg"
-        priority
-        isLoading={!profileHydrated || !hydrated}
-      />
+  const isPcCustomized =
+    JSON.stringify(pcColumns) !== JSON.stringify(DEFAULT_PC_COLUMNS);
 
-      {/* 시즌 배너 — '필요한 때'에만. hydrated 게이트(SSR/클라 날짜 불일치 회피) */}
-      {hydrated && season && (
-        <Link
-          href={season.ctaHref}
-          className="mt-5 flex items-center gap-3 rounded-card border-2 border-brand-500/30 bg-brand-500/10 p-4 transition-[border-color,background-color] duration-100 hover:bg-brand-500/15"
-        >
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
-            <CalendarClock className="size-6" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-sm font-bold">{season.title}</span>
-            <span className="block text-xs text-muted">{season.message}</span>
-          </span>
-          <ArrowRight className="size-4 shrink-0 text-brand-600" />
-        </Link>
-      )}
+  const isMobileCustomized =
+    JSON.stringify(mobileSectionIds) !==
+    JSON.stringify(DEFAULT_MOBILE_SECTION_IDS);
 
-      {/* PC(lg): 2단 — 좌측 메인(내 돈·내 학습·상황별·한 입) + 우측 뉴스(sticky).
-          모바일: 세로 스택. 헤더/탭바에 이미 전역 내비가 있어, 홈은 '내비 칩' 없이 콘텐츠에 집중한다. */}
-      <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-[1.7fr_1fr] lg:items-start lg:gap-6">
-        {/* ── 메인 컬럼 ── */}
-        <div className="flex flex-col gap-5">
-          {/* 내 돈 — 개인화 금융 대시보드(이 앱의 축) */}
-          <Card highlight padding="lg">
+  // ── PC Pointer Drag Event Handlers ──
+  const handlePointerDown = (e: React.PointerEvent, id: HomeSectionId) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const handleEl = e.currentTarget as HTMLElement;
+    try {
+      handleEl.setPointerCapture(e.pointerId);
+    } catch {
+      // 무시
+    }
+
+    setDraggedId(id);
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      const el = document.elementFromPoint(
+        moveEvent.clientX,
+        moveEvent.clientY
+      );
+      if (!el) return;
+
+      const cardEl = el.closest("[data-section-id]") as HTMLElement | null;
+      const colEl = el.closest("[data-column-id]") as HTMLElement | null;
+
+      if (cardEl) {
+        const columnId = cardEl.getAttribute("data-column-scope") as
+          | "left"
+          | "right";
+        const indexStr = cardEl.getAttribute("data-section-index");
+
+        if (columnId && indexStr !== null) {
+          const index = parseInt(indexStr, 10);
+          const rect = cardEl.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          const insertIndex = moveEvent.clientY < midY ? index : index + 1;
+
+          setDropTarget({ column: columnId, index: insertIndex });
+        }
+      } else if (colEl) {
+        const columnId = colEl.getAttribute("data-column-id") as
+          | "left"
+          | "right";
+        if (columnId) {
+          const list = columnId === "left" ? pcColumns.left : pcColumns.right;
+          setDropTarget({ column: columnId, index: list.length });
+        }
+      }
+    };
+
+    const onPointerUp = (upEvent: PointerEvent) => {
+      try {
+        handleEl.releasePointerCapture(upEvent.pointerId);
+      } catch {
+        // 무시
+      }
+
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+
+      const el = document.elementFromPoint(upEvent.clientX, upEvent.clientY);
+      let targetCol: "left" | "right" | null = null;
+      let targetIndex = 0;
+
+      if (el) {
+        const cardEl = el.closest("[data-section-id]") as HTMLElement | null;
+        const colEl = el.closest("[data-column-id]") as HTMLElement | null;
+
+        if (cardEl) {
+          targetCol = cardEl.getAttribute("data-column-scope") as
+            | "left"
+            | "right";
+          const indexStr = cardEl.getAttribute("data-section-index");
+          if (indexStr !== null) {
+            const index = parseInt(indexStr, 10);
+            const rect = cardEl.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+            targetIndex = upEvent.clientY < midY ? index : index + 1;
+          }
+        } else if (colEl) {
+          targetCol = colEl.getAttribute("data-column-id") as "left" | "right";
+          const list = targetCol === "left" ? pcColumns.left : pcColumns.right;
+          targetIndex = list.length;
+        }
+      }
+
+      if (targetCol && id) {
+        movePcSectionToPosition(id, targetCol, targetIndex);
+      } else if (dropTarget && id) {
+        movePcSectionToPosition(id, dropTarget.column, dropTarget.index);
+      }
+
+      setDraggedId(null);
+      setDropTarget(null);
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+  };
+
+  // ── HTML5 Drag & Drop Event Handlers (PC 마우스) ──
+  const handleDragStart = (e: React.DragEvent, id: HomeSectionId) => {
+    e.dataTransfer.setData("text/plain", id);
+    e.dataTransfer.effectAllowed = "move";
+    setDraggedId(id);
+  };
+
+  const handleDragOverCard = (
+    e: React.DragEvent,
+    column: "left" | "right",
+    index: number
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = "move";
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    const insertIndex = e.clientY < midY ? index : index + 1;
+
+    if (
+      !dropTarget ||
+      dropTarget.column !== column ||
+      dropTarget.index !== insertIndex
+    ) {
+      setDropTarget({ column, index: insertIndex });
+    }
+  };
+
+  const handleDragOverColumnContainer = (
+    e: React.DragEvent,
+    column: "left" | "right"
+  ) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    const list = column === "left" ? pcColumns.left : pcColumns.right;
+    if (list.length === 0) {
+      if (
+        !dropTarget ||
+        dropTarget.column !== column ||
+        dropTarget.index !== 0
+      ) {
+        setDropTarget({ column, index: 0 });
+      }
+    }
+  };
+
+  const handleDrop = (
+    e: React.DragEvent,
+    column: "left" | "right",
+    targetIndex?: number
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const id = (e.dataTransfer.getData("text/plain") ||
+      draggedId) as HomeSectionId;
+    if (!id) return;
+
+    const list = column === "left" ? pcColumns.left : pcColumns.right;
+    const finalIndex =
+      targetIndex !== undefined
+        ? targetIndex
+        : dropTarget
+        ? dropTarget.index
+        : list.length;
+
+    movePcSectionToPosition(id, column, finalIndex);
+    setDraggedId(null);
+    setDropTarget(null);
+  };
+
+  const renderSection = (id: HomeSectionId) => {
+    switch (id) {
+      case "my-money":
+        return (
+          <Card highlight padding="sm">
             <div className="h-8 flex items-center justify-between">
               <span className="flex items-center gap-2 text-sm font-bold text-brand-600">
                 <Wallet className="size-6" /> 내 돈
               </span>
 
-              {/* 위젯 스위처 버튼 & 로딩 중 스켈레톤 스페이서 */}
-              {!profileHydrated ? (
-                <div className="h-6 w-24 animate-pulse rounded-lg bg-subtle/50" />
-              ) : hasProfile(profile) ? (
-                <div className="flex gap-0.5 rounded-lg bg-subtle p-0.5 text-[10px]">
-                  {(["salary", "dday"] as const).map((w) => (
-                    <button
-                      key={w}
-                      type="button"
-                      onClick={() => handleWidgetChange(w)}
-                      className={cn(
-                        "rounded-md px-2 py-1 font-bold transition-colors",
-                        widgetType === w
-                          ? "bg-surface text-brand-600 shadow-sm"
-                          : "text-muted hover:text-foreground",
-                      )}
-                    >
-                      {w === "salary" ? "실수령" : "디데이"}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
+              <div className="flex items-center gap-2">
+                {!profileHydrated ? (
+                  <div className="h-6 w-24 animate-pulse rounded-lg bg-subtle/50" />
+                ) : hasProfile(profile) ? (
+                  <div className="flex gap-0.5 rounded-lg bg-subtle p-0.5 text-[10px]">
+                    {(["salary", "dday"] as const).map((w) => (
+                      <button
+                        key={w}
+                        type="button"
+                        onClick={() => handleWidgetChange(w)}
+                        className={cn(
+                          "rounded-md px-2 py-1 font-bold transition-colors",
+                          widgetType === w
+                            ? "bg-surface text-brand-600 shadow-sm"
+                            : "text-muted hover:text-foreground"
+                        )}
+                      >
+                        {w === "salary" ? "실수령" : "디데이"}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              <CardControl />
+              </div>
             </div>
             <div className="mt-3 h-[208px] flex flex-col justify-between">
               {!profileHydrated ? (
                 <div className="animate-pulse flex-1 flex flex-col justify-between">
                   <div>
-                    {/* 타이틀 스켈레톤 */}
                     <div className="h-5 w-40 rounded bg-subtle/50" />
-                    {/* 금액 스켈레톤 */}
                     <div className="mt-2.5 h-10 w-56 rounded-lg bg-subtle/50 lg:h-12" />
-                    {/* 비중 바 스켈레톤 */}
                     <div className="mt-5 h-2.5 w-full rounded-full bg-subtle/50" />
-                    {/* 상세설명 스켈레톤 */}
                     <div className="mt-2 flex justify-between">
                       <div className="h-4 w-28 rounded bg-subtle/50" />
                       <div className="h-4 w-48 rounded bg-subtle/50" />
                     </div>
                   </div>
-                  {/* 버튼 스켈레톤 */}
                   <div className="flex gap-2">
                     <div className="h-11 flex-1 rounded-xl bg-subtle/50" />
                     <div className="h-11 w-20 rounded-xl bg-subtle/50" />
@@ -319,14 +615,15 @@ export function HomeDashboard() {
                       <p className="mt-0.5 text-4xl font-extrabold tracking-tight tabular-nums lg:text-5xl">
                         <AnimatedWon value={th.net} />
                       </p>
-                      {/* 실수령 vs 공제 비중 바 */}
                       <div
                         className="mt-4 h-2.5 overflow-hidden rounded-full bg-subtle/50"
                         aria-hidden
                       >
                         <div
                           className="h-full rounded-full bg-brand-500"
-                          style={{ width: `${(th.net / th.monthlyGross) * 100}%` }}
+                          style={{
+                            width: `${(th.net / th.monthlyGross) * 100}%`,
+                          }}
                         />
                       </div>
                       <div className="mt-1.5 flex justify-between text-[11px] text-muted tabular-nums">
@@ -361,17 +658,22 @@ export function HomeDashboard() {
                     </div>
                   </div>
                 ) : (
-                  <DDayWidgetView profile={profile} onSalaryDayChange={handleSalaryDayChange} />
+                  <DDayWidgetView
+                    profile={profile}
+                    onSalaryDayChange={handleSalaryDayChange}
+                  />
                 )
               ) : (
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <p className="text-2xl font-extrabold tracking-tight lg:text-3xl leading-tight text-foreground">
                       월급 딱 한 번만 적어볼까요?
-                      <br className="hidden sm:block" /> 여기가 전부 내 지갑 이야기가 돼요
+                      <br className="hidden sm:block" /> 여기가 전부 내 지갑
+                      이야기가 돼요
                     </p>
                     <p className="mt-2 text-sm text-muted">
-                      모든 레슨과 계산기가 내 실제 월급 기준으로 바뀌어요. 30초면 충분해요.
+                      모든 레슨과 계산기가 내 실제 월급 기준으로 바뀌어요.
+                      30초면 충분해요.
                     </p>
                   </div>
                   <Link
@@ -388,36 +690,53 @@ export function HomeDashboard() {
               )}
             </div>
           </Card>
+        );
 
-          {/* 내 학습 — 레벨별 진행 + 스트릭/XP + 이어서 풀기 */}
-          <LearnStatus
-            hydrated={hydrated}
-            completedIds={progress.completedLessonIds}
-            xp={progress.xp}
-            streakCount={progress.streak.count}
-            nextHref={allDone ? "/learn" : `/learn/${nextId}`}
-            ctaLabel={learnCta}
-            variant={showOnboardingNudge ? "secondary" : "primary"}
-          />
-          {hydrated && !started && (
-            <p className="-mt-1 text-center text-sm">
-              <Link
-                href="/diagnostic"
-                className="inline-flex items-center gap-1 font-semibold text-muted transition-colors hover:text-brand-600"
-              >
-                <Sparkles className="size-4" /> 이미 좀 아세요? 진단으로 레벨
-                건너뛰기
-              </Link>
-            </p>
-          )}
+      case "learn-status":
+        return (
+          <div className="flex flex-col gap-2">
+            <LearnStatus
+              hydrated={hydrated}
+              completedIds={progress.completedLessonIds}
+              xp={progress.xp}
+              streakCount={progress.streak.count}
+              nextHref={allDone ? "/learn" : `/learn/${nextId}`}
+              ctaLabel={learnCta}
+              variant={showOnboardingNudge ? "secondary" : "primary"}
+              rightSlot={
+                <CardControl />
+              }
+            />
+            {hydrated && !started && (
+              <p className="text-center text-sm">
+                <Link
+                  href="/diagnostic"
+                  className="inline-flex items-center gap-1 font-semibold text-muted transition-colors hover:text-brand-600"
+                >
+                  <Sparkles className="size-4" /> 이미 좀 아세요? 진단으로 레벨
+                  건너뛰기
+                </Link>
+              </p>
+            )}
+          </div>
+        );
 
-          {/* 상황별로 시작하기 — 라이프 이벤트 진입(내비엔 없는 콘텐츠 경로) */}
-          <section>
-            <h2 className="text-base font-bold">지금 어떤 고민이 있나요?</h2>
-            <p className="mt-0.5 text-sm text-muted">
-              내 상황을 고르면 꼭 필요한 레슨과 계산기만 쏙쏙 골라 모아 드릴게요.
-            </p>
-            <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
+      case "scenarios":
+        return (
+          <Card padding="sm">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-bold text-foreground">
+                  지금 어떤 고민이 있나요?
+                </h2>
+                <p className="mt-0.5 text-xs text-muted">
+                  내 상황을 고르면 꼭 필요한 레슨과 계산기만 쏙쏙 골라 모아
+                  드릴게요.
+                </p>
+              </div>
+              <CardControl />
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-3">
               {scenarios.map((s) => (
                 <Link
                   key={s.id}
@@ -438,15 +757,22 @@ export function HomeDashboard() {
                 </Link>
               ))}
             </div>
-          </section>
+          </Card>
+        );
 
-          {/* 오늘의 한 입 — 용어 하나 */}
-          <Card padding="md">
-            <p className="text-xs font-bold tracking-wide text-brand-600">
-              하루 1분, 오늘의 한 입 🍪
-            </p>
+      case "daily-term":
+        return (
+          <Card padding="sm">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-bold tracking-wide text-brand-600">
+                하루 1분, 오늘의 한 입 🍪
+              </p>
+              <CardControl />
+            </div>
             <p className="mt-1.5 text-xl font-bold">{term.term}</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">{term.short}</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted">
+              {term.short}
+            </p>
             <Link
               href="/glossary"
               className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700"
@@ -454,11 +780,11 @@ export function HomeDashboard() {
               용어 사전 더 보기 <ArrowRight className="size-4" />
             </Link>
           </Card>
-        </div>
+        );
 
-        {/* ── 오늘의 경제뉴스 — PC(lg)에서는 우측 sticky 컬럼, 모바일에선 맨 아래 ── */}
-        <aside className="lg:sticky lg:top-24">
-          <Card padding="md">
+      case "news-aside":
+        return (
+          <Card padding="sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/10">
@@ -474,45 +800,258 @@ export function HomeDashboard() {
                   </p>
                 </div>
               </div>
-              <Link
-                href="/news"
-                className="inline-flex items-center gap-1 rounded-full bg-subtle px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-brand-500/10 hover:text-brand-600"
-              >
-                더 보기 <ArrowRight className="size-3.5" />
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/news"
+                  className="inline-flex items-center gap-1 rounded-full bg-subtle px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-brand-500/10 hover:text-brand-600"
+                >
+                  더 보기 <ArrowRight className="size-3.5" />
+                </Link>
+                <CardControl />
+              </div>
             </div>
-            <div className="mt-2">
-              <NewsList limit={8} numbered mixed />
+            <div className="mt-3">
+              <NewsList limit={6} numbered withTopics />
+            </div>
+
+            {/* 청약 정보 광고 배너 */}
+            <div className="mt-4 p-3 rounded-card bg-subtle/80 hover:bg-subtle dark:bg-subtle/30 dark:hover:bg-subtle/50 transition-colors">
+              <a
+                href="https://www.applyhome.co.kr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3"
+              >
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 text-xl">
+                  🏢
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-brand-600">
+                    청약 가이드 🔔
+                  </p>
+                  <p className="mt-0.5 text-sm font-bold leading-tight text-foreground truncate">
+                    내 지역 청약정보를 알고 싶다면?
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-muted">
+                    청약홈 바로가기 · 청약 일정 확인
+                  </p>
+                </div>
+                <ArrowRight className="size-4 shrink-0 text-brand-600" />
+              </a>
             </div>
           </Card>
+        );
 
-          {/* 청약 정보 광고 배너 */}
-          <div
-            className="mt-4 p-3 rounded-card bg-subtle/80 hover:bg-subtle dark:bg-subtle/30 dark:hover:bg-subtle/50 transition-colors"
-          >
-            <a
-              href="https://www.applyhome.co.kr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3"
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <main className="mx-auto w-full max-w-7xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+      {/* 인사 */}
+      <MascotBubble
+        variant={mascotVariant}
+        message={bubbleMessage}
+        size="lg"
+        priority
+        isLoading={!profileHydrated || !hydrated}
+      />
+
+      {/* 모바일 전용 토글 세그먼트 스위처 */}
+      <MobileToggleBar />
+
+      {/* 시즌 배너 */}
+      {hydrated && season && (
+        <Link
+          href={season.ctaHref}
+          className="mt-5 flex items-center gap-3 rounded-card border-2 border-brand-500/30 bg-brand-500/10 p-4 transition-[border-color,background-color] duration-100 hover:bg-brand-500/15"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
+            <CalendarClock className="size-6" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-bold">{season.title}</span>
+            <span className="block text-xs text-muted">{season.message}</span>
+          </span>
+          <ArrowRight className="size-4 shrink-0 text-brand-600" />
+        </Link>
+      )}
+
+      {/* 홈 커스텀 가이드 & 리셋 옵션 (PC / 모바일 분기) */}
+      {orderHydrated && (
+        <div className="mt-4 flex items-center justify-between text-xs text-muted">
+          <span className="flex items-center gap-1.5">
+            <GripVertical className="size-3.5 text-brand-600 shrink-0" />
+            <span className="hidden lg:inline">
+              카드를 잡고 <b>마우스 드래그앤드롭</b>으로 원하는 위치에 자유롭게
+              배치할 수 있습니다.
+            </span>
+            <span className="inline lg:hidden">
+              주로 확인할 컨텐츠를 탭으로 전환할 수 있습니다.
+            </span>
+          </span>
+
+          {/* PC용 리셋 버튼 */}
+          {isPcCustomized && (
+            <button
+              type="button"
+              onClick={resetPcColumns}
+              className="hidden lg:inline-flex items-center gap-1 rounded-full border border-border bg-subtle px-2.5 py-1 text-[11px] font-bold text-foreground hover:bg-surface active:scale-95 transition-all shrink-0 ml-2"
             >
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-600 text-xl">
-                🏢
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-brand-600">청약 가이드 🔔</p>
-                <p className="mt-0.5 text-sm font-bold leading-tight text-foreground truncate">
-                  내 지역 청약정보를 알고 싶다면?
-                </p>
-                <p className="mt-0.5 text-[11px] text-muted">
-                  청약홈 바로가기 · 청약 일정 확인
-                </p>
-              </div>
-              <ArrowRight className="size-4 shrink-0 text-brand-600" />
-            </a>
+              <RotateCcw className="size-3" /> 순서 초기화
+            </button>
+          )}
+
+          {/* 모바일용 리셋 버튼 */}
+          {isMobileCustomized && (
+            <button
+              type="button"
+              onClick={resetMobileOrder}
+              className="inline-flex lg:hidden items-center gap-1 rounded-full border border-border bg-subtle px-2.5 py-1 text-[11px] font-bold text-foreground hover:bg-surface active:scale-95 transition-all shrink-0 ml-2"
+            >
+              <RotateCcw className="size-3" /> 순서 초기화
+            </button>
+          )}
+        </div>
+      )}
+
+      {orderHydrated ? (
+        <>
+          {/* 💻 PC(lg 이상) 2단 그리드 독립 배치 뷰 */}
+          <div className="mt-5 hidden lg:grid grid-cols-[1.7fr_1fr] items-start gap-6">
+            {/* PC 좌측 컬럼 */}
+            <div
+              data-column-id="left"
+              onDragOver={(e) => handleDragOverColumnContainer(e, "left")}
+              onDrop={(e) => handleDrop(e, "left")}
+              className="flex flex-col gap-5 min-h-[160px] transition-colors rounded-card"
+            >
+              {pcColumns.left.map((id, index) => {
+                const showIndicatorBefore =
+                  dropTarget?.column === "left" && dropTarget.index === index;
+                const isLast = index === pcColumns.left.length - 1;
+                const showIndicatorAfter =
+                  dropTarget?.column === "left" &&
+                  dropTarget.index === index + 1;
+
+                return (
+                  <div key={id} className="flex flex-col">
+                    {showIndicatorBefore && <DropIndicator />}
+                    <div
+                      draggable
+                      data-section-id={id}
+                      data-column-scope="left"
+                      data-section-index={index}
+                      onDragStart={(e) => handleDragStart(e, id)}
+                      onDragEnd={() => {
+                        setDraggedId(null);
+                        setDropTarget(null);
+                      }}
+                      onDragOver={(e) => handleDragOverCard(e, "left", index)}
+                      onDrop={(e) => handleDrop(e, "left")}
+                      className={cn(
+                        "relative rounded-card transition-all duration-150 touch-none",
+                        draggedId === id &&
+                          "opacity-40 scale-[0.98] border-2 border-dashed border-brand-500/60"
+                      )}
+                    >
+                      {renderSection(id)}
+                    </div>
+                    {isLast && showIndicatorAfter && <DropIndicator />}
+                  </div>
+                );
+              })}
+
+              {pcColumns.left.length === 0 && (
+                <div
+                  data-column-id="left"
+                  onDragOver={(e) => handleDragOverColumnContainer(e, "left")}
+                  onDrop={(e) => handleDrop(e, "left")}
+                >
+                  <EmptyColumnBox
+                    isDropTarget={dropTarget?.column === "left"}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* PC 우측 컬럼 (Sticky) */}
+            <aside
+              data-column-id="right"
+              onDragOver={(e) => handleDragOverColumnContainer(e, "right")}
+              onDrop={(e) => handleDrop(e, "right")}
+              className="sticky top-24 flex flex-col gap-5 min-h-[160px] transition-colors rounded-card"
+            >
+              {pcColumns.right.map((id, index) => {
+                const showIndicatorBefore =
+                  dropTarget?.column === "right" && dropTarget.index === index;
+                const isLast = index === pcColumns.right.length - 1;
+                const showIndicatorAfter =
+                  dropTarget?.column === "right" &&
+                  dropTarget.index === index + 1;
+
+                return (
+                  <div key={id} className="flex flex-col">
+                    {showIndicatorBefore && <DropIndicator />}
+                    <div
+                      draggable
+                      data-section-id={id}
+                      data-column-scope="right"
+                      data-section-index={index}
+                      onDragStart={(e) => handleDragStart(e, id)}
+                      onDragEnd={() => {
+                        setDraggedId(null);
+                        setDropTarget(null);
+                      }}
+                      onDragOver={(e) => handleDragOverCard(e, "right", index)}
+                      onDrop={(e) => handleDrop(e, "right")}
+                      className={cn(
+                        "relative rounded-card transition-all duration-150 touch-none",
+                        draggedId === id &&
+                          "opacity-40 scale-[0.98] border-2 border-dashed border-brand-500/60"
+                      )}
+                    >
+                      {renderSection(id)}
+                    </div>
+                    {isLast && showIndicatorAfter && <DropIndicator />}
+                  </div>
+                );
+              })}
+
+              {pcColumns.right.length === 0 && (
+                <div
+                  data-column-id="right"
+                  onDragOver={(e) => handleDragOverColumnContainer(e, "right")}
+                  onDrop={(e) => handleDrop(e, "right")}
+                >
+                  <EmptyColumnBox
+                    isDropTarget={dropTarget?.column === "right"}
+                  />
+                </div>
+              )}
+            </aside>
           </div>
-        </aside>
-      </div>
+
+          {/* 📱 모바일(lg 미만) 세로 1열 독립 배치 뷰 */}
+          <div className="mt-5 flex flex-col gap-5 lg:hidden">
+            {mobileSectionIds.map((id) => (
+              <div key={id} className="relative rounded-card">
+                {renderSection(id)}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[1.7fr_1fr] lg:gap-6 animate-pulse">
+          <div className="flex flex-col gap-5">
+            <div className="h-48 rounded-card bg-subtle/40" />
+            <div className="h-44 rounded-card bg-subtle/40" />
+            <div className="h-44 rounded-card bg-subtle/40" />
+          </div>
+          <div className="h-96 rounded-card bg-subtle/40" />
+        </div>
+      )}
     </main>
   );
 }

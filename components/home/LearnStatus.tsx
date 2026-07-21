@@ -16,6 +16,7 @@ export function LearnStatus({
   nextHref,
   ctaLabel,
   variant = "primary",
+  rightSlot,
 }: {
   hydrated: boolean;
   completedIds: string[];
@@ -24,11 +25,12 @@ export function LearnStatus({
   nextHref: string;
   ctaLabel: string;
   variant?: ButtonVariant;
+  rightSlot?: React.ReactNode;
 }) {
   const done = new Set(completedIds);
 
   return (
-    <Card padding="md">
+    <Card padding="sm">
       <div className="flex items-center justify-between gap-3">
         <span className="flex items-center gap-2 text-sm font-bold text-brand-600">
           <GraduationCap className="size-5" /> 내 학습
@@ -42,6 +44,7 @@ export function LearnStatus({
             <Zap className="size-3.5" />
             {hydrated ? xp : 0}
           </span>
+          {rightSlot}
         </div>
       </div>
 

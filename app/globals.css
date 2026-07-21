@@ -143,13 +143,39 @@ h2 {
   font-weight: 700;
 }
 
-/* 가로 스크롤 영역(토픽 칩 등)의 스크롤바 숨김 */
+/* 가로 스크롤 영역(토픽 칩 등)의 모바일 스크롤바 숨김 */
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* PC 전용 얇고 차분한 가로 스크롤바 (필요 시 자동 표시) */
+@media (min-width: 1024px) {
+  .lg\:custom-scrollbar {
+    -ms-overflow-style: auto !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--border) transparent !important;
+    overflow-x: auto !important;
+  }
+  .lg\:custom-scrollbar::-webkit-scrollbar {
+    height: 5px !important;
+    display: block !important;
+    appearance: none !important;
+  }
+  .lg\:custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--subtle) !important;
+    border-radius: 9999px !important;
+  }
+  .lg\:custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--border) !important;
+    border-radius: 9999px !important;
+  }
+  .lg\:custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--muted) !important;
+  }
 }
 
 /* ── 모션 ────────────────────────────────────────────────────

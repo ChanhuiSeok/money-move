@@ -61,9 +61,9 @@ describe("topicQuery", () => {
     expect(topicQuery("us")).toBe("미국증시");
   });
 
-  it("모르는 값·null은 기본(전체=경제)", () => {
-    expect(topicQuery("zzz")).toBe("경제");
-    expect(topicQuery(null)).toBe("경제");
+  it("모르는 값·null은 기본(첫 토픽=주식)", () => {
+    expect(topicQuery("zzz")).toBe("주식");
+    expect(topicQuery(null)).toBe("주식");
   });
 });
 

@@ -50,7 +50,6 @@ export function toNewsItem(raw: RawNaverNewsItem): NewsItem {
 export type NewsTopic = { id: string; label: string; query: string };
 
 export const newsTopics: NewsTopic[] = [
-  { id: "all", label: "전체", query: "경제" },
   { id: "stock", label: "주식", query: "주식" },
   { id: "kospi", label: "코스피", query: "코스피" },
   { id: "us", label: "미국증시", query: "미국증시" },

@@ -67,7 +67,14 @@ export async function GET(request: Request) {
     );
   }
 
-  const topic = new URL(request.url).searchParams.get("topic");
+  const searchParams = new URL(request.url).searchParams;
+  const topic = searchParams.get("topic");
+  const queryParam = searchParams.get("query");
+
+  if (queryParam) {
+    const items = await fetchNaver(queryParam, 10, clientId, clientSecret);
+    return NextResponse.json({ items });
+  }
 
   if (topic === "mixed") {
     const lists = await Promise.all(
