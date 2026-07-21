@@ -841,7 +841,7 @@ export function HomeDashboard() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-5 py-6 lg:px-8 lg:py-10">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5 lg:px-8 lg:py-10">
       {/* 인사 */}
       <MascotBubble
         variant={mascotVariant}

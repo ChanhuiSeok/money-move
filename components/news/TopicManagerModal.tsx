@@ -60,7 +60,7 @@ export function TopicManagerModal({ isOpen, onClose }: TopicManagerModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-fade-in">
       <div
-        className="w-full max-w-md rounded-2xl border border-border bg-surface p-5 shadow-2xl transition-all"
+        className="w-full max-w-md rounded-2xl border border-border bg-surface p-4 sm:p-5 shadow-2xl transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}
@@ -97,14 +97,14 @@ export function TopicManagerModal({ isOpen, onClose }: TopicManagerModalProps) {
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               placeholder="예: 미국주식, 청약, 엔화..."
-              className="flex-1 rounded-xl border border-border/80 bg-subtle/50 px-3.5 py-2 text-sm font-semibold text-foreground placeholder:text-muted/60 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="flex-1 min-w-0 rounded-xl border border-border/80 bg-subtle/50 px-3.5 py-2 text-sm font-semibold text-foreground placeholder:text-muted/60 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
             <button
               type="submit"
               className={buttonVariants({
                 variant: "primary",
                 size: "sm",
-                className: "shrink-0 gap-1 px-4",
+                className: "shrink-0 whitespace-nowrap gap-1 px-3 sm:px-4",
               })}
             >
               <Plus className="size-4" /> 추가
