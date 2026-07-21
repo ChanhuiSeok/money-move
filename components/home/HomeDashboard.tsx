@@ -53,12 +53,7 @@ function AnimatedWon({ value }: { value: number }) {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    let start = 0;
-    const end = value;
-    if (start === end) {
-      setDisplayValue(end);
-      return;
-    }
+    if (value === 0) return;
 
     const duration = 800;
     const startTime = performance.now();
@@ -67,7 +62,7 @@ function AnimatedWon({ value }: { value: number }) {
     function run(now: number) {
       const progress = Math.min(1, (now - startTime) / duration);
       const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      const current = Math.floor(ease * end);
+      const current = Math.floor(ease * value);
       setDisplayValue(current);
 
       if (progress < 1) {
@@ -585,7 +580,7 @@ export function HomeDashboard() {
                     ))}
                   </div>
                 ) : null}
-              <CardControl />
+                <CardControl />
               </div>
             </div>
             <div className="mt-3 h-[208px] flex flex-col justify-between">
@@ -703,9 +698,7 @@ export function HomeDashboard() {
               nextHref={allDone ? "/learn" : `/learn/${nextId}`}
               ctaLabel={learnCta}
               variant={showOnboardingNudge ? "secondary" : "primary"}
-              rightSlot={
-                <CardControl />
-              }
+              rightSlot={<CardControl />}
             />
             {hydrated && !started && (
               <p className="text-center text-sm">
