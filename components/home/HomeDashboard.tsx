@@ -11,6 +11,7 @@ import {
   Sparkles,
   Wallet,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { NewsIcon } from "@/components/icons/PixelIcon";
 import { LearnStatus } from "@/components/home/LearnStatus";
 import { MascotBubble } from "@/components/mascot/MascotBubble";
@@ -215,30 +216,45 @@ function MobileToggleBar() {
   const setMobileTab = useHomeOrder((s) => s.setMobileTab);
 
   return (
-    <div className="mt-4 flex rounded-xl bg-subtle p-1 border border-border/60 lg:hidden">
+    <div className="mt-4 flex rounded-xl bg-subtle p-1 border border-border/60 lg:hidden relative">
       <button
         type="button"
         onClick={() => setMobileTab("news")}
         className={cn(
-          "flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm font-bold transition-all",
+          "relative flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm font-bold transition-colors z-10",
           mobileTab === "news"
-            ? "bg-surface text-foreground shadow-sm border border-border/50 dark:bg-[#2b3248] dark:text-foreground dark:border-white/10 dark:shadow-md"
+            ? "text-foreground font-extrabold"
             : "text-muted font-medium hover:text-foreground"
         )}
       >
-        <span>경제 뉴스</span>
+        {mobileTab === "news" && (
+          <motion.div
+            layoutId="activeMobileTabPill"
+            className="absolute inset-0 rounded-lg bg-surface shadow-sm border border-border/50 dark:bg-[#2b3248] dark:border-white/10 dark:shadow-md"
+            transition={{ type: "spring", stiffness: 450, damping: 35 }}
+          />
+        )}
+        <span className="relative z-10">경제 뉴스</span>
       </button>
+
       <button
         type="button"
         onClick={() => setMobileTab("my-economy")}
         className={cn(
-          "flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm font-bold transition-all",
+          "relative flex-1 flex items-center justify-center rounded-lg py-2.5 text-sm font-bold transition-colors z-10",
           mobileTab === "my-economy"
-            ? "bg-surface text-foreground shadow-sm border border-border/50 dark:bg-[#2b3248] dark:text-foreground dark:border-white/10 dark:shadow-md"
+            ? "text-foreground font-extrabold"
             : "text-muted font-medium hover:text-foreground"
         )}
       >
-        <span>나의 경제</span>
+        {mobileTab === "my-economy" && (
+          <motion.div
+            layoutId="activeMobileTabPill"
+            className="absolute inset-0 rounded-lg bg-surface shadow-sm border border-border/50 dark:bg-[#2b3248] dark:border-white/10 dark:shadow-md"
+            transition={{ type: "spring", stiffness: 450, damping: 35 }}
+          />
+        )}
+        <span className="relative z-10">나의 경제</span>
       </button>
     </div>
   );
@@ -289,6 +305,7 @@ export function HomeDashboard() {
 
   // PC & 모바일 독립 스토어 상태 및 메소드
   const pcColumns = useHomeOrder((s) => s.pcColumns);
+  const mobileTab = useHomeOrder((s) => s.mobileTab);
   const mobileSectionIds = useHomeOrder((s) => s.mobileSectionIds);
   const orderHydrated = useHomeOrder((s) => s.hydrated);
   const hydrateHomeOrder = useHomeOrder((s) => s.hydrate);
