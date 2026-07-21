@@ -12,6 +12,7 @@ import { Confetti } from "@/components/ui/Confetti";
 import { MascotImage, type MascotVariant } from "@/components/mascot/MascotImage";
 import { formatWon } from "@/lib/format";
 import { getUserLevelInfo } from "@/lib/achievements";
+import { isDevToolsEnabled } from "@/lib/env";
 import { hasProfile, profileTakeHome } from "@/lib/profile";
 import type { Profile } from "@/lib/schema";
 import { useProfile } from "@/store/useProfile";
@@ -106,7 +107,10 @@ export default function ProfilePage() {
 
 
       {/* 내 성취 기록 */}
-      <AchievementsSection onTestXp={handleTestXp} onResetXp={handleResetXp} />
+      <AchievementsSection
+        onTestXp={isDevToolsEnabled() ? handleTestXp : undefined}
+        onResetXp={isDevToolsEnabled() ? handleResetXp : undefined}
+      />
 
       {/* 입력 폼 — 저장값으로 seed하려고 hydrate 이후 마운트 */}
       {hydrated && (
